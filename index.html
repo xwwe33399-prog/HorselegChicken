@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Horseleg Chicken demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mario-font: 'Press Start 2P', cursive;
+            --primary-color: #FFD700;
+            --secondary-color: #FF4500;
+            --bg-color: #1a1a2e;
+            --ground-color: #2b2b2b;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            touch-action: none;
+            font-family: var(--mario-font);
+            user-select: none;
+            color: white;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        #menuLayer, #gameUiLayer, #settingsLayer, #gameOverScreen, #winScreen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100;
+        }
+        #menuLayer { display: flex; background-color: var(--bg-color); }
+
+        .title {
+            font-size: 5vw; color: var(--primary-color);
+            text-shadow: 4px 4px 0 var(--secondary-color), 8px 8px 0 #000;
+            margin-bottom: 50px; text-transform: uppercase; letter-spacing: 2px;
+            z-index: 10; text-align: center; line-height: 1.4;
+        }
+
+        .btn {
+            padding: 20px 50px; font-size: 20px; margin: 15px;
+            background: linear-gradient(to bottom, #8B0000, #500000);
+            color: white; border: 6px solid #fff; border-radius: 0; 
+            font-weight: bold; box-shadow: 0 8px 0 #300000, 0 12px 15px rgba(0,0,0,0.8);
+            cursor: pointer; z-index: 10; font-family: var(--mario-font);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #300000, 0 8px 10px rgba(0,0,0,0.8); }
+        .btn-settings { background: linear-gradient(to bottom, #666, #333); box-shadow: 0 8px 0 #111, 0 12px 15px rgba(0,0,0,0.8); }
+        .btn-settings:active { box-shadow: 0 4px 0 #111, 0 8px 10px rgba(0,0,0,0.8); }
+        .btn-copy { background: linear-gradient(to bottom, #008B8B, #005050); box-shadow: 0 8px 0 #003333, 0 12px 15px rgba(0,0,0,0.8); }
+        .btn-copy:active { box-shadow: 0 4px 0 #003333, 0 8px 10px rgba(0,0,0,0.8); }
+
+        .copyright {
+            position: absolute; bottom: 20px; font-size: 12px;
+            color: rgba(255, 255, 255, 0.9); z-index: 10; text-align: center;
+            text-shadow: 2px 2px 0 #000; line-height: 1.5;
+        }
+
+        #settingsLayer { background: rgba(0, 0, 0, 0.95); z-index: 110; }
+        .settings-panel {
+            background: #222; border: 6px solid #8B0000; padding: 40px;
+            width: 80%; max-width: 600px; text-align: center; box-shadow: 10px 10px 0 #000;
+        }
+        .setting-item {
+            margin: 20px 0; display: flex; justify-content: space-between; align-items: center;
+            font-size: 14px; text-shadow: 2px 2px 0 #000;
+        }
+        
+        input[type=range] { -webkit-appearance: none; width: 150px; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 20px; width: 20px;
+            background: #FFD700; cursor: pointer; border: 2px solid #fff; margin-top: -6px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 8px; cursor: pointer; background: #555; border: 1px solid #000;
+        }
+
+        .credits-box {
+            background: #111; padding: 15px; border: 4px dashed #666; margin-top: 20px;
+            font-size: 10px; line-height: 2; color: #FFD700; text-align: left;
+        }
+
+        .toggle-btn {
+            padding: 8px 20px; background: #444; border: 4px solid #fff; color: white;
+            font-family: var(--mario-font); cursor: pointer; box-shadow: 4px 4px 0 #000;
+        }
+        .toggle-btn.active { background: #8B0000; }
+
+        #gameUiLayer { pointer-events: none; z-index: 50; display: none; justify-content: flex-start; align-items: flex-start; padding: 20px; }
+        #topBar { width: 100%; display: flex; justify-content: space-between; align-items: center; pointer-events: auto; }
+        #hud {
+            background: rgba(0,0,0,0.8); padding: 15px; border: 4px solid #8B0000;
+            font-size: 16px; text-shadow: 2px 2px 0 #000; box-shadow: 4px 4px 0 #000;
+        }
+        .score-text { color: var(--primary-color); margin-bottom: 10px; display: block; }
+        .progress-text { color: #00FFFF; margin-bottom: 10px; display: block; font-size: 12px; }
+        .energy-title { font-size: 14px; display: flex; align-items: center; gap: 5px; }
+        .bar-bg { width: 200px; height: 20px; background: #333; margin-top: 5px; border: 3px solid #fff; position: relative; }
+        .bar-fill { width: 100%; height: 100%; background: linear-gradient(to right, #f00, #0f0); transition: width 0.1s linear; }
+        .game-buttons { display: flex; gap: 15px; }
+        .game-btn {
+            padding: 15px 25px; font-size: 12px; background: rgba(0,0,0,0.8); color: white;
+            border: 4px solid #fff; cursor: pointer; font-family: var(--mario-font); box-shadow: 4px 4px 0 #000;
+        }
+        .game-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #000; }
+
+        #floatingTextContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .floating-text {
+            position: absolute; color: #FFD700; font-size: 20px; font-weight: bold;
+            text-shadow: 3px 3px 0 #000; animation: floatUp 1.2s ease-out forwards;
+            pointer-events: none; z-index: 200; text-align: center;
+        }
+        .burger-text { color: #FF0000; font-size: 30px; animation: floatUpShake 1.5s ease-out forwards; }
+        .oikotie-shout { color: #00FFFF; font-size: 26px; animation: popIn 1.5s ease-out forwards; }
+
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-40px) scale(1.2); opacity: 1; } 100% { transform: translateY(-80px) scale(1); opacity: 0; } }
+        @keyframes floatUpShake { 0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translateY(-20px) scale(1.5) rotate(10deg); opacity: 1; } 40% { transform: translateY(-40px) scale(1.5) rotate(-10deg); opacity: 1; } 60% { transform: translateY(-60px) scale(1.5) rotate(10deg); opacity: 1; } 100% { transform: translateY(-100px) scale(1) rotate(0deg); opacity: 0; } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 20% { transform: scale(1.5); opacity: 1; } 80% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
+
+        #controlsArea { position: absolute; bottom: 0; left: 0; width: 100%; height: 250px; pointer-events: none; z-index: 60; }
+        .control-zone { pointer-events: auto; position: absolute; }
+        #joystickBase {
+            bottom: 40px; left: 40px; width: 160px; height: 160px; background: rgba(0,0,0,0.5);
+            border: 6px solid rgba(255,255,255,0.8); border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        #joystickStick {
+            position: absolute; top: 40px; left: 40px; width: 80px; height: 80px; background: var(--secondary-color);
+            border: 4px solid #fff; border-radius: 50%; box-shadow: inset -4px -4px 0 rgba(0,0,0,0.3), 4px 4px 0 rgba(0,0,0,0.5);
+        }
+        #kickBtn {
+            bottom: 50px; right: 50px; width: 140px; height: 140px; background: #8B0000;
+            border: 6px solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 20px; text-shadow: 3px 3px 0 #000; box-shadow: inset -6px -6px 0 rgba(0,0,0,0.3), 6px 6px 0 rgba(0,0,0,0.5); cursor: pointer;
+        }
+        #kickBtn:active { box-shadow: inset 6px 6px 0 rgba(0,0,0,0.5), 0 0 0 rgba(0,0,0,0); transform: translate(4px, 4px); }
+
+        #gameOverScreen { background: rgba(50,0,0,0.9); z-index: 150; }
+        .game-over-title { color: #FF0000; font-size: 6vw; text-shadow: 4px 4px 0 #000; margin-bottom: 20px; }
+        #winScreen { background: rgba(0,30,0,0.95); z-index: 150; }
+        .win-title { color: #00FF00; font-size: 5vw; text-shadow: 4px 4px 0 #000; margin-bottom: 20px; }
+        .win-stats { color: white; font-size: 20px; margin-bottom: 30px; text-align: left; background: rgba(0,0,0,0.5); padding: 20px; border: 4px solid #0F0; line-height: 2; }
+    </style>
+</head>
+<body>
+
+    <div id="menuLayer">
+        <canvas id="menuCanvas" style="position: absolute; top:0; left:0; z-index: 1;"></canvas>
+        <div class="title" style="position: relative; z-index: 10;">Horseleg<br>Chicken<br><span style="font-size: 0.5em; color: #8B0000;">demoversio</span></div>
+        <button class="btn" id="playBtn">aloita demopeli</button>
+        <button class="btn btn-settings" id="openSettingsBtn">SETTINGS</button>
+        <div class="copyright">IDEA: JANI NORONEN<br>&copy; COPYRIGHT © LAKKULA EELI NORONEN 1999 </div>
+    </div>
+
+    <div id="settingsLayer">
+        <div class="settings-panel">
+            <h2 class="title" style="font-size: 30px; margin-bottom: 20px;">SETTINGS</h2>
+            
+            <div class="setting-item">
+                <span>varjot</span>
+                <button class="toggle-btn active" id="shadowToggle">ON</button>
+            </div>
+            
+            <div class="setting-item"><span>Kaikki äänet vol</span><input type="range" id="volMaster" min="0" max="100" value="100"></div>
+            <div class="setting-item"><span>Musiikki vol</span><input type="range" id="volMusic" min="0" max="100" value="50"></div>
+            <div class="setting-item"><span>SFX Vol</span><input type="range" id="volSfx" min="0" max="100" value="100"></div>
+            <div class="setting-item"><span>Puhumis Vol</span><input type="range" id="volVoice" min="0" max="100" value="100"></div>
+            
+            <div class="credits-box">
+                - Idea: Jani Noronen<br>
+                - Ohjelmointi: Lakkula<br>
+                - Grafiikkamoottori: 8-Bittinen<br>
+                - ODOTA ETTÄ, PELI, ON, KOKONAAN LATAUTUNUT TAI LAGAA<br>
+                - Copyright: Lakkula 2026
+            </div>
+
+            <button class="btn" id="closeSettingsBtn" style="margin-top: 20px; padding: 10px 30px; font-size: 16px;">BACK</button>
+        </div>
+    </div>
+
+    <div id="gameUiLayer">
+        <div id="topBar">
+            <div id="hud">
+                <span class="score-text">SCORE: <span id="scoreDisplay">0</span></span>
+                <span class="progress-text">PROGRESS: <span id="distDisplay">0</span>%</span>
+                <div class="energy-title">❤️ CHICKEN ENERGY</div>
+                <div class="bar-bg"><div class="bar-fill" id="healthBar"></div></div>
+            </div>
+            <div class="game-buttons">
+                <button class="game-btn" id="fullscreenBtn">FULLSCREEN</button>
+                <button class="game-btn" id="menuBtn">PÄÄVALIKKO</button>
+            </div>
+        </div>
+        <div id="floatingTextContainer"></div>
+    </div>
+
+    <div id="gameOverScreen">
+        <div class="game-over-title">WASTED</div>
+        <div class="title" style="font-size: 30px; margin-bottom: 40px; color: white;">FINAL SCORE: <span id="finalScore">0</span></div>
+        <button class="btn" id="restartBtn">RETRY</button>
+        <button class="btn btn-settings" id="gameOverMenuBtn">PÄÄVALIKKO</button>
+    </div>
+    
+    <div id="winScreen">
+        <div class="win-title">RAMPAGE COMPLETE!</div>
+        <div class="win-stats">
+            AIKA: <span id="winTime" style="color: #FFD700;">00:00</span><br>
+            LOPPUPISTEET: <span id="winScore" style="color: #00FFFF;">0</span>
+        </div>
+        <button class="btn" id="winRestartBtn">PLAY AGAIN</button>
+        <button class="btn btn-copy" id="copyBtn">KOPIOI TULOKSET</button>
+        <button class="btn btn-settings" id="winMenuBtn">PÄÄVALIKKO</button>
+    </div>
+    
+    <div id="controlsArea" style="display:none;">
+        <div class="control-zone" id="joystickBase"><div id="joystickStick"></div></div>
+        <div class="control-zone" id="kickBtn">KICK</div>
+    </div>
+
+    <canvas id="gameCanvas" style="display:none;"></canvas>
+
+<script>
+    // --- Globals & DOM ---
+    const menuLayer = document.getElementById('menuLayer');
+    const gameUiLayer = document.getElementById('gameUiLayer');
+    const settingsLayer = document.getElementById('settingsLayer');
+    const controlsArea = document.getElementById('controlsArea');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const winScreen = document.getElementById('winScreen');
+    const healthBar = document.getElementById('healthBar');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const distDisplay = document.getElementById('distDisplay');
+    const floatContainer = document.getElementById('floatingTextContainer');
+    
+    const menuCanvas = document.getElementById('menuCanvas');
+    const mCtx = menuCanvas.getContext('2d', { alpha: false });
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    
+    let W, H;
+    let groundY;
+    let gameState = 'MENU'; // MENU, PLAYING, ANIMATION, GAMEOVER, WIN
+    let gameLoopId;
+    let lastTime = 0;
+    let fadeAlpha = 0; // Käytetään loppuanimaatiossa
+    let startTime = 0;
+    let finalTimeStr = "00:00";
+    
+    const GOAL_X = 20000; 
+    
+    let settings = { shadows: true };
+    let vols = { master: 1.0, music: 0.5, sfx: 1.0, voice: 1.0 };
+
+    document.getElementById('volMaster').addEventListener('input', e => vols.master = e.target.value / 100);
+    document.getElementById('volMusic').addEventListener('input', e => vols.music = e.target.value / 100);
+    document.getElementById('volSfx').addEventListener('input', e => vols.sfx = e.target.value / 100);
+    document.getElementById('volVoice').addEventListener('input', e => vols.voice = e.target.value / 100);
+
+    // --- AUDIO SYSTEM ---
+    let audioCtx;
+    let musicInterval;
+    const bgmNotes = [ 82.41, 82.41, 98.00, 82.41, 82.41, 110.00, 82.41, 82.41, 123.47, 82.41, 82.41, 110.00, 98.00, 82.41, 82.41, 73.42 ]; 
+    let noteIndex = 0;
+
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function startBGM() {
+        if (musicInterval) clearInterval(musicInterval);
+        musicInterval = setInterval(() => {
+            if (gameState === 'GAMEOVER' || gameState === 'WIN' || gameState === 'ANIMATION' || vols.master === 0 || vols.music === 0) return;
+            if (!audioCtx) return;
+            try {
+                let mVol = vols.master * vols.music;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+                
+                osc.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(bgmNotes[noteIndex], audioCtx.currentTime); 
+                
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.05);
+                filter.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+                
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.15 * mVol, audioCtx.currentTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.15);
+                
+                if (noteIndex % 4 === 0) {
+                    const kickOsc = audioCtx.createOscillator();
+                    const kickGain = audioCtx.createGain();
+                    kickOsc.connect(kickGain); kickGain.connect(audioCtx.destination);
+                    kickOsc.type = 'sine';
+                    kickOsc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    kickOsc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    kickGain.gain.setValueAtTime(0.3 * mVol, audioCtx.currentTime);
+                    kickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    kickOsc.start(audioCtx.currentTime); kickOsc.stop(audioCtx.currentTime + 0.1);
+                }
+                noteIndex = (noteIndex + 1) % bgmNotes.length;
+            } catch(e) {}
+        }, 180);
+    }
+
+    function stopBGM() { if (musicInterval) clearInterval(musicInterval); }
+
+    function playSound(type) {
+        if (!audioCtx || vols.master === 0) return;
+        try {
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            
+            let sVol = vols.master * vols.sfx;
+            let vVol = vols.master * vols.voice;
+            let mVol = vols.master * vols.music; // Käytetään win musalle
+
+            if (type === 'kick' && sVol > 0) {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+                gain.gain.setValueAtTime(0.6 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'hit' && sVol > 0) {
+                osc.type = 'square'; osc.frequency.setValueAtTime(100, now);
+                osc.frequency.exponentialRampToValueAtTime(20, now + 0.2);
+                gain.gain.setValueAtTime(0.8 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            } else if (type === 'metalHit' && sVol > 0) {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+                gain.gain.setValueAtTime(0.7 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now); osc.stop(now + 0.15);
+            } else if (type === 'eat' && sVol > 0) {
+                osc.type = 'square'; osc.frequency.setValueAtTime(440, now);
+                osc.frequency.linearRampToValueAtTime(880, now + 0.1); osc.frequency.linearRampToValueAtTime(1760, now + 0.2);
+                gain.gain.setValueAtTime(0.4 * sVol, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'pickup' && sVol > 0) {
+                // Pullojen keräys (kilahdus)
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(1200, now);
+                osc.frequency.exponentialRampToValueAtTime(2000, now + 0.1);
+                gain.gain.setValueAtTime(0.3 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'speech' && vVol > 0) {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.4 * vVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'hamburgerVoice' && vVol > 0) {
+                osc.type = 'square'; osc.frequency.setValueAtTime(150, now);
+                osc.frequency.setValueAtTime(120, now + 0.2); osc.frequency.setValueAtTime(100, now + 0.4);
+                gain.gain.setValueAtTime(0.8 * vVol, now); gain.gain.setValueAtTime(0.8 * vVol, now + 0.15);
+                gain.gain.setValueAtTime(0, now + 0.18); gain.gain.setValueAtTime(0.8 * vVol, now + 0.2);
+                gain.gain.setValueAtTime(0.8 * vVol, now + 0.35); gain.gain.setValueAtTime(0, now + 0.38);
+                gain.gain.setValueAtTime(0.8 * vVol, now + 0.4); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now); osc.stop(now + 0.6);
+            } else if (type === 'crash' && sVol > 0) {
+                osc.type = 'square'; osc.frequency.setValueAtTime(80, now);
+                osc.frequency.exponentialRampToValueAtTime(10, now + 0.8);
+                gain.gain.setValueAtTime(1.0 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                const nBuf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.8, audioCtx.sampleRate);
+                const out = nBuf.getChannelData(0);
+                for (let i = 0; i < nBuf.length; i++) { out[i] = Math.random() * 2 - 1; }
+                const nSrc = audioCtx.createBufferSource(); nSrc.buffer = nBuf;
+                const nFilt = audioCtx.createBiquadFilter(); nFilt.type = 'lowpass'; nFilt.frequency.value = 800;
+                nSrc.connect(nFilt); nFilt.connect(gain); nSrc.start(now);
+                osc.start(now); osc.stop(now + 0.8);
+            } else if (type === 'brickBreak' && sVol > 0) {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now);
+                osc.frequency.exponentialRampToValueAtTime(20, now + 0.3);
+                gain.gain.setValueAtTime(0.8 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'win' && mVol > 0) {
+                // Epic Victory Fanfare
+                osc.type = 'square'; 
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now+0.3); // E5
+                osc.frequency.setValueAtTime(783.99, now+0.6); // G5
+                osc.frequency.setValueAtTime(1046.50, now+0.9); // C6
+                gain.gain.setValueAtTime(0.5 * mVol, now); 
+                gain.gain.linearRampToValueAtTime(0, now + 3.0);
+                osc.start(now); osc.stop(now + 3.0);
+            }
+        } catch(e) {}
+    }
+
+    // --- PIXEL ART ---
+    const PAL = {
+        'T': 'rgba(0,0,0,0)', 'B': '#000000', 'W': '#FFFFFF', 'R': '#FF0000', 'O': '#FFA500', 
+        'H': '#654321', 'Y': '#FFFF00', 'U': '#0000FF', 'S': '#FFC0CB', 'G': '#777777', 
+        'D': '#444444', 'L': '#8B4513', 'A': '#2b2b2b', 'K': '#555555', 'V': '#00FF00', 'M': '#FFD700'
+    };
+
+    const SPRITES_DATA = {
+        chicken_idle: [
+            "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTRRRTT", "TTTTTTTTTTTRRRTT", "TTTTTTTTTBWWWWWT",
+            "TTTTTTTTBWWWWWWW", "TTTTTTTBWWBWWWWW", "TTTTTTTWWWWWWWWO", "TTTBBBBWWWWWWWOO",
+            "TTBWWWWWWWWWWTTT", "TBBWWWWWWWWWWTTT", "TTBWWWWWWWWWTTTT", "TTTBBBBBBBBBTTTT",
+            "TTTTTTHHTHHTTTTT", "TTTTTTHHTHHTTTTT", "TTTTTTHHTHHTTTTT", "TTTTTTBBTTBBTTTT"
+        ],
+        chicken_kick: [
+            "TTTTTTTTTTTTTTTT", "TTTTTTTTTRRRTTTT", "TTTTTTTTBWWWBBTT", "TTTTTTTBWWBWWWBT",
+            "TTTBBBBWWWWWWWWO", "TTBWWWWWWWWWWWOO", "TBBWWWWWWWWWWTTT", "TTBWWWWWWWWWTTTT",
+            "TTTBBBBBBBBTTTTT", "TTTTTHHTTTTTTTTT", "TTTTTHHTTTTTTTTT", "TTTTTHHHHHHHTTTT",
+            "TTTTTTTTTTHHHTTT", "TTTTTTTTTTTHHTTT", "TTTTTTTTTTTBBTTT", "TTTTTTTTTTTTTTTT"
+        ],
+        human_stand: [
+            "TTTTTTSSTTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTTBBTTTTTTTT",
+            "TTTTTRRRRTTTTTTT", "TTTSSRRRRSTTTTTT", "TTTTRRRRRRTTTTTT", "TTTTUUUUUUTTTTTT",
+            "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTBBTBBTTTTTT"
+        ],
+        human_sit: [
+            "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT", "TTTTTTSSTTTTTTTT", "TTTTTSSSSTTTTTTT",
+            "TTTTTSSSSTTTTTTT", "TTTTTTBBTTTTTTTT", "TTTTTRRRRTTTTTTT", "TTTSSRRRRSTTTTTT",
+            "TTTTRRRRRRTTTTTT", "TTTTUUUUUUTTTTTT", "TTTTUUUUUUUUUTTT", "TTTTBBTTTBBTTTTT"
+        ],
+        human_dance1: [
+            "TTTTTTSSTTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTTBBTTTTTTTT",
+            "TTTSSRRRRSTTTTTT", "TTTTTRRRRTTTTTTT", "TTTTRRRRRRTTTTTT", "TTTTUUUUUUTTTTTT",
+            "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTBBTBBTTTTTT"
+        ],
+        human_dance2: [
+            "TTSSSSSSTTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTTBBTTTTTTTT",
+            "TTTTTRRRRTTTTTTT", "TTTSSRRRRSTTTTTT", "TTTTRRRRRRTTTTTT", "TTTTUUUUUUTTTTTT",
+            "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTBBTBBTTTTTT"
+        ],
+        human_green: [
+            "TTTTTTSSTTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTTBBTTTTTTTT",
+            "TTTTTVVVVTTTTTTT", "TTTSSVVVVSTTTTTT", "TTTTVVVVVVTTTTTT", "TTTTUUUUUUTTTTTT",
+            "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTBBTBBTTTTTT"
+        ],
+        oikotie: [
+            "TTTTTTSSTTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTSSSSTTTTTTT", "TTTTTTBBTTTTTTTT",
+            "TTTTTUUUUTTTTTTT", "TTTSSUYUUSTTTTTT", "TTTTUUYUUUTTTTTT", "TTTTUUUUUUTTTTTT",
+            "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTUUUUTTTTTTT", "TTTTTBBTBBTTTTTT"
+        ],
+        burger: [
+            "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT", "TTTTTTMMMMTTTTTT", "TTTTTMMMMMMTTTTT",
+            "TTTTTLLLLLLTTTTT", "TTTTTVVVVVVTTTTT", "TTTTTRRRRRRTTTTT", "TTTTTMMMMMMTTTTT",
+            "TTTTTTMMMMTTTTTT", "TTTTTTTTTTTTTTTT"
+        ],
+        leg: [
+            "TTTTTTTT", "TTTTTTTT", "TTWWTTTT", "TWWWWTHT", "TTWWWTHH",
+            "TWWWWTHT", "TTWWTTTT", "TTTTTTTT"
+        ],
+        bottle: [
+            "TTTTTTTT", "TTTVVTTT", "TTTVVTTT", "TTVVVVTT",
+            "TTVVVVTT", "TTVVVVTT", "TTVVVVTT", "TTTTTTTT"
+        ],
+        sign: [
+            "TTTTTTTT", "TLLLLLLT", "TLLLLLLT", "TLLLLLLT",
+            "TLLLLLLT", "TTTLLTTT", "TTTLLTTT", "TTTLLTTT"
+        ],
+        table: [
+            "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT",
+            "TTTTTTTTTTTTTTTT", "LLLLLLLLLLLLLLLL", "LLLLLLLLLLLLLLLL", "TDDTTTTTTTTTTDDT",
+            "TDDTTTTTTTTTTDDT", "TDDTTTTTTTTTTDDT", "TDDTTTTTTTTTTDDT", "TDDTTTTTTTTTTDDT"
+        ],
+        basket: [
+            "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT",
+            "TTTTTYYYYTTTTTTT", "TTTTYYYYYYTTTTTT", "TTTRWRWRWRWTTTTT", "TTTRWRWRWRWTTTTT",
+            "TTTRWRWRWRWTTTTT", "TTTWRWRWRWRTTTTT", "TTTWRWRWRWRTTTTT", "TTTWRWRWRWRTTTTT"
+        ],
+        brick_wall: [
+            "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT", "TTTTTTTTTTTTTTTT",
+            "LLLLLLLLLLLLLLLL", "BDDBBDDBBDDBBDDB", "LLLLLLLLLLLLLLLL", "DBBDDBBDDBBDDBBD",
+            "LLLLLLLLLLLLLLLL", "BDDBBDDBBDDBBDDB", "LLLLLLLLLLLLLLLL", "DBBDDBBDDBBDDBBD"
+        ],
+        trash: [
+            "TTTTTTTTTTTTTTTT", "TTTTTDTTDTTTTTTT", "TTTTDDDDDDTTTTTT", "TTTGGGGGGGGTTTTT",
+            "TTTGGGGGGGGTTTTT", "TTTGGGGGGGGTTTTT", "TTTGGGGGGGGTTTTT", "TTTGGGGGGGGTTTTT",
+            "TTTGGGGGGGGTTTTT", "TTTGGGGGGGGTTTTT", "TTTGGGGGGGGTTTTT", "TTTDDDDDDDDTTTTT"
+        ],
+        car_blue: [
+            "TTTTTTTTTTTTTTTT", "TTTTTTUUUUUTTTTT", "TTTTTUUWWWUUTTTT", "TTTUUUUUUUUUUUTT",
+            "TTYUUUUUUUUUUUTT", "TDDDUUUUUUUUUDDD", "DBBBDTTTTTTTDBBB", "TDDDTTTTTTTTTDDD"
+        ],
+        car_red: [
+            "TTTTTTTTTTTTTTTT", "TTTTTTRRRRRTTTTT", "TTTTTRRWWWRRTTTT", "TTTRRRRRRRRRRRTT",
+            "TTYRRRRRRRRRRRTT", "TDDDRRRRRRRRRDDD", "DBBBDTTTTTTTDBBB", "TDDDTTTTTTTTTDDD"
+        ]
+    };
+
+    const Sprites = {};
+    function generateSprite(asciiArray, scale) {
+        const h = asciiArray.length, w = asciiArray[0].length;
+        const canvas = document.createElement('canvas');
+        canvas.width = w * scale; canvas.height = h * scale;
+        const ctx = canvas.getContext('2d');
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const char = asciiArray[y][x];
+                if (char !== 'T' && PAL[char]) {
+                    ctx.fillStyle = PAL[char]; ctx.fillRect(x * scale, y * scale, scale, scale);
+                }
+            }
+        }
+        return canvas;
+    }
+
+    function initSprites() {
+        const S = 6; 
+        Sprites.chicken_idle = generateSprite(SPRITES_DATA.chicken_idle, S);
+        Sprites.chicken_kick = generateSprite(SPRITES_DATA.chicken_kick, S);
+        Sprites.human_stand = generateSprite(SPRITES_DATA.human_stand, S);
+        Sprites.human_sit = generateSprite(SPRITES_DATA.human_sit, S);
+        Sprites.human_dance1 = generateSprite(SPRITES_DATA.human_dance1, S);
+        Sprites.human_dance2 = generateSprite(SPRITES_DATA.human_dance2, S);
+        Sprites.human_green = generateSprite(SPRITES_DATA.human_green, S);
+        Sprites.oikotie = generateSprite(SPRITES_DATA.oikotie, S * 1.5);
+        Sprites.burger = generateSprite(SPRITES_DATA.burger, S);
+        Sprites.table = generateSprite(SPRITES_DATA.table, S);
+        Sprites.basket = generateSprite(SPRITES_DATA.basket, S);
+        Sprites.brick_wall = generateSprite(SPRITES_DATA.brick_wall, S);
+        Sprites.trash = generateSprite(SPRITES_DATA.trash, S);
+        Sprites.car_blue = generateSprite(SPRITES_DATA.car_blue, S * 1.5);
+        Sprites.car_red = generateSprite(SPRITES_DATA.car_red, S * 1.5);
+        
+        // Uudet spriteet
+        Sprites.leg = generateSprite(SPRITES_DATA.leg, S);
+        Sprites.bottle = generateSprite(SPRITES_DATA.bottle, S);
+        Sprites.sign = generateSprite(SPRITES_DATA.sign, S * 2);
+    }
+
+    const phoneTexts = [ "jätkä tuulottaa", "se on oikotiä", "Miksi täällä juoksentelee kana? ", "Ostan asunnon..", "Kana lähestyy!", "Kaupat tuli!", "Näin hirviön..." ];
+
+    // --- GAME ENGINE ---
+    let cameraX = 0; let score = 0; let cityBuildings = []; let oikotieActive = false;
+    const keys = { w:false, a:false, s:false, d:false, space:false, up:false, down:false, left:false, right:false };
+    const joystick = { active: false, dx: 0, dy: 0, touchId: null };
+    let isKickingMobile = false;
+
+    let player, entities = [], particles = [];
+
+    class Entity {
+        constructor(x, y, type) {
+            this.x = x; this.y = y; this.z = 0; this.type = type; 
+            this.vx = 0; this.vy = 0; this.vz = 0;
+            this.dir = Math.random() > 0.5 ? 1 : -1;
+            this.hp = 100; this.kicksReceived = 0;
+            this.width = 60; this.height = 80;
+            this.isDead = false; this.hitTimer = 0; this.shakeTimer = 0;
+            
+            this.idleTimer = 0;
+            if (type === 'human_stand') {
+                let rnd = Math.random();
+                if(rnd < 0.4) this.idleType = 'smoke';
+                else if(rnd < 0.7) this.idleType = 'phone';
+                else this.idleType = 'stand';
+                this.speechText = ""; this.speechTimer = 0;
+            } else if (type === 'human_dance') {
+                this.speechText = "jätkä tuulottaa"; this.speechTimer = 0; this.hasSpoken = false;
+            } else if (type === 'human_green') {
+                this.speechText = "oi juma"; this.speechTimer = 0; this.hasSpoken = false;
+            } else if (type === 'npc_chicken') {
+                this.width = 40; this.height = 50; this.idleTimer = Math.random()*100;
+            } else if(type === 'car' || type === 'car_crashed') {
+                this.carType = Math.random() > 0.5 ? 'car_blue' : 'car_red'; this.width = 120;
+            } else if (type === 'table' || type === 'brick_wall' || type === 'sign_crash') { this.width = 80;
+            } else if (type === 'basket' || type === 'burger' || type === 'leg' || type === 'bottle') { this.width = 40; this.height = 40;
+            } else if (type === 'oikotie') {
+                this.width = 80; this.height = 100; this.state = 0; this.actionTimer = 0;
+            } else if (type === 'restaurant') {
+                this.width = 400; this.height = 300;
+            }
+        }
+
+        takeDamage(amount, forceX) {
+            if (this.isDead || ['basket','goal','burger','oikotie','leg','bottle','restaurant','sign_crash'].includes(this.type)) return;
+            
+            if (this.type === 'car' || this.type === 'car_crashed') {
+                this.kicksReceived++; this.hitTimer = 10;
+                if (this.kicksReceived >= 3) {
+                    this.isDead = true; this.vx = forceX * 1.5;
+                    createParticles(this.x, this.y, 25, '#F00'); addScore(500, this.x, this.y - 50); playSound('crash');
+                } else {
+                    playSound('metalHit'); createParticles(this.x, this.y, 5, '#FFF');
+                    addFloatingText("KICK " + this.kicksReceived + "/3", this.x, this.y - 80, '#FFF', '');
+                }
+            } else if (this.type === 'brick_wall') {
+                this.kicksReceived++; this.shakeTimer = 10; playSound('metalHit');
+                if (this.kicksReceived >= 5) {
+                    this.isDead = true; playSound('brickBreak');
+                    createParticles(this.x, this.y, 20, '#8B4513'); addScore(150, this.x, this.y - 50);
+                } else { createParticles(this.x, this.y, 3, '#8B4513'); }
+            } else if (this.type === 'npc_chicken') {
+                this.isDead = true; this.vx = forceX; playSound('hit');
+                createParticles(this.x, this.y, 10, '#FFF'); addScore(20, this.x, this.y - 20);
+            } else {
+                this.hp -= amount; this.shakeTimer = 15; this.vx = forceX; playSound('hit');
+                if (this.hp <= 0) {
+                    this.isDead = true;
+                    if (this.type.includes('human')) { addScore(100, this.x, this.y - 50); createParticles(this.x, this.y, 10, '#F00');
+                    } else if (this.type === 'table' || this.type === 'trash') { addScore(50, this.x, this.y - 50); createParticles(this.x, this.y, 10, '#8B4513'); }
+                }
+            }
+        }
+    }
+
+    function generateCity() {
+        cityBuildings = []; let curX = -W;
+        while(curX < GOAL_X + W) {
+            let width = 100 + Math.random() * 200; let height = 200 + Math.random() * 400;
+            let building = { x: curX, w: width, h: height, color: `rgb(${20+Math.random()*30},${20+Math.random()*30},${40+Math.random()*40})`, windows: [] };
+            for(let r=0; r<Math.floor(height/40); r++) {
+                for(let c=0; c<Math.floor(width/30); c++) {
+                    if(Math.random() > 0.6) building.windows.push({ x: c*30+10, y: r*40+20, color: Math.random()>0.8 ? '#FFF':'#FFD700' });
+                }
+            }
+            cityBuildings.push(building); curX += width + (Math.random() * 20);
+        }
+    }
+
+    function createCarCrash(cx) {
+        let cc = new Entity(cx, groundY, 'car_crashed'); cc.z = -50; entities.push(cc);
+        let h1 = new Entity(cx - 60, groundY, 'human_stand'); h1.z = -30; h1.dir = 1; entities.push(h1);
+        let h2 = new Entity(cx + 60, groundY, 'human_stand'); h2.z = -30; h2.dir = -1; entities.push(h2);
+        let h3 = new Entity(cx - 30, groundY, 'human_stand'); h3.z = -10; h3.dir = 1; entities.push(h3);
+        let hg = new Entity(cx + 30, groundY, 'human_green'); hg.z = -10; hg.dir = -1; entities.push(hg);
+        
+        let sign = new Entity(cx - 130, groundY, 'sign_crash'); sign.z = -60; entities.push(sign);
+    }
+
+    function initGame() {
+        score = 0; scoreDisplay.innerText = score; cameraX = 0; fadeAlpha = 0; entities = []; particles = []; oikotieActive = false;
+        startTime = Date.now(); finalTimeStr = "00:00";
+        player = new Entity(W/2, groundY, 'chicken'); player.hp = 100; player.energy = 100; player.isKicking = false; player.kickTimer = 0; player.z = 0;
+        generateCity(); spawnLevel();
+    }
+
+    function spawnLevel() {
+        entities = [];
+        createCarCrash(3000); createCarCrash(12000);
+
+        let cx = W + 500;
+        while(cx < GOAL_X - 1000) {
+            if (Math.abs(cx - 3000) < 600 || Math.abs(cx - 12000) < 600) { cx += 800; continue; } // Skippaa kolarit
+
+            let rnd = Math.random();
+            if (rnd < 0.15) { // Basket (Vähemmän)
+                let b = new Entity(cx, groundY, 'basket'); b.z = (Math.random() * 200) - 100; entities.push(b);
+            } else if (rnd < 0.25) { // Chicken leg
+                let leg = new Entity(cx, groundY, 'leg'); leg.z = (Math.random() * 200) - 100; entities.push(leg);
+            } else if (rnd < 0.35) { // Tyhjiä pulloja
+                let count = 1 + Math.floor(Math.random()*3);
+                for(let j=0; j<count; j++) {
+                    let bot = new Entity(cx + j*20, groundY, 'bottle'); bot.z = (Math.random() * 100) - 50; entities.push(bot);
+                }
+            } else if (rnd < 0.5) { // Ihmisiä + Roskis
+                let h = new Entity(cx, groundY, 'human_stand'); h.z = (Math.random() * 80) - 40; entities.push(h);
+                if(Math.random() < 0.5) { let tr = new Entity(cx+80, groundY, 'trash'); tr.z = -60; entities.push(tr); }
+            } else if (rnd < 0.65) { // Pöytäryhmä
+                let t = new Entity(cx, groundY, 'table'); t.z = (Math.random() * 40) - 20; entities.push(t);
+                let p1 = new Entity(cx - 50, groundY, 'human_sit'); p1.dir = 1; p1.z = t.z+5; entities.push(p1);
+                let p2 = new Entity(cx + 50, groundY, 'human_sit'); p2.dir = -1; p2.z = t.z-5; entities.push(p2);
+            } else if (rnd < 0.75) { // Auto
+                let c = new Entity(cx, groundY, 'car'); c.z = (Math.random() * 80) - 40; entities.push(c);
+            } else if (rnd < 0.85) { // Tiiliseinä
+                let w = new Entity(cx, groundY, 'brick_wall'); w.z = (Math.random() * 80) - 40; entities.push(w);
+            } else if (rnd < 0.95) { // Tanssija
+                let d = new Entity(cx, groundY, 'human_dance'); d.z = (Math.random() * 80) - 40; entities.push(d);
+            } else { // Kana
+                let nc = new Entity(cx, groundY, 'npc_chicken'); nc.z = (Math.random() * 100) - 50; entities.push(nc);
+            }
+            cx += 250 + Math.random() * 400; // Sattumanvarainen väli
+        }
+        
+        let rest = new Entity(GOAL_X + 200, groundY, 'restaurant'); rest.z = -150; entities.push(rest);
+    }
+
+    function spawnOikotie() {
+        if (oikotieActive) return; oikotieActive = true;
+        let oiko = new Entity(player.x + 300 + Math.random() * 200, groundY, 'oikotie');
+        oiko.z = -140; oiko.y = groundY + oiko.z + 100; oiko.vy = -3; oiko.state = 0;
+        entities.push(oiko);
+    }
+
+    // Input Events
+    window.addEventListener('keydown', e => {
+        let k = e.key.toLowerCase(); if(keys.hasOwnProperty(k)) keys[k] = true;
+        if(e.code === 'Space') keys.space = true;
+        if(k === 'arrowup') keys.w = true; if(k === 'arrowdown') keys.s = true; if(k === 'arrowleft') keys.a = true; if(k === 'arrowright') keys.d = true;
+        if((gameState === 'GAMEOVER' || gameState === 'WIN') && keys.space) restartGame();
+    });
+    window.addEventListener('keyup', e => {
+        let k = e.key.toLowerCase(); if(keys.hasOwnProperty(k)) keys[k] = false;
+        if(e.code === 'Space') keys.space = false;
+        if(k === 'arrowup') keys.w = false; if(k === 'arrowdown') keys.s = false; if(k === 'arrowleft') keys.a = false; if(k === 'arrowright') keys.d = false;
+    });
+
+    const stick = document.getElementById('joystickStick'), base = document.getElementById('joystickBase');
+    base.addEventListener('touchstart', e => { e.preventDefault(); joystick.active = true; joystick.touchId = e.changedTouches[0].identifier; updateJoystickPos(e.changedTouches[0]); }, {passive: false});
+    base.addEventListener('touchmove', e => { e.preventDefault(); if(!joystick.active) return; for(let i=0; i<e.changedTouches.length; i++) { if(e.changedTouches[i].identifier === joystick.touchId) updateJoystickPos(e.changedTouches[i]); } }, {passive: false});
+    base.addEventListener('touchend', handleJoystickEnd); base.addEventListener('touchcancel', handleJoystickEnd);
+    function updateJoystickPos(touch) {
+        let r = base.getBoundingClientRect(); let cx = r.left + r.width/2, cy = r.top + r.height/2;
+        let dx = touch.clientX - cx, dy = touch.clientY - cy;
+        let dist = Math.sqrt(dx*dx + dy*dy), maxDist = r.width/2 - stick.offsetWidth/2;
+        if(dist > maxDist) { dx = (dx/dist)*maxDist; dy = (dy/dist)*maxDist; }
+        stick.style.transform = `translate(${dx}px, ${dy}px)`; joystick.dx = dx/maxDist; joystick.dy = dy/maxDist;
+    }
+    function handleJoystickEnd(e) {
+        e.preventDefault(); for(let i=0; i<e.changedTouches.length; i++) {
+            if(e.changedTouches[i].identifier === joystick.touchId) { joystick.active = false; joystick.touchId = null; joystick.dx = 0; joystick.dy = 0; stick.style.transform = `translate(0px, 0px)`; }
+        }
+    }
+    const kickBtn = document.getElementById('kickBtn');
+    kickBtn.addEventListener('touchstart', e => { e.preventDefault(); isKickingMobile = true; }); kickBtn.addEventListener('touchend', e => { e.preventDefault(); isKickingMobile = false; });
+    kickBtn.addEventListener('mousedown', () => isKickingMobile = true); kickBtn.addEventListener('mouseup', () => isKickingMobile = false);
+
+    function formatTime(ms) {
+        let totalSec = Math.floor(ms / 1000); let m = Math.floor(totalSec / 60); let s = totalSec % 60;
+        return (m < 10 ? "0"+m : m) + ":" + (s < 10 ? "0"+s : s);
+    }
+
+    // Update
+    function update(dt) {
+        if(gameState === 'PLAYING') {
+            let speed = 8, moveX = 0, moveZ = 0;
+            if (keys.a || keys.left) moveX -= 1; if (keys.d || keys.right) moveX += 1;
+            if (keys.w || keys.up) moveZ -= 1; if (keys.s || keys.down) moveZ += 1;
+            if (joystick.active) { moveX = joystick.dx; moveZ = joystick.dy; }
+
+            player.x += moveX * speed; player.z += moveZ * (speed * 0.7); 
+            if (player.z < -120) player.z = -120; if (player.z > 120) player.z = 120;
+            if (player.x < 100) player.x = 100;
+            if (moveX !== 0) player.dir = moveX > 0 ? 1 : -1;
+
+            if ((keys.space || isKickingMobile) && player.kickTimer <= 0) {
+                player.isKicking = true; player.kickTimer = 25; playSound('kick');
+                let hitBox = { x: player.x + (player.dir * 40), y: player.y + player.z - 40, r: 50 };
+                for (let ent of entities) {
+                    if (ent.isDead || ['basket','goal','burger','oikotie','leg','bottle','restaurant','sign_crash'].includes(ent.type)) continue;
+                    let dx = ent.x - hitBox.x, dy = (ent.y + ent.z) - hitBox.y;
+                    if (Math.hypot(dx, dy) < hitBox.r + ent.width/2 && Math.abs(ent.z - player.z) < 40) {
+                        ent.takeDamage(50, player.dir * 15); cameraX += (Math.random() - 0.5) * 30; 
+                    }
+                }
+            }
+            if (player.kickTimer > 0) { player.kickTimer--; if (player.kickTimer < 10) player.isKicking = false; }
+
+            player.energy -= 0.12; 
+            if (player.energy <= 0) gameOver();
+            
+            // Progress percentage
+            let progress = Math.floor((player.x / GOAL_X) * 100);
+            distDisplay.innerText = Math.min(100, Math.max(0, progress));
+
+            if(Math.random() < 0.002 && !oikotieActive) spawnOikotie();
+
+            // Check goal
+            if (player.x >= GOAL_X) {
+                gameState = 'ANIMATION'; stopBGM(); playSound('win');
+                player.isKicking = false; player.dir = 1;
+            }
+
+        } else if (gameState === 'ANIMATION') {
+            player.x += 4; // Kävelee itse ravintolaan
+            player.z += (-100 - player.z) * 0.05; // Siirtyy ovelle päin
+            fadeAlpha += 0.005; // Häivytys
+            
+            if (fadeAlpha >= 1) {
+                fadeAlpha = 1; winGame();
+            }
+        }
+
+        if(gameState === 'PLAYING' || gameState === 'ANIMATION') {
+            healthBar.style.width = Math.max(0, player.energy) + "%";
+            healthBar.style.background = player.energy < 30 ? "#F00" : "linear-gradient(to right, #f00, #0f0)";
+            cameraX += (player.x - W/3 - cameraX) * 0.1;
+
+            for (let i = entities.length - 1; i >= 0; i--) {
+                let ent = entities[i];
+                if (ent.hitTimer > 0) ent.hitTimer--; if (ent.shakeTimer > 0) ent.shakeTimer--;
+                
+                let dToPlayer = Math.hypot(player.x - ent.x, player.z - ent.z);
+                
+                if (!ent.isDead) {
+                    if (ent.type === 'basket') {
+                        if (dToPlayer < 60) {
+                            ent.isDead = true; player.energy = Math.min(100, player.energy + 50); playSound('eat');
+                            addFloatingText("+50 ❤️", player.x, player.y - 100, '#0F0', ''); addScore(200, player.x, player.y - 120);
+                        }
+                    } else if (ent.type === 'leg') {
+                        if (dToPlayer < 40) {
+                            ent.isDead = true; player.energy = Math.min(100, player.energy + 15); playSound('eat');
+                            addFloatingText("+15 ❤️", player.x, player.y - 100, '#0F0', '');
+                        }
+                    } else if (ent.type === 'bottle') {
+                        if (dToPlayer < 40) {
+                            ent.isDead = true; playSound('pickup'); addScore(10, player.x, player.y - 80);
+                        }
+                    } else if (ent.type === 'human_stand') {
+                        ent.idleTimer++;
+                        if(ent.idleType === 'smoke' && ent.idleTimer % 30 === 0) {
+                            particles.push({ x: ent.x, y: ent.y + ent.z - 80, vx: (Math.random() - 0.5) * 1.5, vy: -1.5 - Math.random(), size: 5 + Math.random()*4, color: 'rgba(200,200,200,0.6)', life: 80, type: 'smoke' });
+                        } else if (ent.idleType === 'phone') {
+                            if (ent.speechTimer > 0) ent.speechTimer--;
+                            else if (Math.random() < 0.005) {
+                                ent.speechText = phoneTexts[Math.floor(Math.random() * phoneTexts.length)]; ent.speechTimer = 150;
+                                if (dToPlayer < 250) playSound('speech');
+                            }
+                        }
+                    } else if (ent.type === 'human_dance') {
+                        ent.idleTimer++; if (ent.speechTimer > 0) ent.speechTimer--;
+                        else if (Math.random() < 0.01) { ent.speechTimer = 150; if (dToPlayer < 250) playSound('speech'); }
+                    } else if (ent.type === 'human_green') {
+                        if (dToPlayer < 350 && !ent.hasSpoken) { ent.speechTimer = 200; ent.hasSpoken = true; playSound('speech'); }
+                        if (ent.speechTimer > 0) ent.speechTimer--;
+                    } else if (ent.type === 'npc_chicken') {
+                        ent.idleTimer++;
+                        if(ent.idleTimer % 100 < 20) ent.x += ent.dir * 1; 
+                        else if(Math.random() < 0.01) ent.dir *= -1;
+                    } else if (ent.type === 'oikotie') {
+                        if (ent.state === 0) {
+                            ent.y += ent.vy; if (ent.y <= groundY + ent.z) { ent.y = groundY + ent.z; ent.state = 1; ent.actionTimer = 50; }
+                        } else if (ent.state === 1) {
+                            ent.actionTimer--;
+                            if (ent.actionTimer === 20) {
+                                playSound('hamburgerVoice'); addFloatingText("OIKOTIÄ!", ent.x, ent.y - 120, '#00FFFF', 'oikotie-shout');
+                                let b = new Entity(ent.x, groundY, 'burger'); b.z = ent.z; b.y = ent.y - 50;
+                                let dx = player.x - b.x, dz = player.z - b.z; let dist = Math.hypot(dx, dz);
+                                b.vx = (dx / dist) * 12; b.vz = (dz / dist) * 12; entities.push(b);
+                            } else if (ent.actionTimer <= 0) ent.state = 2;
+                        } else if (ent.state === 2) {
+                            ent.y += 3; if (ent.y > groundY + ent.z + 150) { entities.splice(i, 1); oikotieActive = false; }
+                        }
+                    } else if (ent.type === 'burger') {
+                        ent.x += ent.vx; ent.z += ent.vz; ent.y += Math.sin(Date.now()/50) * 5; 
+                        if (dToPlayer < 50 && gameState !== 'ANIMATION') {
+                            player.energy -= 30; playSound('hit'); addFloatingText("BURGER'D!", player.x, player.y - 120, '#FF0000', 'burger-text');
+                            cameraX += (Math.random() - 0.5) * 50; entities.splice(i, 1);
+                        }
+                        if (ent.z > 200 || ent.x < cameraX - 200 || ent.x > cameraX + W + 200) entities.splice(i, 1);
+                    }
+                } else {
+                    if(!['basket','burger','oikotie','brick_wall','leg','bottle','restaurant','sign_crash'].includes(ent.type)) {
+                        ent.x += ent.vx; ent.y += ent.vy; ent.vy += 1; ent.dir += 0.2; 
+                    }
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i]; p.x += p.vx; p.y += p.vy;
+                if(p.type === 'smoke') { p.vy -= 0.05; } else { p.vy += 0.8; }
+                p.life--; if (p.life <= 0) particles.splice(i, 1);
+            }
+            entities.sort((a, b) => (a.y + a.z) - (b.y + b.z));
+        }
+    }
+
+    // Render
+    function drawGame() {
+        ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, W, H);
+        for (let b of cityBuildings) {
+            let bx = b.x - cameraX * 0.3;
+            if (bx + b.w > 0 && bx < W) {
+                ctx.fillStyle = b.color; ctx.fillRect(bx, groundY - b.h - 50, b.w, b.h + 100);
+                for(let w of b.windows) { ctx.fillStyle = w.color; ctx.fillRect(bx + w.x, groundY - b.h - 50 + w.y, 10, 15); }
+            }
+        }
+
+        ctx.fillStyle = PAL['K']; ctx.fillRect(0, groundY - 140, W, 40);
+        ctx.fillStyle = PAL['A']; ctx.fillRect(0, groundY - 100, W, H - groundY + 100);
+        ctx.fillStyle = '#FFF'; for(let i = -1; i < W / 100 + 2; i++) { ctx.fillRect(i * 100 - (cameraX % 100), groundY + 50, 60, 8); }
+
+        let renderList = [...entities, player]; renderList.sort((a, b) => (a.z) - (b.z));
+
+        for (let ent of renderList) {
+            if ((ent.isDead && ['basket','brick_wall','leg','bottle'].includes(ent.type)) || ent.type === 'burger') continue;
+            
+            if (ent.type !== 'oikotie' && ent.type !== 'restaurant') drawShadow(ent.x - cameraX, groundY + ent.z, ent.width/2, 8);
+
+            ctx.save();
+            let sX = 0, sY = 0;
+            if (ent.shakeTimer > 0) { sX = (Math.random() - 0.5) * 8; sY = (Math.random() - 0.5) * 8; }
+            
+            ctx.translate(ent.x - cameraX + sX, ent.y + ent.z + sY);
+            
+            if (ent.isDead) {
+                ctx.rotate(ent.dir); 
+            } else if (!['basket','table','trash','car','car_crashed','oikotie','burger','brick_wall','restaurant','sign_crash','leg','bottle'].includes(ent.type)) {
+                ctx.scale(ent.dir > 0 ? 1 : -1, 1);
+            }
+
+            if ((ent.type === 'car' || ent.type === 'car_crashed') && ent.hitTimer > 0 && Math.floor(Date.now() / 50) % 2 === 0) {
+                ctx.globalCompositeOperation = 'source-atop'; ctx.fillStyle = 'rgba(255,0,0,0.5)';
+            }
+
+            if (ent === player) {
+                let sprite = player.isKicking ? Sprites.chicken_kick : Sprites.chicken_idle;
+                let walkY = (!player.isKicking && (keys.a || keys.d || keys.w || keys.s || joystick.active || gameState === 'ANIMATION')) ? Math.sin(Date.now() / 100) * 10 : 0;
+                ctx.drawImage(sprite, -sprite.width/2, -sprite.height + walkY);
+            } else if (ent.type === 'human_stand') {
+                ctx.drawImage(Sprites.human_stand, -Sprites.human_stand.width/2, -Sprites.human_stand.height);
+                if (ent.idleType === 'phone' && ent.speechTimer > 0 && !ent.isDead) drawBubble(ctx, ent, ent.speechText);
+            } else if (ent.type === 'human_dance') {
+                let sprite = Math.floor(Date.now() / 150) % 2 === 0 ? Sprites.human_dance1 : Sprites.human_dance2;
+                ctx.drawImage(sprite, -Sprites.human_stand.width/2, -Sprites.human_stand.height);
+                if (ent.speechTimer > 0 && !ent.isDead) drawBubble(ctx, ent, ent.speechText);
+            } else if (ent.type === 'human_green') {
+                ctx.drawImage(Sprites.human_green, -Sprites.human_green.width/2, -Sprites.human_green.height);
+                if (ent.speechTimer > 0 && !ent.isDead) drawBubble(ctx, ent, ent.speechText);
+            } else if (ent.type === 'human_sit') { ctx.drawImage(Sprites.human_sit, -Sprites.human_sit.width/2, -Sprites.human_sit.height);
+            } else if (ent.type === 'npc_chicken') {
+                let walkY = ent.idleTimer % 100 < 20 ? Math.sin(Date.now() / 50) * 5 : 0;
+                ctx.drawImage(Sprites.chicken_idle, -Sprites.chicken_idle.width/2, -Sprites.chicken_idle.height + walkY);
+            } else if (ent.type === 'table') { ctx.drawImage(Sprites.table, -Sprites.table.width/2, -Sprites.table.height);
+            } else if (ent.type === 'basket') { let floatY = Math.sin(Date.now() / 200) * 5; ctx.drawImage(Sprites.basket, -Sprites.basket.width/2, -Sprites.basket.height + floatY);
+            } else if (ent.type === 'leg') { ctx.drawImage(Sprites.leg, -Sprites.leg.width/2, -Sprites.leg.height);
+            } else if (ent.type === 'bottle') { ctx.drawImage(Sprites.bottle, -Sprites.bottle.width/2, -Sprites.bottle.height);
+            } else if (ent.type === 'sign_crash') {
+                ctx.drawImage(Sprites.sign, -Sprites.sign.width/2, -Sprites.sign.height);
+                ctx.fillStyle = '#FFF'; ctx.font = '8px "Press Start 2P"'; ctx.textAlign = 'center';
+                ctx.fillText("Autokolari", 0, -Sprites.sign.height - 15);
+                ctx.fillText("heheh", 0, -Sprites.sign.height - 5);
+            } else if (ent.type === 'restaurant') {
+                // Piirrä iso ravintola
+                ctx.fillStyle = '#400'; ctx.fillRect(-200, -300, 400, 300); // Rakennus
+                ctx.fillStyle = '#200'; ctx.fillRect(-180, -280, 360, 100); // Kylttitausta
+                ctx.fillStyle = '#F00'; ctx.font = '24px "Press Start 2P"'; ctx.textAlign = 'center';
+                ctx.fillText("KANAN TEURASTAMO", 0, -220); // Teksti
+                ctx.fillStyle = '#111'; ctx.fillRect(-40, -100, 80, 100); // Ovi
+                ctx.fillStyle = '#FFD700'; ctx.fillRect(25, -55, 10, 10); // Kahva
+                ctx.fillStyle = '#666'; ctx.fillRect(-150, -150, 80, 80); ctx.fillRect(70, -150, 80, 80); // Ikkunat
+            } else if (ent.type === 'brick_wall') {
+                ctx.drawImage(Sprites.brick_wall, -Sprites.brick_wall.width/2, -Sprites.brick_wall.height);
+                if(ent.kicksReceived > 0) {
+                    ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.beginPath();
+                    if(ent.kicksReceived >= 1) { ctx.moveTo(-10, -70); ctx.lineTo(10, -50); }
+                    if(ent.kicksReceived >= 2) { ctx.lineTo(-20, -30); }
+                    if(ent.kicksReceived >= 3) { ctx.moveTo(5, -80); ctx.lineTo(-5, -40); ctx.lineTo(25, -20); }
+                    if(ent.kicksReceived >= 4) { ctx.moveTo(-30, -20); ctx.lineTo(15, -5); }
+                    ctx.stroke();
+                }
+            } else if (ent.type === 'trash') { ctx.drawImage(Sprites.trash, -Sprites.trash.width/2, -Sprites.trash.height);
+            } else if (ent.type === 'car' || ent.type === 'car_crashed') {
+                let sprite = ent.carType === 'car_blue' ? Sprites.car_blue : Sprites.car_red; ctx.drawImage(sprite, -sprite.width/2, -sprite.height);
+                if (ent.type === 'car_crashed' && Math.random() < 0.2) {
+                    particles.push({ x: ent.x + 30, y: ent.y + ent.z - 30, vx: (Math.random()-0.5)*2, vy: -1-Math.random()*2, size: 4+Math.random()*6, color: 'rgba(50,50,50,0.8)', life: 60, type: 'smoke' });
+                }
+            } else if (ent.type === 'oikotie') { ctx.drawImage(Sprites.oikotie, -Sprites.oikotie.width/2, -Sprites.oikotie.height); }
+
+            if ((ent.type === 'car' || ent.type === 'car_crashed') && ent.hitTimer > 0) {
+                ctx.fillRect(-100, -100, 200, 200); ctx.globalCompositeOperation = 'source-over';
+            }
+            ctx.restore();
+        }
+
+        for (let ent of entities) {
+            if (ent.type === 'burger') {
+                ctx.save(); ctx.translate(ent.x - cameraX, ent.y + ent.z);
+                ctx.drawImage(Sprites.burger, -Sprites.burger.width/2, -Sprites.burger.height); ctx.restore();
+            }
+        }
+
+        for (let p of particles) { ctx.fillStyle = p.color; ctx.fillRect(p.x - cameraX, p.y, p.size, p.size); }
+
+        // Fade out overlay loppuanimaatiossa
+        if (fadeAlpha > 0) {
+            ctx.fillStyle = `rgba(0,0,0,${fadeAlpha})`;
+            ctx.fillRect(0, 0, W, H);
+        }
+    }
+    
+    function drawBubble(ctx, ent, text) {
+        ctx.restore(); ctx.save();
+        ctx.translate(ent.x - cameraX, ent.y + ent.z - 90);
+        ctx.font = '10px "Press Start 2P"'; let tw = ctx.measureText(text).width;
+        ctx.fillStyle = 'white'; ctx.fillRect(-tw/2 - 5, -15, tw + 10, 20);
+        ctx.fillStyle = 'black'; ctx.strokeRect(-tw/2 - 5, -15, tw + 10, 20);
+        ctx.beginPath(); ctx.moveTo(-5, 5); ctx.lineTo(5, 5); ctx.lineTo(0, 10); ctx.fill();
+        ctx.fillText(text, -tw/2, 0); ctx.restore(); ctx.save();
+    }
+
+    function drawShadow(x, y, radiusX, radiusY) {
+        if (!settings.shadows) return; ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.beginPath(); ctx.ellipse(x, y, radiusX, radiusY, 0, 0, Math.PI * 2); ctx.fill();
+    }
+    function createParticles(x, y, count, color) {
+        for(let i=0; i<count; i++) particles.push({ x: x, y: y - 40, vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 1) * 20, size: Math.random() * 8 + 4, color: color, life: 30 + Math.random() * 20, type: 'debris' });
+    }
+    function addScore(amount, x, y) { score += amount; scoreDisplay.innerText = score; addFloatingText(amount.toString(), x, y, '#FFD700', ''); }
+    function addFloatingText(text, x, y, color, customClass) {
+        const el = document.createElement('div'); el.className = 'floating-text ' + customClass; el.innerText = text; el.style.color = color;
+        el.style.left = (x - cameraX) + 'px'; el.style.top = y + 'px'; floatContainer.appendChild(el);
+        setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 1500);
+    }
+
+    function gameOver() { 
+        gameState = 'GAMEOVER'; stopBGM(); playSound('crash'); 
+        document.getElementById('finalScore').innerText = score; 
+        gameOverScreen.style.display = 'flex'; controlsArea.style.display = 'none'; 
+    }
+    function winGame() { 
+        gameState = 'WIN'; 
+        let timeTaken = Date.now() - startTime;
+        finalTimeStr = formatTime(timeTaken);
+        score += Math.floor(player.energy * 100); 
+        
+        document.getElementById('winScore').innerText = score; 
+        document.getElementById('winTime').innerText = finalTimeStr;
+        winScreen.style.display = 'flex'; controlsArea.style.display = 'none'; 
+    }
+    function restartGame() { gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; gameState = 'PLAYING'; if('ontouchstart' in window) controlsArea.style.display = 'block'; initGame(); startBGM(); }
+
+    let menuTime = 0;
+    function drawMenu() {
+        if (gameState !== 'MENU') return; menuTime += 0.05;
+        mCtx.fillStyle = '#1a1a2e'; mCtx.fillRect(0, 0, W, H);
+        let mGround = H - 150;
+        mCtx.fillStyle = '#111122'; for(let i=0; i<10; i++) { let bx = ((i*200 - menuTime*2) % (W+400)) - 200; mCtx.fillRect(bx, mGround-300, 150, 300); }
+        mCtx.fillStyle = '#222233';
+        for(let i=0; i<8; i++) {
+            let bx = ((i*300 - menuTime*5) % (W+500)) - 200; mCtx.fillRect(bx, mGround-400+(i%2)*50, 200, 400); mCtx.fillStyle = '#FFD700';
+            for(let w=0; w<5; w++) mCtx.fillRect(bx+40+w*30, mGround-300+(i%3)*40, 10, 15);
+            mCtx.fillStyle = '#222233'; 
+        }
+        mCtx.fillStyle = '#2b2b2b'; mCtx.fillRect(0, mGround, W, H-mGround); mCtx.fillStyle = '#555'; mCtx.fillRect(0, mGround, W, 10); 
+        mCtx.fillStyle = '#FFF'; for(let i=0; i<W/100 + 2; i++) mCtx.fillRect(i*100 - (menuTime*10)%100, mGround+50, 60, 8);
+        mCtx.save(); mCtx.translate(W / 2, mGround + 30); mCtx.drawImage(Sprites.chicken_idle, -Sprites.chicken_idle.width/2, -Sprites.chicken_idle.height + Math.sin(menuTime * 2) * 10); mCtx.restore();
+    }
+
+    function gameLoop(timestamp) {
+        let dt = timestamp - lastTime; lastTime = timestamp;
+        if (gameState === 'MENU') drawMenu(); else if (gameState === 'PLAYING' || gameState === 'ANIMATION') { update(dt); drawGame(); } else if (gameState === 'GAMEOVER' || gameState === 'WIN') drawGame(); 
+        gameLoopId = requestAnimationFrame(gameLoop);
+    }
+
+    function resize() {
+        W = window.innerWidth; H = window.innerHeight; menuCanvas.width = W; menuCanvas.height = H; canvas.width = W; canvas.height = H; groundY = H - 150;
+        ctx.imageSmoothingEnabled = false; mCtx.imageSmoothingEnabled = false;
+    }
+    window.addEventListener('resize', resize);
+    
+    document.getElementById('playBtn').addEventListener('click', () => {
+        initAudio(); gameState = 'PLAYING'; menuLayer.style.display = 'none'; gameUiLayer.style.display = 'flex'; canvas.style.display = 'block';
+        if('ontouchstart' in window) controlsArea.style.display = 'block'; initGame(); startBGM();
+    });
+    document.getElementById('restartBtn').addEventListener('click', restartGame); document.getElementById('winRestartBtn').addEventListener('click', restartGame);
+    document.getElementById('openSettingsBtn').addEventListener('click', () => settingsLayer.style.display = 'flex');
+    document.getElementById('closeSettingsBtn').addEventListener('click', () => settingsLayer.style.display = 'none');
+    const goToMenu = () => { gameState = 'MENU'; menuLayer.style.display = 'flex'; gameUiLayer.style.display = 'none'; controlsArea.style.display = 'none'; gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; canvas.style.display = 'none'; stopBGM(); };
+    document.getElementById('menuBtn').addEventListener('click', goToMenu); document.getElementById('gameOverMenuBtn').addEventListener('click', goToMenu); document.getElementById('winMenuBtn').addEventListener('click', goToMenu);
+    
+    document.getElementById('copyBtn').addEventListener('click', () => {
+        const resultText = `Horseleg Chicken: City Rampage\nAika: ${finalTimeStr}\nLoppupisteet: ${score}\nOlet paras!`;
+        if (navigator.clipboard) { navigator.clipboard.writeText(resultText).then(() => alert("Kopioitu leikepöydälle!")); }
+        else { alert("Kopiointi ei tuettu tässä selaimessa."); }
+    });
+
+    document.getElementById('shadowToggle').addEventListener('click', function() { settings.shadows = !settings.shadows; this.innerText = settings.shadows ? "ON" : "OFF"; this.classList.toggle('active', settings.shadows); });
+    document.getElementById('fullscreenBtn').addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e=>console.log(e)); else if (document.exitFullscreen) document.exitFullscreen(); });
+
+    resize(); initSprites(); gameLoopId = requestAnimationFrame(gameLoop);
+</script>
+</body>
+</html>
