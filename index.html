@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Horseleg Chicken demo</title>
+    <title>Horseleg Chicken demo hassu</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -35,7 +35,8 @@
         }
 
         .loader-title {
-            color: var(--primary-color); font-size: 24px; margin-bottom: 30px; text-shadow: 2px 2px 0 #FF0000; text-align: center; line-height: 1.5;
+            color: var(--primary-color); font-size: 20px; margin-bottom: 30px; text-shadow: 2px 2px 0 #FF0000; text-align: center; line-height: 1.5;
+            max-width: 80%;
         }
 
         .loader-bar-bg {
@@ -168,7 +169,7 @@
 <body>
 
     <div id="loaderOverlay">
-        <div class="loader-title">Ladataan grafiikoita...</div>
+        <div class="loader-title">odota että sivusto ei lagaa ja sitten mene peliin</div>
         <div class="loader-bar-bg"><div class="loader-bar-fill" id="loaderFill"></div></div>
         <button class="btn btn-settings" id="skipLoadBtn" style="font-size: 12px; padding: 15px;">SKIPPAA LATAUS</button>
     </div>
@@ -200,7 +201,7 @@
                 - Ohjelmointi: Lakkula<br>
                 - Grafiikkamoottori: 8-Bittinen<br>
                 - ODOTA ETTÄ, PELI, ON, KOKONAAN LATAUTUNUT TAI LAGAA<br>
-                - Copyright: Lakkula 2026
+                - Copyright: Lakkula 67
             </div>
 
             <button class="btn" id="closeSettingsBtn" style="margin-top: 20px; padding: 10px 30px; font-size: 16px;">BACK</button>
@@ -212,7 +213,7 @@
             <div id="hud">
                 <span class="score-text">SCORE: <span id="scoreDisplay">0</span></span>
                 <span class="progress-text">PROGRESS: <span id="distDisplay">0</span>%</span>
-                <div class="energy-title">❤️ CHICKEN ENERGY</div>
+                <div class="energy-title">❤️ Salienergia</div>
                 <div class="bar-bg"><div class="bar-fill" id="healthBar"></div></div>
             </div>
             <div class="game-buttons">
@@ -224,14 +225,14 @@
     </div>
 
     <div id="gameOverScreen">
-        <div class="game-over-title">WASTED</div>
+        <div class="game-over-title">WASTED ):</div>
         <div class="title" style="font-size: 30px; margin-bottom: 40px; color: white;">FINAL SCORE: <span id="finalScore">0</span></div>
         <button class="btn" id="restartBtn">RETRY</button>
         <button class="btn btn-settings" id="gameOverMenuBtn">PÄÄVALIKKO</button>
     </div>
     
     <div id="winScreen">
-        <div class="win-title">RAMPAGE COMPLETE!</div>
+        <div class="win-title">UI JUME, voitit!</div>
         <div class="win-stats">
             AIKA: <span id="winTime" style="color: #FFD700;">00:00</span><br>
             LOPPUPISTEET: <span id="winScore" style="color: #00FFFF;">0</span>
@@ -274,7 +275,7 @@
     let gameState = 'MENU'; // MENU, PLAYING, ANIMATION, GAMEOVER, WIN
     let gameLoopId;
     let lastTime = 0;
-    let fadeAlpha = 0; // Käytetään loppuanimaatiossa
+    let fadeAlpha = 0; 
     let startTime = 0;
     let finalTimeStr = "00:00";
     
@@ -545,24 +546,46 @@
         return canvas;
     }
 
-    let spriteKeys = Object.keys(SPRITES_DATA);
-    let currentSpriteIdx = 0;
-    
-    function loadNextSprite() {
-        if (currentSpriteIdx < spriteKeys.length) {
-            let key = spriteKeys[currentSpriteIdx];
-            let S = 6;
-            if (key.includes('car')) S = 9;
-            if (key.includes('oikotie')) S = 9;
-            if (key.includes('sign')) S = 12;
+    function initSprites() {
+        const S = 6; 
+        Sprites.chicken_idle = generateSprite(SPRITES_DATA.chicken_idle, S);
+        Sprites.chicken_kick = generateSprite(SPRITES_DATA.chicken_kick, S);
+        Sprites.human_stand = generateSprite(SPRITES_DATA.human_stand, S);
+        Sprites.human_sit = generateSprite(SPRITES_DATA.human_sit, S);
+        Sprites.human_dance1 = generateSprite(SPRITES_DATA.human_dance1, S);
+        Sprites.human_dance2 = generateSprite(SPRITES_DATA.human_dance2, S);
+        Sprites.human_green = generateSprite(SPRITES_DATA.human_green, S);
+        Sprites.oikotie = generateSprite(SPRITES_DATA.oikotie, S * 1.5);
+        Sprites.burger = generateSprite(SPRITES_DATA.burger, S);
+        Sprites.table = generateSprite(SPRITES_DATA.table, S);
+        Sprites.basket = generateSprite(SPRITES_DATA.basket, S);
+        Sprites.brick_wall = generateSprite(SPRITES_DATA.brick_wall, S);
+        Sprites.trash = generateSprite(SPRITES_DATA.trash, S);
+        Sprites.car_blue = generateSprite(SPRITES_DATA.car_blue, S * 1.5);
+        Sprites.car_red = generateSprite(SPRITES_DATA.car_red, S * 1.5);
+        
+        Sprites.leg = generateSprite(SPRITES_DATA.leg, S);
+        Sprites.bottle = generateSprite(SPRITES_DATA.bottle, S);
+        Sprites.sign = generateSprite(SPRITES_DATA.sign, S * 2);
+        Sprites.bat_guy_1 = generateSprite(SPRITES_DATA.bat_guy_1, S);
+        Sprites.bat_guy_2 = generateSprite(SPRITES_DATA.bat_guy_2, S);
+    }
 
-            Sprites[key] = generateSprite(SPRITES_DATA[key], S);
-            currentSpriteIdx++;
-            loaderFill.style.width = (currentSpriteIdx / spriteKeys.length * 100) + '%';
-            setTimeout(loadNextSprite, 30); // 30ms viive animoimaan palkkia
-        } else {
-            finishLoading();
-        }
+    // Feikki lataus 5 sekuntia
+    let loadTimer = 0;
+    let loadInterval;
+
+    function startFakeLoading() {
+        initSprites(); // Generoidaan synkronisesti heti jotta varmasti valmiit
+        loadInterval = setInterval(() => {
+            loadTimer += 50;
+            let percent = Math.min(100, (loadTimer / 5000) * 100);
+            loaderFill.style.width = percent + '%';
+            if (loadTimer >= 5000) {
+                clearInterval(loadInterval);
+                finishLoading();
+            }
+        }, 50);
     }
     
     function finishLoading() {
@@ -574,11 +597,8 @@
     }
 
     skipLoadBtn.addEventListener('click', () => {
-        loaderOverlay.style.display = 'none';
-        if (!gameLoopId) {
-            resize();
-            gameLoopId = requestAnimationFrame(gameLoop);
-        }
+        clearInterval(loadInterval);
+        finishLoading();
     });
 
     const phoneTexts = [ "jätkä tuulottaa", "se on oikotiä", "Miksi täällä juoksentelee kana? ", "Ostan asunnon..", "Kana lähestyy!", "Kaupat tuli!", "Näin hirviön..." ];
@@ -828,7 +848,6 @@
             }
 
         } else if (gameState === 'ANIMATION') {
-            // Ravintolan ovi on x = GOAL_X + 200, z = -180
             let targetX = GOAL_X + 200;
             let targetZ = -180;
             let dx = targetX - player.x;
@@ -836,13 +855,12 @@
             let dist = Math.hypot(dx, dz);
 
             if (dist > 5) {
-                // Hidas kävely ovelle (kestää n. 5-10 sekuntia)
                 player.x += (dx / dist) * 0.8;
                 player.z += (dz / dist) * 0.8;
                 player.dir = dx > 0 ? 1 : -1;
             } else {
-                player.isDead = true; // Piilotetaan kana (se on sisällä)
-                fadeAlpha += 0.008; // Aloita fade out mustaan
+                player.isDead = true; 
+                fadeAlpha += 0.008; 
                 if (fadeAlpha >= 1) {
                     fadeAlpha = 1; winGame();
                 }
@@ -973,7 +991,7 @@
             }
 
             if (ent === player) {
-                if(!player.isDead) { // Näytetään vain jos kana on elossa / ei piilossa
+                if(!player.isDead) { 
                     let sprite = player.isKicking ? Sprites.chicken_kick : Sprites.chicken_idle;
                     let walkY = (!player.isKicking && (keys.a || keys.d || keys.w || keys.s || joystick.active || gameState === 'ANIMATION')) ? Math.sin(Date.now() / 100) * 10 : 0;
                     ctx.drawImage(sprite, -sprite.width/2, -sprite.height + walkY);
@@ -1099,6 +1117,7 @@
     let menuTime = 0;
     function drawMenu() {
         if (gameState !== 'MENU') return; menuTime += 0.05;
+        
         mCtx.fillStyle = '#1a1a2e'; mCtx.fillRect(0, 0, W, H);
         let mGround = H - 150;
         mCtx.fillStyle = '#111122'; for(let i=0; i<10; i++) { let bx = ((i*200 - menuTime*2) % (W+400)) - 200; mCtx.fillRect(bx, mGround-300, 150, 300); }
@@ -1110,7 +1129,49 @@
         }
         mCtx.fillStyle = '#2b2b2b'; mCtx.fillRect(0, mGround, W, H-mGround); mCtx.fillStyle = '#555'; mCtx.fillRect(0, mGround, W, 10); 
         mCtx.fillStyle = '#FFF'; for(let i=0; i<W/100 + 2; i++) mCtx.fillRect(i*100 - (menuTime*10)%100, mGround+50, 60, 8);
-        mCtx.save(); mCtx.translate(W / 2, mGround + 30); mCtx.drawImage(Sprites.chicken_idle, -Sprites.chicken_idle.width/2, -Sprites.chicken_idle.height + Math.sin(menuTime * 2) * 10); mCtx.restore();
+        
+        // Päävalikon Disko - siirretty vasemmalle!
+        let leftCenter = W / 4;
+        
+        // Diskovalot (heijastukset takana)
+        mCtx.save();
+        mCtx.globalCompositeOperation = 'lighter';
+        mCtx.fillStyle = `rgba(${Math.sin(menuTime)*127+128}, ${Math.cos(menuTime*1.5)*127+128}, ${Math.sin(menuTime*0.8)*127+128}, 0.5)`;
+        mCtx.beginPath();
+        mCtx.moveTo(leftCenter + 30, 50);
+        mCtx.lineTo(leftCenter - 100, mGround + 50);
+        mCtx.lineTo(leftCenter + 150, mGround + 50);
+        mCtx.fill();
+        
+        mCtx.fillStyle = `rgba(${Math.cos(menuTime)*127+128}, ${Math.sin(menuTime*1.2)*127+128}, ${Math.cos(menuTime*0.7)*127+128}, 0.5)`;
+        mCtx.beginPath();
+        mCtx.moveTo(leftCenter + 30, 50);
+        mCtx.lineTo(leftCenter - 50, mGround + 50);
+        mCtx.lineTo(leftCenter + 200, mGround + 50);
+        mCtx.fill();
+        mCtx.restore();
+
+        // Kana
+        mCtx.save(); 
+        mCtx.translate(leftCenter, mGround + 30); 
+        mCtx.drawImage(Sprites.chicken_idle, -Sprites.chicken_idle.width/2, -Sprites.chicken_idle.height + Math.sin(menuTime * 2) * 10); 
+        mCtx.restore();
+
+        // Tanssija
+        mCtx.save();
+        mCtx.translate(leftCenter + 80, mGround + 30);
+        let danceSprite = Math.floor(menuTime * 5) % 2 === 0 ? Sprites.human_dance1 : Sprites.human_dance2;
+        mCtx.drawImage(danceSprite, -Sprites.human_stand.width/2, -Sprites.human_stand.height);
+        mCtx.restore();
+
+        // Diskopallo katosta
+        mCtx.fillStyle = '#666';
+        mCtx.fillRect(leftCenter + 28, 0, 4, 50); // Langan pätkä
+        mCtx.fillStyle = '#DDD';
+        mCtx.beginPath(); mCtx.arc(leftCenter + 30, 50, 20, 0, Math.PI*2); mCtx.fill(); // Pallo
+        mCtx.fillStyle = '#FFF'; // Kimalteet pallossa
+        mCtx.fillRect(leftCenter + 20 + Math.sin(menuTime*5)*10, 40, 5, 5);
+        mCtx.fillRect(leftCenter + 20 + Math.cos(menuTime*4)*10, 50, 5, 5);
     }
 
     function gameLoop(timestamp) {
@@ -1123,7 +1184,6 @@
         W = window.innerWidth; H = window.innerHeight; 
         menuCanvas.width = W; menuCanvas.height = H; canvas.width = W; canvas.height = H; 
         
-        // Pidetään y-koordinaatit lattiassa kiinni kun näyttöä skaalataan
         let oldGround = groundY;
         groundY = H - 150;
         let diff = groundY - (oldGround || groundY);
@@ -1155,9 +1215,7 @@
     document.getElementById('shadowToggle').addEventListener('click', function() { settings.shadows = !settings.shadows; this.innerText = settings.shadows ? "ON" : "OFF"; this.classList.toggle('active', settings.shadows); });
     document.getElementById('fullscreenBtn').addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e=>console.log(e)); else if (document.exitFullscreen) document.exitFullscreen(); });
 
-    // Käynnistetään loaderi
-    initSprites();
-    loadNextSprite();
+    startFakeLoading();
 
 </script>
 </body>
