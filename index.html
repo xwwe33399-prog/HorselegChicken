@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Horseleg Chicken demo hassu</title>
+    <title>Horseleg Chicken demo</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -35,12 +35,12 @@
         }
 
         .loader-title {
-            color: var(--primary-color); font-size: 20px; margin-bottom: 30px; text-shadow: 2px 2px 0 #FF0000; text-align: center; line-height: 1.5;
-            max-width: 80%;
+            color: var(--primary-color); font-size: 3vmin; margin-bottom: 3vmin; text-shadow: 2px 2px 0 #FF0000; text-align: center; line-height: 1.5;
+            max-width: 90%;
         }
 
         .loader-bar-bg {
-            width: 60%; height: 30px; background: #333; border: 4px solid #FFF; margin-bottom: 30px; position: relative;
+            width: 60%; height: 3vmin; background: #333; border: 4px solid #FFF; margin-bottom: 3vmin; position: relative;
         }
 
         .loader-bar-fill {
@@ -55,156 +55,158 @@
         #menuLayer { display: flex; background-color: var(--bg-color); }
 
         .title {
-            font-size: 5vw; color: var(--primary-color);
-            text-shadow: 4px 4px 0 var(--secondary-color), 8px 8px 0 #000;
-            margin-bottom: 50px; text-transform: uppercase; letter-spacing: 2px;
+            font-size: 6vmin; color: var(--primary-color);
+            text-shadow: 0.4vmin 0.4vmin 0 var(--secondary-color), 0.8vmin 0.8vmin 0 #000;
+            margin-bottom: 5vmin; text-transform: uppercase; letter-spacing: 0.2vmin;
             z-index: 10; text-align: center; line-height: 1.4;
         }
 
         .btn {
-            padding: 20px 50px; font-size: 20px; margin: 15px;
+            padding: 3vmin 6vmin; font-size: 2.5vmin; margin: 1.5vmin;
             background: linear-gradient(to bottom, #8B0000, #500000);
-            color: white; border: 6px solid #fff; border-radius: 0; 
-            font-weight: bold; box-shadow: 0 8px 0 #300000, 0 12px 15px rgba(0,0,0,0.8);
+            color: white; border: 0.6vmin solid #fff; border-radius: 0; 
+            font-weight: bold; box-shadow: 0 0.8vmin 0 #300000, 0 1.2vmin 1.5vmin rgba(0,0,0,0.8);
             cursor: pointer; z-index: 10; font-family: var(--mario-font);
             transition: transform 0.1s, box-shadow 0.1s;
         }
-        .btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #300000, 0 8px 10px rgba(0,0,0,0.8); }
-        .btn-settings { background: linear-gradient(to bottom, #666, #333); box-shadow: 0 8px 0 #111, 0 12px 15px rgba(0,0,0,0.8); }
-        .btn-settings:active { box-shadow: 0 4px 0 #111, 0 8px 10px rgba(0,0,0,0.8); }
-        .btn-copy { background: linear-gradient(to bottom, #008B8B, #005050); box-shadow: 0 8px 0 #003333, 0 12px 15px rgba(0,0,0,0.8); }
-        .btn-copy:active { box-shadow: 0 4px 0 #003333, 0 8px 10px rgba(0,0,0,0.8); }
+        .btn:active { transform: translateY(0.4vmin); box-shadow: 0 0.4vmin 0 #300000, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-settings { background: linear-gradient(to bottom, #666, #333); box-shadow: 0 0.8vmin 0 #111, 0 1.2vmin 1.5vmin rgba(0,0,0,0.8); }
+        .btn-settings:active { box-shadow: 0 0.4vmin 0 #111, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-copy { background: linear-gradient(to bottom, #008B8B, #005050); box-shadow: 0 0.8vmin 0 #003333, 0 1.2vmin 1.5vmin rgba(0,0,0,0.8); }
+        .btn-copy:active { box-shadow: 0 0.4vmin 0 #003333, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
 
         .copyright {
-            position: absolute; bottom: 20px; font-size: 12px;
+            position: absolute; bottom: 2vmin; font-size: 1.5vmin;
             color: rgba(255, 255, 255, 0.9); z-index: 10; text-align: center;
-            text-shadow: 2px 2px 0 #000; line-height: 1.5;
+            text-shadow: 0.2vmin 0.2vmin 0 #000; line-height: 1.5;
         }
 
         #settingsLayer { background: rgba(0, 0, 0, 0.95); z-index: 110; }
         .settings-panel {
-            background: #222; border: 6px solid #8B0000; padding: 40px;
-            width: 80%; max-width: 600px; text-align: center; box-shadow: 10px 10px 0 #000;
+            background: #222; border: 0.6vmin solid #8B0000; padding: 4vmin;
+            width: 85vw; max-width: 600px; max-height: 85vh; overflow-y: auto;
+            text-align: center; box-shadow: 1vmin 1vmin 0 #000;
         }
         .setting-item {
-            margin: 20px 0; display: flex; justify-content: space-between; align-items: center;
-            font-size: 14px; text-shadow: 2px 2px 0 #000;
+            margin: 2.5vmin 0; display: flex; justify-content: space-between; align-items: center;
+            font-size: 2vmin; text-shadow: 0.2vmin 0.2vmin 0 #000;
         }
         
-        input[type=range] { -webkit-appearance: none; width: 150px; background: transparent; }
+        input[type=range] { -webkit-appearance: none; width: 30vw; max-width: 150px; background: transparent; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 20px; width: 20px;
-            background: #FFD700; cursor: pointer; border: 2px solid #fff; margin-top: -6px;
+            -webkit-appearance: none; height: 3vmin; width: 3vmin;
+            background: #FFD700; cursor: pointer; border: 0.3vmin solid #fff; margin-top: -1vmin;
         }
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 8px; cursor: pointer; background: #555; border: 1px solid #000;
+            width: 100%; height: 1vmin; cursor: pointer; background: #555; border: 0.1vmin solid #000;
         }
 
         .credits-box {
-            background: #111; padding: 15px; border: 4px dashed #666; margin-top: 20px;
-            font-size: 10px; line-height: 2; color: #FFD700; text-align: left;
+            background: #111; padding: 2vmin; border: 0.4vmin dashed #666; margin-top: 3vmin;
+            font-size: 1.5vmin; line-height: 2; color: #FFD700; text-align: left;
         }
 
         .toggle-btn {
-            padding: 8px 20px; background: #444; border: 4px solid #fff; color: white;
-            font-family: var(--mario-font); cursor: pointer; box-shadow: 4px 4px 0 #000;
+            padding: 1.5vmin 3vmin; background: #444; border: 0.4vmin solid #fff; color: white;
+            font-family: var(--mario-font); font-size: 1.8vmin; cursor: pointer; box-shadow: 0.4vmin 0.4vmin 0 #000;
         }
         .toggle-btn.active { background: #8B0000; }
 
-        #gameUiLayer { pointer-events: none; z-index: 50; display: none; justify-content: flex-start; align-items: flex-start; padding: 20px; }
-        #topBar { width: 100%; display: flex; justify-content: space-between; align-items: center; pointer-events: auto; }
+        #gameUiLayer { pointer-events: none; z-index: 50; display: none; justify-content: flex-start; align-items: flex-start; padding: 2vmin; }
+        #topBar { width: 100%; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: auto; flex-wrap: wrap; gap: 2vmin;}
         #hud {
-            background: rgba(0,0,0,0.8); padding: 15px; border: 4px solid #8B0000;
-            font-size: 16px; text-shadow: 2px 2px 0 #000; box-shadow: 4px 4px 0 #000;
+            background: rgba(0,0,0,0.8); padding: 2vmin; border: 0.4vmin solid #8B0000;
+            font-size: 2vmin; text-shadow: 0.2vmin 0.2vmin 0 #000; box-shadow: 0.4vmin 0.4vmin 0 #000;
         }
-        .score-text { color: var(--primary-color); margin-bottom: 10px; display: block; }
-        .progress-text { color: #00FFFF; margin-bottom: 10px; display: block; font-size: 12px; }
-        .energy-title { font-size: 14px; display: flex; align-items: center; gap: 5px; }
-        .bar-bg { width: 200px; height: 20px; background: #333; margin-top: 5px; border: 3px solid #fff; position: relative; }
+        .score-text { color: var(--primary-color); margin-bottom: 1vmin; display: block; }
+        .progress-text { color: #00FFFF; margin-bottom: 1vmin; display: block; font-size: 1.5vmin; }
+        .energy-title { font-size: 1.8vmin; display: flex; align-items: center; gap: 0.5vmin; }
+        .bar-bg { width: 25vw; max-width: 200px; height: 2.5vmin; background: #333; margin-top: 1vmin; border: 0.3vmin solid #fff; position: relative; }
         .bar-fill { width: 100%; height: 100%; background: linear-gradient(to right, #f00, #0f0); transition: width 0.1s linear; }
-        .game-buttons { display: flex; gap: 15px; }
+        .game-buttons { display: flex; gap: 2vmin; }
         .game-btn {
-            padding: 15px 25px; font-size: 12px; background: rgba(0,0,0,0.8); color: white;
-            border: 4px solid #fff; cursor: pointer; font-family: var(--mario-font); box-shadow: 4px 4px 0 #000;
+            padding: 2vmin 3vmin; font-size: 1.5vmin; background: rgba(0,0,0,0.8); color: white;
+            border: 0.4vmin solid #fff; cursor: pointer; font-family: var(--mario-font); box-shadow: 0.4vmin 0.4vmin 0 #000;
         }
-        .game-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #000; }
+        .game-btn:active { transform: translateY(0.4vmin); box-shadow: 0 0 0 #000; }
 
         #floatingTextContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
         .floating-text {
-            position: absolute; color: #FFD700; font-size: 20px; font-weight: bold;
-            text-shadow: 3px 3px 0 #000; animation: floatUp 1.2s ease-out forwards;
+            position: absolute; color: #FFD700; font-size: 3vmin; font-weight: bold;
+            text-shadow: 0.3vmin 0.3vmin 0 #000; animation: floatUp 1.2s ease-out forwards;
             pointer-events: none; z-index: 200; text-align: center;
         }
-        .burger-text { color: #FF0000; font-size: 30px; animation: floatUpShake 1.5s ease-out forwards; }
-        .oikotie-shout { color: #00FFFF; font-size: 26px; animation: popIn 1.5s ease-out forwards; }
+        .burger-text { color: #FF0000; font-size: 4vmin; animation: floatUpShake 1.5s ease-out forwards; }
+        .oikotie-shout { color: #00FFFF; font-size: 3.5vmin; animation: popIn 1.5s ease-out forwards; }
 
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-40px) scale(1.2); opacity: 1; } 100% { transform: translateY(-80px) scale(1); opacity: 0; } }
-        @keyframes floatUpShake { 0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translateY(-20px) scale(1.5) rotate(10deg); opacity: 1; } 40% { transform: translateY(-40px) scale(1.5) rotate(-10deg); opacity: 1; } 60% { transform: translateY(-60px) scale(1.5) rotate(10deg); opacity: 1; } 100% { transform: translateY(-100px) scale(1) rotate(0deg); opacity: 0; } }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-4vmin) scale(1.2); opacity: 1; } 100% { transform: translateY(-8vmin) scale(1); opacity: 0; } }
+        @keyframes floatUpShake { 0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translateY(-2vmin) scale(1.5) rotate(10deg); opacity: 1; } 40% { transform: translateY(-4vmin) scale(1.5) rotate(-10deg); opacity: 1; } 60% { transform: translateY(-6vmin) scale(1.5) rotate(10deg); opacity: 1; } 100% { transform: translateY(-10vmin) scale(1) rotate(0deg); opacity: 0; } }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 20% { transform: scale(1.5); opacity: 1; } 80% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
 
-        #controlsArea { position: absolute; bottom: 0; left: 0; width: 100%; height: 250px; pointer-events: none; z-index: 60; }
+        #controlsArea { position: absolute; bottom: 0; left: 0; width: 100%; height: 35vmin; pointer-events: none; z-index: 60; }
         .control-zone { pointer-events: auto; position: absolute; }
         #joystickBase {
-            bottom: 40px; left: 40px; width: 160px; height: 160px; background: rgba(0,0,0,0.5);
-            border: 6px solid rgba(255,255,255,0.8); border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            bottom: 5vmin; left: 5vmin; width: 22vmin; height: 22vmin; background: rgba(0,0,0,0.5);
+            border: 0.6vmin solid rgba(255,255,255,0.8); border-radius: 50%; box-shadow: 0 0 2vmin rgba(0,0,0,0.5);
         }
         #joystickStick {
-            position: absolute; top: 40px; left: 40px; width: 80px; height: 80px; background: var(--secondary-color);
-            border: 4px solid #fff; border-radius: 50%; box-shadow: inset -4px -4px 0 rgba(0,0,0,0.3), 4px 4px 0 rgba(0,0,0,0.5);
+            position: absolute; top: 5.5vmin; left: 5.5vmin; width: 11vmin; height: 11vmin; background: var(--secondary-color);
+            border: 0.4vmin solid #fff; border-radius: 50%; box-shadow: inset -0.4vmin -0.4vmin 0 rgba(0,0,0,0.3), 0.4vmin 0.4vmin 0 rgba(0,0,0,0.5);
         }
         #kickBtn {
-            bottom: 50px; right: 50px; width: 140px; height: 140px; background: #8B0000;
-            border: 6px solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            color: white; font-size: 20px; text-shadow: 3px 3px 0 #000; box-shadow: inset -6px -6px 0 rgba(0,0,0,0.3), 6px 6px 0 rgba(0,0,0,0.5); cursor: pointer;
+            bottom: 6vmin; right: 6vmin; width: 20vmin; height: 20vmin; background: #8B0000;
+            border: 0.6vmin solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 3vmin; text-shadow: 0.3vmin 0.3vmin 0 #000; box-shadow: inset -0.6vmin -0.6vmin 0 rgba(0,0,0,0.3), 0.6vmin 0.6vmin 0 rgba(0,0,0,0.5); cursor: pointer;
         }
-        #kickBtn:active { box-shadow: inset 6px 6px 0 rgba(0,0,0,0.5), 0 0 0 rgba(0,0,0,0); transform: translate(4px, 4px); }
+        #kickBtn:active { box-shadow: inset 0.6vmin 0.6vmin 0 rgba(0,0,0,0.5), 0 0 0 rgba(0,0,0,0); transform: translate(0.4vmin, 0.4vmin); }
 
         #gameOverScreen { background: rgba(50,0,0,0.9); z-index: 150; }
-        .game-over-title { color: #FF0000; font-size: 6vw; text-shadow: 4px 4px 0 #000; margin-bottom: 20px; }
+        .game-over-title { color: #FF0000; font-size: 8vmin; text-shadow: 0.4vmin 0.4vmin 0 #000; margin-bottom: 3vmin; }
         #winScreen { background: rgba(0,30,0,0.95); z-index: 150; }
-        .win-title { color: #00FF00; font-size: 5vw; text-shadow: 4px 4px 0 #000; margin-bottom: 20px; }
-        .win-stats { color: white; font-size: 20px; margin-bottom: 30px; text-align: left; background: rgba(0,0,0,0.5); padding: 20px; border: 4px solid #0F0; line-height: 2; }
+        .win-title { color: #00FF00; font-size: 7vmin; text-shadow: 0.4vmin 0.4vmin 0 #000; margin-bottom: 3vmin; text-align:center;}
+        .win-stats { color: white; font-size: 3vmin; margin-bottom: 4vmin; text-align: left; background: rgba(0,0,0,0.5); padding: 3vmin; border: 0.4vmin solid #0F0; line-height: 2; }
     </style>
 </head>
 <body>
 
     <div id="loaderOverlay">
-        <div class="loader-title">odota että sivusto ei lagaa ja sitten mene peliin</div>
+        <div class="loader-title">odota että sivusto ei lagaa ja sitten mene peliin plis</div>
         <div class="loader-bar-bg"><div class="loader-bar-fill" id="loaderFill"></div></div>
-        <button class="btn btn-settings" id="skipLoadBtn" style="font-size: 12px; padding: 15px;">SKIPPAA LATAUS</button>
+        <button class="btn btn-settings" id="skipLoadBtn" style="font-size: 2vmin; padding: 2vmin 4vmin;">SKIPPAA LATAUS</button>
     </div>
 
     <div id="menuLayer">
         <canvas id="menuCanvas" style="position: absolute; top:0; left:0; z-index: 1;"></canvas>
-        <div class="title" style="position: relative; z-index: 10;">Horseleg<br>Chicken<br><span style="font-size: 0.5em; color: #8B0000;">demoversio</span></div>
-        <button class="btn" id="playBtn">aloita demopeli</button>
-        <button class="btn btn-settings" id="openSettingsBtn">SETTINGS</button>
-        <div class="copyright">IDEA: JANI NORONEN<br>&copy; COPYRIGHT © LAKKULA EELI NORONEN 1999 </div>
+        <div class="title" style="position: relative; z-index: 10;">Horseleg<br>Chicken<br><span style="font-size: 0.5em; color: #8B0000;">City Rampage</span></div>
+        <button class="btn" id="playBtn">aloita peli</button>
+        <button class="btn btn-settings" id="openSettingsBtn">ASETUKSET</button>
+        <div class="copyright">IDEA: JANI NORONEN<br>&copy; COPYRIGHT © EELI NORONEN 2026 </div>
     </div>
 
     <div id="settingsLayer">
         <div class="settings-panel">
-            <h2 class="title" style="font-size: 30px; margin-bottom: 20px;">SETTINGS</h2>
+            <h2 class="title" style="font-size: 4vmin; margin-bottom: 3vmin;">SETTINGS</h2>
             
-            <div class="setting-item">
-                <span>varjot</span>
-                <button class="toggle-btn active" id="shadowToggle">ON</button>
-            </div>
+            <div class="setting-item"><span>Varjot</span><button class="toggle-btn active" id="shadowToggle">ON</button></div>
+            <div class="setting-item"><span>Veri (Gore)</span><button class="toggle-btn active" id="goreToggle">ON</button></div>
+            <div class="setting-item"><span>Partikkelit</span><button class="toggle-btn active" id="particleToggle">ON</button></div>
+            <div class="setting-item"><span>Vaikeustaso</span><button class="toggle-btn" id="diffToggle" style="background:#444;">NORMAALI</button></div>
             
-            <div class="setting-item"><span>Kaikki äänet vol</span><input type="range" id="volMaster" min="0" max="100" value="100"></div>
-            <div class="setting-item"><span>Musiikki vol</span><input type="range" id="volMusic" min="0" max="100" value="50"></div>
+            <div style="border-top: 2px solid #555; margin: 2vmin 0;"></div>
+
+            <div class="setting-item"><span>Master Vol</span><input type="range" id="volMaster" min="0" max="100" value="100"></div>
+            <div class="setting-item"><span>Music Vol</span><input type="range" id="volMusic" min="0" max="100" value="50"></div>
             <div class="setting-item"><span>SFX Vol</span><input type="range" id="volSfx" min="0" max="100" value="100"></div>
-            <div class="setting-item"><span>Puhumis Vol</span><input type="range" id="volVoice" min="0" max="100" value="100"></div>
+            <div class="setting-item"><span>Puhe Vol</span><input type="range" id="volVoice" min="0" max="100" value="100"></div>
             
             <div class="credits-box">
                 - Idea: Jani Noronen<br>
-                - Ohjelmointi: Lakkula<br>
-                - Grafiikkamoottori: 8-Bittinen<br>
-                - ODOTA ETTÄ, PELI, ON, KOKONAAN LATAUTUNUT TAI LAGAA<br>
-                - Copyright: Lakkula 67
+                - Ohjelmointi: EN TIIÄ<br>
+                - Grafiikkamoottori: 8-Bittine kait<br>
+                - Copyright: Lakkula 2026
             </div>
 
-            <button class="btn" id="closeSettingsBtn" style="margin-top: 20px; padding: 10px 30px; font-size: 16px;">BACK</button>
+            <button class="btn" id="closeSettingsBtn" style="margin-top: 3vmin; padding: 1.5vmin 4vmin; font-size: 2vmin;">BACK</button>
         </div>
     </div>
 
@@ -213,11 +215,11 @@
             <div id="hud">
                 <span class="score-text">SCORE: <span id="scoreDisplay">0</span></span>
                 <span class="progress-text">PROGRESS: <span id="distDisplay">0</span>%</span>
-                <div class="energy-title">❤️ Salienergia</div>
+                <div class="energy-title">❤️ Tuulotus-energia</div>
                 <div class="bar-bg"><div class="bar-fill" id="healthBar"></div></div>
             </div>
             <div class="game-buttons">
-                <button class="game-btn" id="fullscreenBtn">FULLSCREEN</button>
+                <button class="game-btn" id="fullscreenBtn">Kokonäyttö</button>
                 <button class="game-btn" id="menuBtn">PÄÄVALIKKO</button>
             </div>
         </div>
@@ -226,13 +228,13 @@
 
     <div id="gameOverScreen">
         <div class="game-over-title">WASTED ):</div>
-        <div class="title" style="font-size: 30px; margin-bottom: 40px; color: white;">FINAL SCORE: <span id="finalScore">0</span></div>
+        <div class="title" style="font-size: 4vmin; margin-bottom: 5vmin; color: white;">FINAL SCORE: <span id="finalScore">0</span></div>
         <button class="btn" id="restartBtn">RETRY</button>
         <button class="btn btn-settings" id="gameOverMenuBtn">PÄÄVALIKKO</button>
     </div>
     
     <div id="winScreen">
-        <div class="win-title">UI JUME, voitit!</div>
+        <div class="win-title">SINUT MURHATTIIN, VOITIT!</div>
         <div class="win-stats">
             AIKA: <span id="winTime" style="color: #FFD700;">00:00</span><br>
             LOPPUPISTEET: <span id="winScore" style="color: #00FFFF;">0</span>
@@ -281,13 +283,28 @@
     
     const GOAL_X = 20000; 
     
-    let settings = { shadows: true };
+    // Asetukset
+    let settings = { shadows: true, gore: true, particles: true, difficulty: 1 }; // diff 0=easy, 1=norm, 2=hard
     let vols = { master: 1.0, music: 0.5, sfx: 1.0, voice: 1.0 };
 
     document.getElementById('volMaster').addEventListener('input', e => vols.master = e.target.value / 100);
     document.getElementById('volMusic').addEventListener('input', e => vols.music = e.target.value / 100);
     document.getElementById('volSfx').addEventListener('input', e => vols.sfx = e.target.value / 100);
     document.getElementById('volVoice').addEventListener('input', e => vols.voice = e.target.value / 100);
+    
+    document.getElementById('goreToggle').addEventListener('click', function() {
+        settings.gore = !settings.gore; this.innerText = settings.gore ? "ON" : "OFF"; this.classList.toggle('active', settings.gore);
+    });
+    document.getElementById('particleToggle').addEventListener('click', function() {
+        settings.particles = !settings.particles; this.innerText = settings.particles ? "ON" : "OFF"; this.classList.toggle('active', settings.particles);
+    });
+    const diffBtn = document.getElementById('diffToggle');
+    diffBtn.addEventListener('click', function() {
+        settings.difficulty = (settings.difficulty + 1) % 3;
+        if(settings.difficulty === 0) { this.innerText = "HELPPO"; this.style.background = "#4CAF50"; }
+        if(settings.difficulty === 1) { this.innerText = "NORMAALI"; this.style.background = "#444"; }
+        if(settings.difficulty === 2) { this.innerText = "VAIKEA"; this.style.background = "#8B0000"; }
+    });
 
     // --- AUDIO SYSTEM ---
     let audioCtx;
@@ -347,53 +364,75 @@
         if (!audioCtx || vols.master === 0) return;
         try {
             const now = audioCtx.currentTime;
-            const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
+            gain.connect(audioCtx.destination);
             
             let sVol = vols.master * vols.sfx;
             let vVol = vols.master * vols.voice;
             let mVol = vols.master * vols.music; 
 
             if (type === 'kick' && sVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'triangle'; osc.frequency.setValueAtTime(600, now);
                 osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
                 gain.gain.setValueAtTime(0.6 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'hit' && sVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'square'; osc.frequency.setValueAtTime(100, now);
                 osc.frequency.exponentialRampToValueAtTime(20, now + 0.2);
                 gain.gain.setValueAtTime(0.8 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
                 osc.start(now); osc.stop(now + 0.2);
             } else if (type === 'metalHit' && sVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'sawtooth'; osc.frequency.setValueAtTime(800, now);
                 osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
                 gain.gain.setValueAtTime(0.7 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
                 osc.start(now); osc.stop(now + 0.15);
             } else if (type === 'eat' && sVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'square'; osc.frequency.setValueAtTime(440, now);
                 osc.frequency.linearRampToValueAtTime(880, now + 0.1); osc.frequency.linearRampToValueAtTime(1760, now + 0.2);
                 gain.gain.setValueAtTime(0.4 * sVol, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
                 osc.start(now); osc.stop(now + 0.3);
             } else if (type === 'pickup' && sVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'triangle'; osc.frequency.setValueAtTime(1200, now);
                 osc.frequency.exponentialRampToValueAtTime(2000, now + 0.1);
                 gain.gain.setValueAtTime(0.3 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'speech' && vVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'sine'; osc.frequency.setValueAtTime(800, now);
                 osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
                 gain.gain.setValueAtTime(0.4 * vVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
                 osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'hamburgerVoice' && vVol > 0) {
-                osc.type = 'square'; osc.frequency.setValueAtTime(150, now);
-                osc.frequency.setValueAtTime(120, now + 0.2); osc.frequency.setValueAtTime(100, now + 0.4);
-                gain.gain.setValueAtTime(0.8 * vVol, now); gain.gain.setValueAtTime(0.8 * vVol, now + 0.15);
-                gain.gain.setValueAtTime(0, now + 0.18); gain.gain.setValueAtTime(0.8 * vVol, now + 0.2);
-                gain.gain.setValueAtTime(0.8 * vVol, now + 0.35); gain.gain.setValueAtTime(0, now + 0.38);
-                gain.gain.setValueAtTime(0.8 * vVol, now + 0.4); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-                osc.start(now); osc.stop(now + 0.6);
+                // Parannettu "OIKOTIÄ" robottiääni (kaksi oskillaattoria)
+                let osc1 = audioCtx.createOscillator(); osc1.connect(gain);
+                let osc2 = audioCtx.createOscillator(); osc2.connect(gain);
+                
+                osc1.type = 'square'; osc2.type = 'sawtooth';
+                
+                osc1.frequency.setValueAtTime(100, now);
+                osc1.frequency.linearRampToValueAtTime(180, now + 0.2); // OI
+                osc1.frequency.setValueAtTime(130, now + 0.3); // KO
+                osc1.frequency.linearRampToValueAtTime(90, now + 0.6); // TIÄ
+                
+                osc2.frequency.setValueAtTime(105, now);
+                osc2.frequency.linearRampToValueAtTime(185, now + 0.2); 
+                osc2.frequency.setValueAtTime(135, now + 0.3); 
+                osc2.frequency.linearRampToValueAtTime(95, now + 0.6); 
+
+                gain.gain.setValueAtTime(0, now); 
+                gain.gain.linearRampToValueAtTime(0.6 * vVol, now + 0.1);
+                gain.gain.setValueAtTime(0.6 * vVol, now + 0.5);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                
+                osc1.start(now); osc1.stop(now + 0.6);
+                osc2.start(now); osc2.stop(now + 0.6);
             } else if (type === 'crash' && sVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'square'; osc.frequency.setValueAtTime(80, now);
                 osc.frequency.exponentialRampToValueAtTime(10, now + 0.8);
                 gain.gain.setValueAtTime(1.0 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
@@ -405,11 +444,13 @@
                 nSrc.connect(nFilt); nFilt.connect(gain); nSrc.start(now);
                 osc.start(now); osc.stop(now + 0.8);
             } else if (type === 'brickBreak' && sVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now);
                 osc.frequency.exponentialRampToValueAtTime(20, now + 0.3);
                 gain.gain.setValueAtTime(0.8 * sVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
                 osc.start(now); osc.stop(now + 0.3);
             } else if (type === 'win' && mVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'square'; 
                 osc.frequency.setValueAtTime(523.25, now);
                 osc.frequency.setValueAtTime(659.25, now+0.3); 
@@ -576,7 +617,7 @@
     let loadInterval;
 
     function startFakeLoading() {
-        initSprites(); // Generoidaan synkronisesti heti jotta varmasti valmiit
+        initSprites(); 
         loadInterval = setInterval(() => {
             loadTimer += 50;
             let percent = Math.min(100, (loadTimer / 5000) * 100);
@@ -640,7 +681,7 @@
             } else if (type === 'oikotie') {
                 this.width = 80; this.height = 100; this.state = 0; this.actionTimer = 0;
             } else if (type === 'restaurant') {
-                this.width = 400; this.height = 300;
+                this.width = 300; this.height = 200;
             } else if (type === 'bat_guy') {
                 this.width = 60; this.height = 80;
             }
@@ -714,31 +755,38 @@
         createCarCrash(3000); createCarCrash(12000);
 
         let cx = W + 500;
+        let nextFoodX = cx + 500; // Takuu spawn
+
         while(cx < GOAL_X - 1000) {
             if (Math.abs(cx - 3000) < 600 || Math.abs(cx - 12000) < 600) { cx += 800; continue; } // Skippaa kolarit
 
+            if (cx >= nextFoodX) {
+                // Takuu ruokaspawn
+                let fType = Math.random() > 0.4 ? 'basket' : 'leg';
+                let f = new Entity(cx, groundY, fType); f.z = (Math.random() * 200) - 100; entities.push(f);
+                nextFoodX = cx + 400 + Math.random() * 400; // Seuraava 400-800px päästä
+                cx += 200;
+                continue;
+            }
+
             let rnd = Math.random();
             if (rnd < 0.15) { 
-                let b = new Entity(cx, groundY, 'basket'); b.z = (Math.random() * 200) - 100; entities.push(b);
-            } else if (rnd < 0.25) { 
-                let leg = new Entity(cx, groundY, 'leg'); leg.z = (Math.random() * 200) - 100; entities.push(leg);
-            } else if (rnd < 0.35) { 
                 let count = 1 + Math.floor(Math.random()*3);
                 for(let j=0; j<count; j++) {
                     let bot = new Entity(cx + j*20, groundY, 'bottle'); bot.z = (Math.random() * 100) - 50; entities.push(bot);
                 }
-            } else if (rnd < 0.5) { 
+            } else if (rnd < 0.35) { 
                 let h = new Entity(cx, groundY, 'human_stand'); h.z = (Math.random() * 80) - 40; entities.push(h);
                 if(Math.random() < 0.5) { let tr = new Entity(cx+80, groundY, 'trash'); tr.z = -60; entities.push(tr); }
-            } else if (rnd < 0.65) { 
+            } else if (rnd < 0.5) { 
                 let t = new Entity(cx, groundY, 'table'); t.z = (Math.random() * 40) - 20; entities.push(t);
                 let p1 = new Entity(cx - 50, groundY, 'human_sit'); p1.dir = 1; p1.z = t.z+5; entities.push(p1);
                 let p2 = new Entity(cx + 50, groundY, 'human_sit'); p2.dir = -1; p2.z = t.z-5; entities.push(p2);
-            } else if (rnd < 0.75) { 
+            } else if (rnd < 0.65) { 
                 let c = new Entity(cx, groundY, 'car'); c.z = (Math.random() * 80) - 40; entities.push(c);
-            } else if (rnd < 0.85) { 
+            } else if (rnd < 0.8) { 
                 let w = new Entity(cx, groundY, 'brick_wall'); w.z = (Math.random() * 80) - 40; entities.push(w);
-            } else if (rnd < 0.95) { 
+            } else if (rnd < 0.9) { 
                 let d = new Entity(cx, groundY, 'human_dance'); d.z = (Math.random() * 80) - 40; entities.push(d);
             } else { 
                 let nc = new Entity(cx, groundY, 'npc_chicken'); nc.z = (Math.random() * 100) - 50; entities.push(nc);
@@ -754,11 +802,11 @@
         }
 
         let rest = new Entity(GOAL_X + 200, groundY, 'restaurant'); 
-        rest.z = -200; 
+        rest.z = -180; 
         entities.push(rest);
 
         let bguy = new Entity(GOAL_X + 240, groundY, 'bat_guy');
-        bguy.z = -180;
+        bguy.z = -160;
         bguy.dir = -1;
         entities.push(bguy);
     }
@@ -766,7 +814,7 @@
     function spawnOikotie() {
         if (oikotieActive) return; oikotieActive = true;
         let oiko = new Entity(player.x + 300 + Math.random() * 200, groundY, 'oikotie');
-        oiko.z = -140; oiko.y = groundY + oiko.z + 100; oiko.vy = -3; oiko.state = 0;
+        oiko.z = -140; oiko.y = groundY + oiko.z + 100; oiko.vy = -2; oiko.state = 0;
         entities.push(oiko);
     }
 
@@ -825,7 +873,7 @@
                 player.isKicking = true; player.kickTimer = 25; playSound('kick');
                 let hitBox = { x: player.x + (player.dir * 40), y: player.y + player.z - 40, r: 50 };
                 for (let ent of entities) {
-                    if (ent.isDead || ['basket','burger','oikotie','leg','bottle','restaurant','sign_crash','blood','bat_guy'].includes(ent.type)) continue;
+                    if (ent.isDead || ['basket','goal','burger','oikotie','leg','bottle','restaurant','sign_crash'].includes(ent.type)) continue;
                     let dx = ent.x - hitBox.x, dy = (ent.y + ent.z) - hitBox.y;
                     if (Math.hypot(dx, dy) < hitBox.r + ent.width/2 && Math.abs(ent.z - player.z) < 40) {
                         ent.takeDamage(50, player.dir * 15); cameraX += (Math.random() - 0.5) * 30; 
@@ -834,7 +882,9 @@
             }
             if (player.kickTimer > 0) { player.kickTimer--; if (player.kickTimer < 10) player.isKicking = false; }
 
-            player.energy -= 0.12; 
+            // Energian kulutus vaikeustason mukaan (0=Helppo, 1=Norm, 2=Vaikea)
+            let drain = settings.difficulty === 0 ? 0.06 : (settings.difficulty === 1 ? 0.12 : 0.20);
+            player.energy -= drain; 
             if (player.energy <= 0) gameOver();
             
             let progress = Math.floor((player.x / GOAL_X) * 100);
@@ -849,7 +899,7 @@
 
         } else if (gameState === 'ANIMATION') {
             let targetX = GOAL_X + 200;
-            let targetZ = -180;
+            let targetZ = -160;
             let dx = targetX - player.x;
             let dz = targetZ - player.z;
             let dist = Math.hypot(dx, dz);
@@ -895,7 +945,7 @@
                         }
                     } else if (ent.type === 'human_stand') {
                         ent.idleTimer++;
-                        if(ent.idleType === 'smoke' && ent.idleTimer % 30 === 0) {
+                        if(ent.idleType === 'smoke' && ent.idleTimer % 30 === 0 && settings.particles) {
                             particles.push({ x: ent.x, y: ent.y + ent.z - 80, vx: (Math.random() - 0.5) * 1.5, vy: -1.5 - Math.random(), size: 5 + Math.random()*4, color: 'rgba(200,200,200,0.6)', life: 80, type: 'smoke' });
                         } else if (ent.idleType === 'phone') {
                             if (ent.speechTimer > 0) ent.speechTimer--;
@@ -916,7 +966,7 @@
                         else if(Math.random() < 0.01) ent.dir *= -1;
                     } else if (ent.type === 'oikotie') {
                         if (ent.state === 0) {
-                            ent.y += ent.vy; if (ent.y <= groundY + ent.z) { ent.y = groundY + ent.z; ent.state = 1; ent.actionTimer = 50; }
+                            ent.y += ent.vy; if (ent.y <= groundY + ent.z + 40) { ent.y = groundY + ent.z + 40; ent.state = 1; ent.actionTimer = 50; }
                         } else if (ent.state === 1) {
                             ent.actionTimer--;
                             if (ent.actionTimer === 20) {
@@ -1020,20 +1070,23 @@
                 ctx.fillText("Autokolari", 0, -Sprites.sign.height - 15);
                 ctx.fillText("heheh", 0, -Sprites.sign.height - 5);
             } else if (ent.type === 'restaurant') {
-                ctx.fillStyle = '#400'; ctx.fillRect(-200, -300, 400, 300); 
-                ctx.fillStyle = '#200'; ctx.fillRect(-180, -280, 360, 100); 
-                ctx.fillStyle = '#F00'; ctx.font = '24px "Press Start 2P"'; ctx.textAlign = 'center';
-                ctx.fillText("KANAN TEURASTAMO", 0, -220); 
-                ctx.fillStyle = '#111'; ctx.fillRect(-40, -100, 80, 100); 
-                ctx.fillStyle = '#FFD700'; ctx.fillRect(25, -55, 10, 10); 
-                ctx.fillStyle = '#666'; ctx.fillRect(-150, -150, 80, 80); ctx.fillRect(70, -150, 80, 80); 
+                // Skaalattu ravintola jotta mahtuu paremmin ruudulle pienillä näytöillä
+                ctx.fillStyle = '#400'; ctx.fillRect(-150, -200, 300, 200); 
+                ctx.fillStyle = '#200'; ctx.fillRect(-140, -180, 280, 80); 
+                ctx.fillStyle = '#F00'; ctx.font = '16px "Press Start 2P"'; ctx.textAlign = 'center';
+                ctx.fillText("KANAN TEURASTAMO", 0, -135); 
+                ctx.fillStyle = '#111'; ctx.fillRect(-30, -80, 60, 80); 
+                ctx.fillStyle = '#FFD700'; ctx.fillRect(15, -45, 8, 8); 
+                ctx.fillStyle = '#666'; ctx.fillRect(-120, -100, 60, 60); ctx.fillRect(60, -100, 60, 60); 
             } else if (ent.type === 'bat_guy') {
                 ctx.scale(ent.dir > 0 ? 1 : -1, 1);
                 let sprite = Math.floor(Date.now() / 250) % 2 === 0 ? Sprites.bat_guy_1 : Sprites.bat_guy_2;
                 ctx.drawImage(sprite, -Sprites.bat_guy_1.width/2, -Sprites.bat_guy_1.height);
             } else if (ent.type === 'blood') {
-                ctx.fillStyle = '#8B0000'; ctx.beginPath();
-                ctx.ellipse(0, 0, 15 + Math.random()*15, 5 + Math.random()*5, 0, 0, Math.PI*2); ctx.fill();
+                if(settings.gore) {
+                    ctx.fillStyle = '#8B0000'; ctx.beginPath();
+                    ctx.ellipse(0, 0, 15 + Math.random()*15, 5 + Math.random()*5, 0, 0, Math.PI*2); ctx.fill();
+                }
             } else if (ent.type === 'brick_wall') {
                 ctx.drawImage(Sprites.brick_wall, -Sprites.brick_wall.width/2, -Sprites.brick_wall.height);
                 if(ent.kicksReceived > 0) {
@@ -1047,7 +1100,7 @@
             } else if (ent.type === 'trash') { ctx.drawImage(Sprites.trash, -Sprites.trash.width/2, -Sprites.trash.height);
             } else if (ent.type === 'car' || ent.type === 'car_crashed') {
                 let sprite = ent.carType === 'car_blue' ? Sprites.car_blue : Sprites.car_red; ctx.drawImage(sprite, -sprite.width/2, -sprite.height);
-                if (ent.type === 'car_crashed' && Math.random() < 0.2) {
+                if (ent.type === 'car_crashed' && Math.random() < 0.2 && settings.particles) {
                     particles.push({ x: ent.x + 30, y: ent.y + ent.z - 30, vx: (Math.random()-0.5)*2, vy: -1-Math.random()*2, size: 4+Math.random()*6, color: 'rgba(50,50,50,0.8)', life: 60, type: 'smoke' });
                 }
             } else if (ent.type === 'oikotie') { ctx.drawImage(Sprites.oikotie, -Sprites.oikotie.width/2, -Sprites.oikotie.height); }
@@ -1088,6 +1141,7 @@
         ctx.beginPath(); ctx.ellipse(x, y, radiusX, radiusY, 0, 0, Math.PI * 2); ctx.fill();
     }
     function createParticles(x, y, count, color) {
+        if(!settings.particles) return;
         for(let i=0; i<count; i++) particles.push({ x: x, y: y - 40, vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 1) * 20, size: Math.random() * 8 + 4, color: color, life: 30 + Math.random() * 20, type: 'debris' });
     }
     function addScore(amount, x, y) { score += amount; scoreDisplay.innerText = score; addFloatingText(amount.toString(), x, y, '#FFD700', ''); }
@@ -1119,7 +1173,7 @@
         if (gameState !== 'MENU') return; menuTime += 0.05;
         
         mCtx.fillStyle = '#1a1a2e'; mCtx.fillRect(0, 0, W, H);
-        let mGround = H - 150;
+        let mGround = groundY; 
         mCtx.fillStyle = '#111122'; for(let i=0; i<10; i++) { let bx = ((i*200 - menuTime*2) % (W+400)) - 200; mCtx.fillRect(bx, mGround-300, 150, 300); }
         mCtx.fillStyle = '#222233';
         for(let i=0; i<8; i++) {
@@ -1130,46 +1184,31 @@
         mCtx.fillStyle = '#2b2b2b'; mCtx.fillRect(0, mGround, W, H-mGround); mCtx.fillStyle = '#555'; mCtx.fillRect(0, mGround, W, 10); 
         mCtx.fillStyle = '#FFF'; for(let i=0; i<W/100 + 2; i++) mCtx.fillRect(i*100 - (menuTime*10)%100, mGround+50, 60, 8);
         
-        // Päävalikon Disko - siirretty vasemmalle!
-        let leftCenter = W / 4;
+        let leftCenter = W / 5;
+        if(leftCenter < 100) leftCenter = 100;
         
-        // Diskovalot (heijastukset takana)
         mCtx.save();
         mCtx.globalCompositeOperation = 'lighter';
         mCtx.fillStyle = `rgba(${Math.sin(menuTime)*127+128}, ${Math.cos(menuTime*1.5)*127+128}, ${Math.sin(menuTime*0.8)*127+128}, 0.5)`;
-        mCtx.beginPath();
-        mCtx.moveTo(leftCenter + 30, 50);
-        mCtx.lineTo(leftCenter - 100, mGround + 50);
-        mCtx.lineTo(leftCenter + 150, mGround + 50);
-        mCtx.fill();
-        
+        mCtx.beginPath(); mCtx.moveTo(leftCenter + 30, 50); mCtx.lineTo(leftCenter - 100, mGround + 50); mCtx.lineTo(leftCenter + 150, mGround + 50); mCtx.fill();
         mCtx.fillStyle = `rgba(${Math.cos(menuTime)*127+128}, ${Math.sin(menuTime*1.2)*127+128}, ${Math.cos(menuTime*0.7)*127+128}, 0.5)`;
-        mCtx.beginPath();
-        mCtx.moveTo(leftCenter + 30, 50);
-        mCtx.lineTo(leftCenter - 50, mGround + 50);
-        mCtx.lineTo(leftCenter + 200, mGround + 50);
-        mCtx.fill();
+        mCtx.beginPath(); mCtx.moveTo(leftCenter + 30, 50); mCtx.lineTo(leftCenter - 50, mGround + 50); mCtx.lineTo(leftCenter + 200, mGround + 50); mCtx.fill();
         mCtx.restore();
 
-        // Kana
         mCtx.save(); 
         mCtx.translate(leftCenter, mGround + 30); 
         mCtx.drawImage(Sprites.chicken_idle, -Sprites.chicken_idle.width/2, -Sprites.chicken_idle.height + Math.sin(menuTime * 2) * 10); 
         mCtx.restore();
 
-        // Tanssija
         mCtx.save();
         mCtx.translate(leftCenter + 80, mGround + 30);
         let danceSprite = Math.floor(menuTime * 5) % 2 === 0 ? Sprites.human_dance1 : Sprites.human_dance2;
         mCtx.drawImage(danceSprite, -Sprites.human_stand.width/2, -Sprites.human_stand.height);
         mCtx.restore();
 
-        // Diskopallo katosta
-        mCtx.fillStyle = '#666';
-        mCtx.fillRect(leftCenter + 28, 0, 4, 50); // Langan pätkä
-        mCtx.fillStyle = '#DDD';
-        mCtx.beginPath(); mCtx.arc(leftCenter + 30, 50, 20, 0, Math.PI*2); mCtx.fill(); // Pallo
-        mCtx.fillStyle = '#FFF'; // Kimalteet pallossa
+        mCtx.fillStyle = '#666'; mCtx.fillRect(leftCenter + 28, 0, 4, 50);
+        mCtx.fillStyle = '#DDD'; mCtx.beginPath(); mCtx.arc(leftCenter + 30, 50, 20, 0, Math.PI*2); mCtx.fill(); 
+        mCtx.fillStyle = '#FFF'; 
         mCtx.fillRect(leftCenter + 20 + Math.sin(menuTime*5)*10, 40, 5, 5);
         mCtx.fillRect(leftCenter + 20 + Math.cos(menuTime*4)*10, 50, 5, 5);
     }
@@ -1185,10 +1224,10 @@
         menuCanvas.width = W; menuCanvas.height = H; canvas.width = W; canvas.height = H; 
         
         let oldGround = groundY;
-        groundY = H - 150;
+        groundY = Math.max(H * 0.7, 300); // Varmistetaan että taivasta näkyy aina
         let diff = groundY - (oldGround || groundY);
-        if (diff !== 0) {
-            if (player) player.y += diff;
+        if (diff !== 0 && player) {
+            player.y += diff;
             entities.forEach(e => e.y += diff);
             particles.forEach(p => p.y += diff);
         }
@@ -1207,7 +1246,7 @@
     document.getElementById('menuBtn').addEventListener('click', goToMenu); document.getElementById('gameOverMenuBtn').addEventListener('click', goToMenu); document.getElementById('winMenuBtn').addEventListener('click', goToMenu);
     
     document.getElementById('copyBtn').addEventListener('click', () => {
-        const resultText = `Horseleg Chicken: City Rampage\nAika: ${finalTimeStr}\nLoppupisteet: ${score}\nOlet paras!`;
+        const resultText = `Horseleg Chicken: City Rampage\nVaikeustaso: ${settings.difficulty === 0 ? "Helppo" : settings.difficulty === 1 ? "Normaali" : "Vaikea"}\nAika: ${finalTimeStr}\nLoppupisteet: ${score}\nOlet paras!`;
         if (navigator.clipboard) { navigator.clipboard.writeText(resultText).then(() => alert("Kopioitu leikepöydälle!")); }
         else { alert("Kopiointi ei tuettu tässä selaimessa."); }
     });
@@ -1215,6 +1254,7 @@
     document.getElementById('shadowToggle').addEventListener('click', function() { settings.shadows = !settings.shadows; this.innerText = settings.shadows ? "ON" : "OFF"; this.classList.toggle('active', settings.shadows); });
     document.getElementById('fullscreenBtn').addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e=>console.log(e)); else if (document.exitFullscreen) document.exitFullscreen(); });
 
+    resize();
     startFakeLoading();
 
 </script>
