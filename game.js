@@ -1226,7 +1226,8 @@ function update(dt) {
         });
     }
 
-    function gameOver() { 
+    
+function gameOver() { 
         gameState = 'GAMEOVER'; stopBGM(); playSound('crash'); 
         document.getElementById('finalScore').innerText = score; 
         document.getElementById('goTime').innerText = formatTime(Date.now() - startTime);
@@ -1386,7 +1387,6 @@ function update(dt) {
         this.innerText = settings.difficulty === 0 ? "HELPPO" : settings.difficulty === 1 ? "NORMAALI" : "VAIKEA";
         this.style.background = settings.difficulty === 0 ? '#006600' : settings.difficulty === 1 ? '#444' : '#660000';
     });
-    // === VIIMEISET RIVIT game.js:ssä ===
 
     document.getElementById('fullscreenBtn').addEventListener('click', () => { 
         if (!document.fullscreenElement) {
@@ -1397,3 +1397,4 @@ function update(dt) {
     });
 
     console.log("%ctesti ladattu JEE!", "color: lime; font-size: 16px");
+} // This single closing bracket here fixes the entire scope block!
