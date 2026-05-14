@@ -1529,7 +1529,7 @@
         setTimeout(() => { note.classList.remove('show'); }, 2000);
     });
 
-    function restartGame() { gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; storyGameOverScreen.style.display = 'none'; storyWinScreen.style.display = 'none'; initGameData(currentMode); }
+    function restartGame() { gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; storyGameOverScreen.style.display = 'none'; storyWinScreen.style.display = 'none'; initGame(currentMode); }
 
     let menuTime = 0;
     function drawMenu() {
@@ -1604,9 +1604,9 @@
     }
     window.addEventListener('resize', resize);
     
-    document.getElementById('playBtn').addEventListener('click', () => { initAudio(); initGameData('rampage'); });
-    document.getElementById('storyBtn').addEventListener('click', () => { initAudio(); initGameData('story'); });
-    document.getElementById('destroyBtn').addEventListener('click', () => { initAudio(); initGameData('destroy'); });
+    document.getElementById('playBtn').addEventListener('click', () => { initAudio(); initGame('rampage'); });
+    document.getElementById('storyBtn').addEventListener('click', () => { initAudio(); initGame('story'); });
+    document.getElementById('destroyBtn').addEventListener('click', () => { initAudio(); initGame('destroy'); });
     
     document.getElementById('restartBtn').addEventListener('click', restartGame); 
     document.getElementById('winRestartBtn').addEventListener('click', restartGame);
