@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Horseleg Chicken päivitetty </title>
+    <title>Horseleg Chicken: Definitive Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -68,9 +68,12 @@
         .btn-settings:active { box-shadow: 0 0.4vh 0 #111, 0 0.8vh 1vh rgba(0,0,0,0.8); }
         .btn-leaderboard { background: linear-gradient(to bottom, #4A0080, #2A0040); box-shadow: 0 0.6vh 0 #1A0020, 0 1vh 1vh rgba(0,0,0,0.8); }
         .btn-leaderboard:active { box-shadow: 0 0.4vh 0 #1A0020, 0 0.8vh 1vh rgba(0,0,0,0.8); }
+        .btn-copy { background: linear-gradient(to bottom, #008B8B, #005050); box-shadow: 0 0.6vh 0 #003333, 0 1vh 1vh rgba(0,0,0,0.8); }
+        .btn-copy:active { box-shadow: 0 0.4vh 0 #003333, 0 0.8vh 1vh rgba(0,0,0,0.8); }
 
         .copyright { position: absolute; bottom: 2vh; font-size: 1.2vh; color: rgba(255, 255, 255, 0.9); z-index: 10; text-align: center; line-height: 1.5; }
 
+        #settingsLayer { background: rgba(0, 0, 0, 0.95); z-index: 110; }
         .settings-panel { background: #222; border: 0.6vh solid #8B0000; padding: 4vh; width: 85%; max-width: 600px; max-height: 85%; overflow-y: auto; text-align: center; box-shadow: 1vh 1vh 0 #000; }
         .setting-item { margin: 2vh 0; display: flex; justify-content: space-between; align-items: center; font-size: 1.8vh; }
         input[type=range] { -webkit-appearance: none; width: 40%; max-width: 150px; background: transparent; }
@@ -108,6 +111,7 @@
         #joystickStick { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; background: var(--secondary-color); border: 0.4vh solid #fff; border-radius: 50%; }
         #kickBtn { bottom: 6vh; right: 6vh; width: 16vh; height: 16vh; background: #8B0000; border: 0.6vh solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2.5vh; box-shadow: inset -0.6vh -0.6vh 0 rgba(0,0,0,0.3), 0.6vh 0.6vh 0 rgba(0,0,0,0.5); cursor: pointer; }
         #jumpBtn { bottom: 25vh; right: 8vh; width: 12vh; height: 12vh; background: #008B8B; border: 0.4vh solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2vh; box-shadow: inset -0.4vh -0.4vh 0 rgba(0,0,0,0.3), 0.4vh 0.4vh 0 rgba(0,0,0,0.5); cursor: pointer; display: none; }
+        #danceBtn { bottom: 25vh; right: 22vh; width: 12vh; height: 12vh; background: #DA70D6; border: 0.4vh solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2vh; box-shadow: inset -0.4vh -0.4vh 0 rgba(0,0,0,0.3), 0.4vh 0.4vh 0 rgba(0,0,0,0.5); cursor: pointer; display: none; }
         
         #gameOverScreen, #storyGameOverScreen { background-color: #000; z-index: 150; }
         .mario-text-title { color: #FFF; font-size: 6vh; margin-bottom: 5vh; text-align: center; text-shadow: none; }
@@ -126,21 +130,21 @@
 
     <div id="lagWarning"><div class="marquee-text">JOS LAGII NIIN ODOTA - GRAFIIKAT LATAUTUU TAUSTALLA - JOS LAGII NIIN ODOTA - GRAFIIKAT LATAUTUU TAUSTALLA</div></div>
 
-    <div id="inGameNotification" class="notification">Tulossa kohta jee!</div>
+    <div id="inGameNotification" class="notification">Tulossa kohta!</div>
 
     <div id="menuLayer">
         <canvas id="menuCanvas" style="position: absolute; top:0; left:0; z-index: 1;"></canvas>
-        <div class="title" style="position: relative;">Horseleg<br>Chicken<br><span style="font-size: 0.5em; color: #FFF; text-shadow:none; animation:none;">UUSI</span></div>
+        <div class="title" style="position: relative;">Horseleg<br>Chicken<br><span style="font-size: 0.5em; color: #FFF; text-shadow:none; animation:none;">Päivitetty</span></div>
         <div class="menu-buttons">
             <button class="btn" id="playBtn">RAMPAGE MODE</button>
             <button class="btn btn-story" id="storyBtn">TARINA MODE</button>
             <button class="btn btn-destroy" id="destroyBtn">TUHOAMIS MODE</button>
-            <button class="btn btn-mp" id="mpBtn">MONINPELI (testiversio)</button>
+            <button class="btn btn-mp" id="mpBtn">MONINPELI (Hengailu)</button>
             <button class="btn btn-leaderboard" id="leaderboardBtn">TULOSTAULU</button>
             <button class="btn btn-settings" id="openSettingsBtn">ASETUKSET</button>
         </div>
         <div id="onlineCountMenu" style="position: absolute; bottom: 8vh; font-size: 1.5vh; color: #0F0; z-index: 10;">Pelaajia linjoilla: 0</div>
-        <div class="copyright">PC KONTROLLIT: WASD / NUOLET Liikkuminen | E tai Space Potku | SPACE Hyppy<br>IDEA: JANI NORONEN | &copy; LAKKULA 2026</div>
+        <div class="copyright">PC KONTROLLIT: WASD / NUOLET Liikkuminen | E tai Space Potku | SPACE Hyppy | X Tanssi moninpelissä<br>IDEA: JANI NORONEN | &copy; LAKKULA 2026</div>
     </div>
 
     <div id="mpSetupLayer" class="modal-layer">
@@ -254,6 +258,7 @@
         <div class="control-zone" id="joystickBase"><div id="joystickStick"></div></div>
         <div class="control-zone" id="kickBtn">KICK</div>
         <div class="control-zone" id="jumpBtn">JUMP</div>
+        <div class="control-zone" id="danceBtn">TUULOTA</div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -278,6 +283,7 @@
     let myMpName = "Pelaaja";
     let myMpChar = "male";
     let otherPlayers = {};
+    let isDancing = false;
 
     // Online counter logic
     const onlineRef = db.ref('.info/connected');
@@ -304,6 +310,7 @@
             z: player.z,
             dir: player.dir,
             isKicking: player.isKicking,
+            isDancing: isDancing,
             name: myMpName,
             char: myMpChar,
             timestamp: Date.now()
@@ -338,14 +345,13 @@
         }
     });
 
-    // Puhdista oma pelaaja kun sivu suljetaan
     window.addEventListener('beforeunload', () => {
         if(myMpId) db.ref('players/' + myMpId).remove();
     });
 
     // --- GLOBAALIT MUUTTUJAT JA DOM ---
     const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
-    const keys = { w:false, a:false, s:false, d:false, space:false, e:false, up:false, down:false, left:false, right:false };
+    const keys = { w:false, a:false, s:false, d:false, space:false, e:false, x:false, up:false, down:false, left:false, right:false };
     const joystick = { active: false, dx: 0, dy: 0, touchId: null };
     let isKickingMobile = false, isJumpingMobile = false;
     
@@ -362,7 +368,8 @@
     const Sprites = {};
     const phoneTexts = [ "jätkä tuulottaa", "se on oikotiä", "Miksi täällä juoksentelee kana? ", "Ostan asunnon..", "Kana lähestyy!", "Kaupat tuli!", "Näin hirviön..." ];
 
-    const menuLayer = document.getElementById('menuLayer'), gameUiLayer = document.getElementById('gameUiLayer'), settingsLayer = document.getElementById('settingsLayer'), controlsArea = document.getElementById('controlsArea'), gameOverScreen = document.getElementById('gameOverScreen'), winScreen = document.getElementById('winScreen'), storyGameOverScreen = document.getElementById('storyGameOverScreen'), storyWinScreen = document.getElementById('storyWinScreen'), leaderboardLayer = document.getElementById('leaderboardLayer'), nameInputLayer = document.getElementById('nameInputLayer'), healthBar = document.getElementById('healthBar'), scoreDisplay = document.getElementById('scoreDisplay'), distDisplay = document.getElementById('distDisplay'), scoreWrapper = document.getElementById('scoreWrapper'), distWrapper = document.getElementById('distWrapper'), floatContainer = document.getElementById('floatingTextContainer'), energyTitle = document.getElementById('energyTitle'), jumpBtn = document.getElementById('jumpBtn'), menuCanvas = document.getElementById('menuCanvas'), mCtx = menuCanvas.getContext('2d', { alpha: false }), canvas = document.getElementById('gameCanvas'), ctx = canvas.getContext('2d', { alpha: false });
+    // DOM Links
+    const menuLayer = document.getElementById('menuLayer'), gameUiLayer = document.getElementById('gameUiLayer'), settingsLayer = document.getElementById('settingsLayer'), controlsArea = document.getElementById('controlsArea'), gameOverScreen = document.getElementById('gameOverScreen'), winScreen = document.getElementById('winScreen'), storyGameOverScreen = document.getElementById('storyGameOverScreen'), storyWinScreen = document.getElementById('storyWinScreen'), leaderboardLayer = document.getElementById('leaderboardLayer'), nameInputLayer = document.getElementById('nameInputLayer'), healthBar = document.getElementById('healthBar'), scoreDisplay = document.getElementById('scoreDisplay'), distDisplay = document.getElementById('distDisplay'), scoreWrapper = document.getElementById('scoreWrapper'), distWrapper = document.getElementById('distWrapper'), floatContainer = document.getElementById('floatingTextContainer'), energyTitle = document.getElementById('energyTitle'), jumpBtn = document.getElementById('jumpBtn'), danceBtn = document.getElementById('danceBtn'), menuCanvas = document.getElementById('menuCanvas'), mCtx = menuCanvas.getContext('2d', { alpha: false }), canvas = document.getElementById('gameCanvas'), ctx = canvas.getContext('2d', { alpha: false });
 
     menuCanvas.width = INTERNAL_W; menuCanvas.height = INTERNAL_H;
     canvas.width = INTERNAL_W; canvas.height = INTERNAL_H;
@@ -385,7 +392,6 @@
         }
         if(audioCtx.state === 'suspended') audioCtx.resume();
     }
-
     function updateVolumes() { if (!audioCtx) return; masterGain.gain.value = vols.master; musicGain.gain.value = vols.music; sfxGain.gain.value = vols.sfx; voiceGain.gain.value = vols.voice; }
     document.getElementById('volMaster').addEventListener('input', e => { vols.master = e.target.value / 100; updateVolumes(); });
     document.getElementById('volMusic').addEventListener('input', e => { vols.music = e.target.value / 100; updateVolumes(); });
@@ -411,9 +417,7 @@
     function stopMenuBGM() { if (menuMusicInterval) { clearInterval(menuMusicInterval); menuMusicInterval = null; } }
 
     function startBGM() {
-        stopMenuBGM(); if (musicInterval) clearInterval(musicInterval); 
-        if (currentMode === 'destroy' || currentMode === 'multiplayer') return; // Ei musaa näissä modeissa
-        
+        stopMenuBGM(); if (musicInterval) clearInterval(musicInterval); if (currentMode === 'destroy' || currentMode === 'multiplayer') return; 
         musicInterval = setInterval(() => {
             if ((gameState !== 'PLAYING' && gameState !== 'ANIMATION') || !audioCtx) return;
             try {
@@ -496,8 +500,8 @@
             } else if (type === 'scream' && vVol > 0) {
                 let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(800, now); osc.frequency.linearRampToValueAtTime(1200, now + 0.2); osc.frequency.exponentialRampToValueAtTime(100, now + 1.5);
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(1.0 * vVol, now + 0.1); gain.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+                osc.frequency.setValueAtTime(600, now); osc.frequency.linearRampToValueAtTime(1500, now + 0.2); osc.frequency.exponentialRampToValueAtTime(300, now + 1.5);
+                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(1.0 * vVol, now + 0.2); gain.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
                 osc.start(now); osc.stop(now + 1.5);
             } else if (type === 'crash' && sVol > 0) {
                 let osc = audioCtx.createOscillator(); osc.connect(gain);
@@ -714,6 +718,7 @@
         gameLoopId = requestAnimationFrame(gameLoop);
     });
 
+    // Tuhoamismoodin rakennukset
     class DestructibleBuilding {
         constructor(x, widthBlocks, heightBlocks) {
             this.x = x; this.z = -80;
@@ -885,10 +890,10 @@
         }
     }
 
-    function initGame(mode) {
+    function initGameData(mode) {
         currentMode = mode;
         score = 0; scoreDisplay.innerText = score; cameraX = 0; fadeAlpha = 0; endingTimer = 0; entities = []; particles = []; destroyBuildings = []; museumLabels = []; oikotieActive = false;
-        startTime = Date.now(); finalTimeStr = "00:00"; lastStepTime = 0; storyCarTimer = 0;
+        startTime = Date.now(); finalTimeStr = "00:00"; lastStepTime = 0; storyCarTimer = 0; isDancing = false;
         
         currentRampageTrack = Math.random() > 0.5 ? 1 : 2;
         player = new Entity(W/2, groundY, 'chicken'); player.hp = 100; player.energy = 100; player.isKicking = false; player.kickTimer = 0; player.z = 0;
@@ -901,8 +906,16 @@
         
         if (isMobile) {
             controlsArea.style.display = 'block';
-            if (mode === 'destroy' || mode === 'multiplayer') jumpBtn.style.display = 'flex';
-            else jumpBtn.style.display = 'none';
+            if (mode === 'destroy') {
+                jumpBtn.style.display = 'flex';
+                danceBtn.style.display = 'none';
+            } else if (mode === 'multiplayer') {
+                jumpBtn.style.display = 'flex';
+                danceBtn.style.display = 'flex';
+            } else {
+                jumpBtn.style.display = 'none';
+                danceBtn.style.display = 'none';
+            }
         } else {
             controlsArea.style.display = 'none';
         }
@@ -922,7 +935,7 @@
         } else if (mode === 'multiplayer') {
             scoreWrapper.style.display = 'none'; distWrapper.style.display = 'none'; energyTitle.innerText = "❤️ KANA ENERGIA";
             document.getElementById('onlineCountMp').style.display = 'block';
-            GOAL_X = 50000; generateCity(); // Iso mappi
+            GOAL_X = 50000; generateCity(); 
             stopBGM();
             
             myMpName = document.getElementById('mpNameInput').value || "Pelaaja";
@@ -934,109 +947,24 @@
         gameState = 'PLAYING';
     }
 
-    function spawnRampageLevel() {
-        let cc1 = new Entity(3000, groundY, 'car_crashed'); cc1.z = -20; entities.push(cc1);
-        let h1 = new Entity(2940, groundY, 'smoker'); h1.z = -10; h1.dir = 1; entities.push(h1);
-        let h2 = new Entity(3060, groundY, 'smoker'); h2.z = -10; h2.dir = -1; entities.push(h2);
-        let h3 = new Entity(2970, groundY, 'human_stand'); h3.z = 10; h3.dir = 1; entities.push(h3);
-        let hg = new Entity(3030, groundY, 'human_green'); hg.z = 10; hg.dir = -1; entities.push(hg);
-        let sign = new Entity(2870, groundY, 'sign_crash'); sign.z = -40; entities.push(sign);
-
-        let cx = W + 500; let nextFoodX = cx + 500; 
-        while(cx < GOAL_X - 1000) {
-            if (Math.abs(cx - 3000) < 600 || Math.abs(cx - 12000) < 600) { cx += 800; continue; } 
-            if (cx >= nextFoodX) {
-                let fType = Math.random() > 0.4 ? 'basket' : 'leg';
-                let f = new Entity(cx, groundY, fType); f.z = (Math.random() * 120) - 40; entities.push(f);
-                nextFoodX = cx + 400 + Math.random() * 400; cx += 200; continue;
-            }
-            let rnd = Math.random();
-            if (rnd < 0.15) { 
-                let count = 1 + Math.floor(Math.random()*3);
-                for(let j=0; j<count; j++) { let bot = new Entity(cx + j*20, groundY, 'bottle'); bot.z = (Math.random() * 120) - 40; entities.push(bot); }
-            } else if (rnd < 0.35) { 
-                let h = new Entity(cx, groundY, 'smoker'); h.z = (Math.random() * 120) - 40; entities.push(h);
-                if(Math.random() < 0.5) { let tr = new Entity(cx+80, groundY, 'trash'); tr.z = -40; entities.push(tr); }
-            } else if (rnd < 0.5) { 
-                let t = new Entity(cx, groundY, 'table'); t.z = (Math.random() * 120) - 40; entities.push(t);
-                let p1 = new Entity(cx - 50, groundY, 'human_sit'); p1.dir = 1; p1.z = t.z+5; entities.push(p1);
-                let p2 = new Entity(cx + 50, groundY, 'human_sit'); p2.dir = -1; p2.z = t.z-5; entities.push(p2);
-            } else if (rnd < 0.65) { 
-                let c = new Entity(cx, groundY, 'car'); c.z = (Math.random() * 120) - 40; entities.push(c);
-            } else if (rnd < 0.8) { 
-                let w = new Entity(cx, groundY, 'brick_wall'); w.z = (Math.random() * 120) - 40; entities.push(w);
-            } else if (rnd < 0.9) { 
-                let d = new Entity(cx, groundY, 'human_dance'); d.z = (Math.random() * 120) - 40; entities.push(d);
-            } else { 
-                let nc = new Entity(cx, groundY, 'npc_chicken'); nc.z = (Math.random() * 120) - 40; entities.push(nc);
-            }
-            cx += 250 + Math.random() * 400; 
+    danceBtn.addEventListener('click', () => {
+        isDancing = !isDancing;
+        if(isDancing) {
+            danceBtn.style.background = '#FFD700';
+            danceBtn.style.color = '#000';
+        } else {
+            danceBtn.style.background = '#DA70D6';
+            danceBtn.style.color = '#FFF';
         }
-        for (let bx = GOAL_X - 500; bx < GOAL_X + 200; bx += 100) {
-            let blood = new Entity(bx + Math.random()*50, groundY, 'blood');
-            blood.bloodW = 15 + Math.random()*15; blood.bloodH = 5 + Math.random()*5; blood.z = (Math.random() * 120) - 40; entities.push(blood);
+    });
+
+    window.addEventListener('keydown', e => {
+        let k = e.key.toLowerCase(); 
+        if (k === 'x' && currentMode === 'multiplayer') {
+            isDancing = !isDancing;
         }
-        let rest = new Entity(GOAL_X + 200, groundY, 'restaurant'); rest.z = -40; entities.push(rest);
-        let bguy = new Entity(GOAL_X + 240, groundY, 'bat_guy'); bguy.z = -10; bguy.dir = -1; entities.push(bguy);
-    }
+    });
 
-    function spawnStoryLevel() {
-        let cx = 800;
-        while (cx < GOAL_X + 1000) {
-            let rnd = Math.random(); let zPos = (Math.random() * 60) - 40; 
-            if (rnd < 0.2) { let t = new Entity(cx, groundY, 'tree'); t.z = -40; entities.push(t);
-            } else if (rnd < 0.3) { let b = new Entity(cx, groundY, 'bench'); b.z = -40; entities.push(b);
-            } else if (rnd < 0.5) { let cType = Math.random() > 0.5 ? 'chicken_girl' : 'chicken_baby'; let nc = new Entity(cx, groundY, cType); nc.z = zPos; entities.push(nc);
-            } else if (rnd < 0.7) { let nc = new Entity(cx, groundY, 'npc_chicken'); nc.z = zPos; entities.push(nc);
-            } else if (rnd < 0.8) { let s = new Entity(cx, groundY, 'smoker'); s.z = zPos; entities.push(s); }
-            cx += 300 + Math.random() * 400;
-        }
-    }
-
-    function spawnDestroyLevel() {
-        let museumItems = [
-            {t:'basket', n:'Kanakori'}, {t:'leg', n:'Kanankoipi'}, {t:'bottle', n:'Pullo'},
-            {t:'human_stand', n:'Seisoja'}, {t:'smoker', n:'Ihminen joka savuttaa'}, {t:'human_dance', n:'Jätkä tuulottaa ihminen'},
-            {t:'human_green', n:'Oi juma -ihminen'}, {t:'human_sit', n:'Istuja'}, {t:'table', n:'Pöytä'},
-            {t:'chicken_girl', n:'Tyttökana'}, {t:'chicken_baby', n:'Vauvakana'}, {t:'npc_chicken', n:'Kana'},
-            {t:'trash', n:'Roskis'}, {t:'car', n:'Auto'}, {t:'car_crashed', n:'Kolaroitu auto'},
-            {t:'brick_wall', n:'Tiiliseinä'}, {t:'bench', n:'Penkki'}, {t:'tree', n:'Puu'},
-            {t:'oikotie', n:'Oikotiemies'}, {t:'bat_guy', n:'Pesäpallomailamies'}, {t:'butcher', n:'Teurastaja'}
-        ];
-        
-        let cx = 500;
-        for(let item of museumItems) {
-            let ent = new Entity(cx, groundY, item.t);
-            ent.z = 0; ent.dir = 1; entities.push(ent);
-            museumLabels.push({text: item.n, x: cx, z: 0, yOffset: 100});
-            cx += 200;
-        }
-
-        cx += 500;
-        for(let i=0; i<15; i++) {
-            destroyBuildings.push(new DestructibleBuilding(cx, 4 + Math.floor(Math.random()*4), 6 + Math.floor(Math.random()*8)));
-            cx += 400 + Math.random() * 200;
-        }
-    }
-
-    function spawnStoryCar() {
-        let fromLeft = Math.random() > 0.5;
-        let cx = fromLeft ? cameraX - 200 : cameraX + W + 200;
-        let c = new Entity(cx, groundY, 'car');
-        c.z = fromLeft ? 60 : 100; // Autot on kaukana kävelytiellä olevasta (joka on z: 0 - 20)
-        c.dir = fromLeft ? 1 : -1; c.vx = fromLeft ? (12 + Math.random()*5) : (-12 - Math.random()*5);
-        entities.push(c);
-    }
-
-    function spawnOikotie() {
-        if (oikotieActive || currentMode === 'story' || currentMode === 'destroy') return; 
-        oikotieActive = true;
-        let oiko = new Entity(player.x + 300 + Math.random() * 200, groundY, 'oikotie');
-        oiko.z = -80; oiko.y = groundY + oiko.z + 100; oiko.vy = -1.5; oiko.state = 0;
-        entities.push(oiko);
-    }
-
-    // Update
     function update(dt) {
         if(gameState === 'PLAYING') {
             let speed = isMobile ? 8 : 4; 
@@ -1044,6 +972,15 @@
             if (keys.a || keys.left) moveX -= 1; if (keys.d || keys.right) moveX += 1;
             if (keys.w || keys.up) moveZ -= 1; if (keys.s || keys.down) moveZ += 1;
             if (joystick.active) { moveX = joystick.dx; moveZ = joystick.dy; }
+
+            // LOPETA TANSSI JOS LIIKKUU
+            if(moveX !== 0 || moveZ !== 0 || player.isKicking || player.vy < 0) {
+                isDancing = false;
+                if(isMobile) {
+                    danceBtn.style.background = '#DA70D6';
+                    danceBtn.style.color = '#FFF';
+                }
+            }
 
             let nextX = player.x + moveX * speed;
             let nextZ = player.z + moveZ * (speed * 0.7);
@@ -1078,7 +1015,7 @@
                 }
                 player.y += player.vy;
                 if (player.y < baseFloor) {
-                    player.vy += 0.6; // Pehmeämpi mario-painovoima
+                    player.vy += 0.6; 
                 } else {
                     player.y = baseFloor; player.vy = 0;
                 }
@@ -1092,7 +1029,6 @@
                 }
             }
 
-            // KICK trigger
             if ((keys.e || (currentMode !== 'destroy' && currentMode !== 'multiplayer' && keys.space) || isKickingMobile)) {
                 if (Date.now() - (player.lastKickTime||0) > 250 && player.kickTimer <= 0) {
                     player.lastKickTime = Date.now();
@@ -1131,14 +1067,15 @@
                 let progress = Math.floor((player.x / GOAL_X) * 100);
                 distDisplay.innerText = Math.min(100, Math.max(0, progress));
 
-                if(currentMode === 'rampage' && Math.random() < 0.002 && !oikotieActive) spawnOikotie();
+                if(currentMode === 'rampage' && Math.random() < 0.002 && !oikotieActive) {
+                    spawnOikotie();
+                }
 
                 if (player.x >= GOAL_X && currentMode === 'rampage') {
                     gameState = 'ANIMATION'; stopBGM(); playSound('win');
                     player.isKicking = false; player.dir = 1;
                 }
             } else if (currentMode === 'story') {
-                // Auto timer logic
                 storyCarTimer -= dt;
                 if (storyCarTimer <= 0) {
                     spawnStoryCar();
@@ -1153,8 +1090,6 @@
                         }
                     }
                 }
-            } else if (currentMode === 'multiplayer') {
-                // Multiplayer energy drain doesn't apply
             }
 
         } else if (gameState === 'ANIMATION') {
@@ -1175,7 +1110,6 @@
             if (endingTimer === 1) {
                 entities = []; 
                 playSound('evil_laugh');
-                // 5s odotus (60 fps * 5 = 300)
             } else if (endingTimer === 300) {
                 for(let i=0; i<6; i++) {
                     let b = new Entity(player.x - 200 + Math.random()*400, groundY, 'butcher');
@@ -1382,12 +1316,18 @@
             if (ent === player) {
                 if(!player.isDead) { 
                     let isMoving = (!player.isKicking && (keys.a || keys.d || keys.w || keys.s || joystick.active || gameState === 'ANIMATION'));
+                    
                     let sprite = myMpChar === 'female' ? Sprites.chicken_girl : Sprites.chicken_idle;
-                    if(player.isKicking) sprite = Sprites.chicken_kick;
-                    else if(isMoving) {
+                    
+                    if (isDancing) {
+                        sprite = Math.floor(Date.now() / 150) % 2 === 0 ? Sprites.human_dance1 : Sprites.human_dance2;
+                    } else if(player.isKicking) {
+                        sprite = Sprites.chicken_kick;
+                    } else if(isMoving) {
                         sprite = Math.floor((player.x + player.z) / 20) % 2 === 0 ? Sprites.chicken_walk1 : Sprites.chicken_walk2;
                     }
-                    let walkY = isMoving ? Math.sin(Date.now() / 100) * 10 : 0;
+
+                    let walkY = (isMoving && !isDancing) ? Math.sin(Date.now() / 100) * 10 : 0;
                     ctx.drawImage(sprite, Math.floor(-sprite.width/2), Math.floor(-sprite.height + walkY));
                 }
             } else if (ent.type === 'smoker') {
@@ -1486,8 +1426,14 @@
                 ctx.save();
                 ctx.translate(Math.floor(screenX), Math.floor(op.y + op.z));
                 ctx.scale(op.dir > 0 ? 1 : -1, 1);
+                
                 let sprite = op.char === 'female' ? Sprites.chicken_girl : Sprites.chicken_idle;
-                if (op.isKicking) sprite = Sprites.chicken_kick;
+                if (op.isDancing) {
+                    sprite = Math.floor(Date.now() / 150) % 2 === 0 ? Sprites.human_dance1 : Sprites.human_dance2;
+                } else if (op.isKicking) {
+                    sprite = Sprites.chicken_kick;
+                }
+                
                 ctx.drawImage(sprite, Math.floor(-sprite.width/2), Math.floor(-sprite.height));
                 ctx.restore();
 
@@ -1506,7 +1452,7 @@
         }
 
         if (fadeAlpha > 0) {
-            ctx.fillStyle = `rgba(255,0,0,${fadeAlpha})`; // Värjäytyy punaiseksi storyn lopussa!
+            ctx.fillStyle = `rgba(255,0,0,${fadeAlpha})`;
             ctx.fillRect(0, 0, W, H);
         }
     }
@@ -1542,19 +1488,53 @@
         document.getElementById('goScore').innerText = score; 
         gameOverScreen.style.display = 'flex'; controlsArea.style.display = 'none'; 
     }
+
     function gameOverStory() {
         gameState = 'STORY_GAMEOVER'; stopBGM(); playSound('crash'); 
         document.getElementById('sGoTime').innerText = formatTime(Date.now() - startTime);
         storyGameOverScreen.style.display = 'flex'; controlsArea.style.display = 'none';
     }
-    function winGame() { 
+
+    async function winGame() { 
         gameState = 'WIN'; 
         let timeTaken = Date.now() - startTime; finalTimeStr = formatTime(timeTaken);
         score += Math.floor(player.energy * 100); 
+        
+        let qualifies = await checkQualifiesTop3(score);
+        if(qualifies && currentMode === 'rampage') {
+            document.getElementById('nameInputLayer').style.display = 'flex';
+        }
+
         document.getElementById('winScore').innerText = score; document.getElementById('winTime').innerText = finalTimeStr;
         winScreen.style.display = 'flex'; controlsArea.style.display = 'none'; 
     }
-    function restartGame() { gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; storyGameOverScreen.style.display = 'none'; storyWinScreen.style.display = 'none'; initGame(currentMode); }
+
+    document.getElementById('submitNameBtn').addEventListener('click', () => {
+        let name = document.getElementById('playerNameInput').value.trim();
+        if(name.length > 0) {
+            submitScoreToFirebase(name, score);
+            document.getElementById('nameInputLayer').style.display = 'none';
+            document.getElementById('leaderboardLayer').style.display = 'flex';
+            loadLeaderboard();
+        }
+    });
+
+    document.getElementById('leaderboardBtn').addEventListener('click', () => {
+        document.getElementById('leaderboardLayer').style.display = 'flex';
+        loadLeaderboard();
+    });
+
+    document.getElementById('closeLbBtn').addEventListener('click', () => {
+        document.getElementById('leaderboardLayer').style.display = 'none';
+    });
+
+    document.getElementById('tab1v1').addEventListener('click', () => {
+        let note = document.getElementById('inGameNotification');
+        note.classList.add('show');
+        setTimeout(() => { note.classList.remove('show'); }, 2000);
+    });
+
+    function restartGame() { gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; storyGameOverScreen.style.display = 'none'; storyWinScreen.style.display = 'none'; initGameData(currentMode); }
 
     let menuTime = 0;
     function drawMenu() {
@@ -1607,20 +1587,46 @@
 
     function gameLoop(timestamp) {
         let dt = timestamp - lastTime; lastTime = timestamp;
-        if (gameState === 'MENU') drawMenu(); else if (gameState === 'PLAYING' || gameState === 'ANIMATION' || gameState === 'STORY_ENDING') { update(dt); drawGame(); } else if (['GAMEOVER', 'WIN', 'STORY_GAMEOVER', 'STORY_WIN'].includes(gameState)) drawGame(); 
+        if (gameState === 'MENU') drawMenu(); 
+        else if (gameState === 'PLAYING' || gameState === 'ANIMATION' || gameState === 'STORY_ENDING') { update(dt); drawGame(); } 
+        else if (['GAMEOVER', 'WIN', 'STORY_GAMEOVER', 'STORY_WIN'].includes(gameState)) drawGame(); 
         gameLoopId = requestAnimationFrame(gameLoop);
     }
 
-    // --- NAPPIEN KUUNTELIJAT ---
-    document.getElementById('playBtn').addEventListener('click', () => { initAudio(); initGame('rampage'); });
-    document.getElementById('storyBtn').addEventListener('click', () => { initAudio(); initGame('story'); });
-    document.getElementById('destroyBtn').addEventListener('click', () => { initAudio(); initGame('destroy'); });
+    function resize() {
+        let screenW = window.innerWidth || 800; 
+        let screenH = window.innerHeight || 600; 
+        
+        let scale = 1;
+        if (screenH < 650) { 
+            scale = screenH / 650;
+        }
+        
+        W = screenW / scale; 
+        H = screenH / scale; 
+        
+        menuCanvas.width = W; menuCanvas.height = H; 
+        canvas.width = W; canvas.height = H; 
+        
+        let oldGround = groundY;
+        groundY = Math.max(H * 0.7, 400); 
+        let diff = groundY - (oldGround || groundY);
+        if (diff !== 0 && player) {
+            player.y += diff; entities.forEach(e => e.y += diff); particles.forEach(p => p.y += diff);
+        }
+        ctx.imageSmoothingEnabled = false; mCtx.imageSmoothingEnabled = false;
+    }
+    window.addEventListener('resize', resize);
     
-    // MP Setup avaus
-    document.getElementById('mpBtn').addEventListener('click', () => { initAudio(); document.getElementById('mpSetupLayer').style.display = 'flex'; });
-    document.getElementById('closeMpSetupBtn').addEventListener('click', () => { document.getElementById('mpSetupLayer').style.display = 'none'; });
-    document.getElementById('startMpBtn').addEventListener('click', () => { initGame('multiplayer'); });
-
+    document.getElementById('playBtn').addEventListener('click', () => { initAudio(); initGameData('rampage'); });
+    document.getElementById('storyBtn').addEventListener('click', () => { initAudio(); initGameData('story'); });
+    document.getElementById('destroyBtn').addEventListener('click', () => { initAudio(); initGameData('destroy'); });
+    
+    document.getElementById('leaderboardBtn').addEventListener('click', () => {
+        document.getElementById('leaderboardLayer').style.display = 'flex';
+        loadLeaderboard();
+    });
+    
     document.getElementById('restartBtn').addEventListener('click', restartGame); 
     document.getElementById('winRestartBtn').addEventListener('click', restartGame);
     document.getElementById('storyRestartBtn').addEventListener('click', restartGame);
@@ -1636,7 +1642,7 @@
     document.getElementById('storyWinMenuBtn').addEventListener('click', goToMenu);
     
     document.getElementById('copyBtn').addEventListener('click', () => {
-        const resultText = `Horseleg Chicken: Definitive Edition\nVaikeustaso: ${settings.difficulty === 0 ? "Helppo" : settings.difficulty === 1 ? "Normaali" : "Vaikea"}\nAika: ${finalTimeStr}\nLoppupisteet: ${score}\nOlet paras!`;
+        const resultText = `Horseleg chicken demo\nVaikeustaso: ${settings.difficulty === 0 ? "Helppo" : settings.difficulty === 1 ? "Normaali" : "Vaikea"}\nAika: ${finalTimeStr}\nLoppupisteet: ${score}\nOlet paras!`;
         if (navigator.clipboard) { navigator.clipboard.writeText(resultText).then(() => alert("Kopioitu leikepöydälle!")); }
         else { alert("Kopiointi ei tuettu tässä selaimessa."); }
     });
