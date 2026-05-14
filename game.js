@@ -1386,8 +1386,13 @@ function update(dt) {
         this.innerText = settings.difficulty === 0 ? "HELPPO" : settings.difficulty === 1 ? "NORMAALI" : "VAIKEA";
         this.style.background = settings.difficulty === 0 ? '#006600' : settings.difficulty === 1 ? '#444' : '#660000';
     });
-    document.getElementById('fullscreenBtn').addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e=>console.log(e)); else if (document.exitFullscreen) document.exitFullscreen(); });
-
+    document.getElementById('fullscreenBtn').addEventListener('click', () => { 
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(e => console.log(e));
+        } else if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    });
 </script>
 </body>
 </html>
