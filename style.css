@@ -1,1 +1,95 @@
+:root {
+    --mario-font: 'Press Start 2P', cursive;
+    --primary-color: #FFD700;
+    --secondary-color: #FF4500;
+    --bg-color: #1a1a2e;
+    --ground-color: #2b2b2b;
+}
 
+body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000; overflow: hidden; touch-action: none; font-family: var(--mario-font); user-select: none; color: white; -webkit-tap-highlight-color: transparent; }
+canvas { display: block; width: 100%; height: 100%; }
+
+#lagWarning { position: fixed; top: 0; left: 0; width: 100%; height: 3vmin; background: linear-gradient(90deg, #8B0000, #FF0000, #8B0000); background-size: 200% 100%; color: white; z-index: 10000; display: flex; align-items: center; overflow: hidden; pointer-events: none; animation: bgSlide 2s infinite linear; }
+.marquee-text { white-space: nowrap; font-size: 1.5vmin; animation: marqueeText 10s infinite linear; }
+@keyframes marqueeText { 0% { transform: translateX(100vw); } 100% { transform: translateX(-150%); } }
+@keyframes bgSlide { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+.notification {
+    position: fixed; top: -10vmin; left: 50%; transform: translateX(-50%);
+    background-color: #FF4500; color: #FFF; padding: 2vmin 4vmin; font-size: 2vmin;
+    border: 0.4vmin solid #FFF; box-shadow: 0 0.8vmin 0 #8B0000;
+    z-index: 10000; font-family: var(--mario-font); transition: top 0.5s ease-in-out;
+}
+.notification.show { top: 10vmin; }
+
+.modal-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 150; background: rgba(0,0,0,0.9); }
+
+#menuLayer, #gameUiLayer, #settingsLayer, #gameOverScreen, #winScreen, #storyGameOverScreen, #storyWinScreen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
+#menuLayer { display: flex; background-color: var(--bg-color); }
+
+.title { font-size: 6vmin; margin-bottom: 3vmin; text-transform: uppercase; letter-spacing: 0.2vmin; z-index: 10; text-align: center; line-height: 1.4; animation: titlePulse 1.5s infinite alternate ease-in-out; }
+@keyframes titlePulse { 0% { transform: scale(1); color: #FFD700; text-shadow: 0 0 10px #FFD700; } 100% { transform: scale(1.05); color: #FF4500; text-shadow: 0 0 20px #FF4500; } }
+
+.menu-buttons { display: flex; flex-direction: column; align-items: center; z-index: 10; gap: 1.5vmin; }
+.btn { padding: 2vmin 4vmin; font-size: 2vmin; background: linear-gradient(to bottom, #8B0000, #500000); color: white; border: 0.4vmin solid #fff; font-weight: bold; box-shadow: 0 0.6vmin 0 #300000, 0 1vmin 1vmin rgba(0,0,0,0.8); cursor: pointer; font-family: var(--mario-font); transition: transform 0.1s, box-shadow 0.1s; }
+.btn:active { transform: translateY(0.4vmin); box-shadow: 0 0.2vmin 0 #300000, 0 0.5vmin 1vmin rgba(0,0,0,0.8); }
+.btn-story { background: linear-gradient(to bottom, #0000CD, #000080); box-shadow: 0 0.6vmin 0 #000033, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+.btn-story:active { box-shadow: 0 0.4vmin 0 #000033, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+.btn-destroy { background: linear-gradient(to bottom, #8B8B00, #505000); box-shadow: 0 0.6vmin 0 #333300, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+.btn-destroy:active { box-shadow: 0 0.4vmin 0 #333300, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+.btn-settings { background: linear-gradient(to bottom, #666, #333); box-shadow: 0 0.6vmin 0 #111, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+.btn-settings:active { box-shadow: 0 0.4vmin 0 #111, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+.btn-leaderboard { background: linear-gradient(to bottom, #4A0080, #2A0040); box-shadow: 0 0.6vmin 0 #1A0020, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+.btn-leaderboard:active { box-shadow: 0 0.4vmin 0 #1A0020, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+.btn-copy { background: linear-gradient(to bottom, #008B8B, #005050); box-shadow: 0 0.6vmin 0 #003333, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+.btn-copy:active { box-shadow: 0 0.4vmin 0 #003333, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+
+.copyright { position: absolute; bottom: 2vmin; font-size: 1.2vmin; color: rgba(255, 255, 255, 0.9); z-index: 10; text-align: center; line-height: 1.5; }
+
+.settings-panel { background: #222; border: 0.6vmin solid #8B0000; padding: 4vmin; width: 85vw; max-width: 600px; max-height: 85vh; overflow-y: auto; text-align: center; box-shadow: 1vmin 1vmin 0 #000; }
+.setting-item { margin: 2vmin 0; display: flex; justify-content: space-between; align-items: center; font-size: 1.8vmin; }
+input[type=range] { -webkit-appearance: none; width: 30vw; max-width: 150px; background: transparent; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 3vmin; width: 3vmin; background: #FFD700; cursor: pointer; border: 0.3vmin solid #fff; margin-top: -1vmin; }
+input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1vmin; cursor: pointer; background: #555; border: 0.1vmin solid #000; }
+.toggle-btn { padding: 1vmin 2vmin; background: #444; border: 0.3vmin solid #fff; color: white; font-family: var(--mario-font); font-size: 1.5vmin; cursor: pointer; box-shadow: 0.3vmin 0.3vmin 0 #000; }
+.toggle-btn.active { background: #8B0000; }
+
+.credits-box { background: #111; padding: 2vmin; border: 0.4vmin dashed #666; margin-top: 3vmin; font-size: 1.5vmin; line-height: 2; color: #FFD700; text-align: left; }
+
+#gameUiLayer { pointer-events: none; z-index: 50; display: none; justify-content: flex-start; align-items: flex-start; padding: 4vmin 2vmin 2vmin 2vmin; }
+#topBar { width: 100%; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: auto; flex-wrap: wrap; gap: 2vmin;}
+#hud { background: rgba(0,0,0,0.8); padding: 2vmin; border: 0.4vmin solid #8B0000; font-size: 2vmin; box-shadow: 0.4vmin 0.4vmin 0 #000; }
+.score-text { color: var(--primary-color); margin-bottom: 1vmin; display: block; }
+.progress-text { color: #00FFFF; margin-bottom: 1vmin; display: block; font-size: 1.5vmin; }
+.energy-title { font-size: 1.8vmin; display: flex; align-items: center; gap: 0.5vmin; }
+.bar-bg { width: 25vw; max-width: 200px; height: 2.5vmin; background: #333; margin-top: 1vmin; border: 0.3vmin solid #fff; position: relative; }
+.bar-fill { width: 100%; height: 100%; background: linear-gradient(to right, #f00, #0f0); transition: width 0.1s linear; }
+.game-buttons { display: flex; gap: 2vmin; }
+.game-btn { padding: 1.5vmin 2vmin; font-size: 1.2vmin; background: rgba(0,0,0,0.8); color: white; border: 0.4vmin solid #fff; cursor: pointer; font-family: var(--mario-font); box-shadow: 0.4vmin 0.4vmin 0 #000; }
+
+#floatingTextContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.floating-text { position: absolute; color: #FFD700; font-size: 2vmin; font-weight: bold; text-shadow: 0.2vmin 0.2vmin 0 #000; animation: floatUp 1.2s ease-out forwards; pointer-events: none; z-index: 200; text-align: center; }
+.burger-text { color: #FF0000; font-size: 4vmin; animation: floatUpShake 1.5s ease-out forwards; }
+.oikotie-shout { color: #00FFFF; font-size: 3.5vmin; animation: popIn 1.5s ease-out forwards; }
+.museum-label { position: absolute; color: #FFF; font-size: 1.5vmin; font-weight: bold; text-shadow: 0.2vmin 0.2vmin 0 #000; text-align: center; transform: translateX(-50%); }
+
+@keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-4vmin) scale(1.2); opacity: 1; } 100% { transform: translateY(-8vmin) scale(1); opacity: 0; } }
+@keyframes floatUpShake { 0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translateY(-2vmin) scale(1.5) rotate(10deg); opacity: 1; } 40% { transform: translateY(-4vmin) scale(1.5) rotate(-10deg); opacity: 1; } 60% { transform: translateY(-6vmin) scale(1.5) rotate(10deg); opacity: 1; } 100% { transform: translateY(-10vmin) scale(1) rotate(0deg); opacity: 0; } }
+@keyframes popIn { 0% { transform: scale(0); opacity: 0; } 20% { transform: scale(1.5); opacity: 1; } 80% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
+
+#controlsArea { position: absolute; bottom: 0; left: 0; width: 100%; height: 35vmin; pointer-events: none; z-index: 60; display: none; }
+.control-zone { pointer-events: auto; position: absolute; }
+#joystickBase { bottom: 5vmin; left: 5vmin; width: 22vmin; height: 22vmin; background: rgba(0,0,0,0.5); border: 0.6vmin solid rgba(255,255,255,0.8); border-radius: 50%; box-shadow: 0 0 2vmin rgba(0,0,0,0.5); }
+#joystickStick { position: absolute; top: 5.5vmin; left: 5.5vmin; width: 11vmin; height: 11vmin; background: var(--secondary-color); border: 0.4vmin solid #fff; border-radius: 50%; }
+#kickBtn { bottom: 6vmin; right: 6vmin; width: 18vmin; height: 18vmin; background: #8B0000; border: 0.6vmin solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2.5vmin; box-shadow: inset -0.6vmin -0.6vmin 0 rgba(0,0,0,0.3), 0.6vmin 0.6vmin 0 rgba(0,0,0,0.5); cursor: pointer; }
+#jumpBtn { bottom: 26vmin; right: 10vmin; width: 12vmin; height: 12vmin; background: #008B8B; border: 0.4vmin solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2vmin; box-shadow: inset -0.4vmin -0.4vmin 0 rgba(0,0,0,0.3), 0.4vmin 0.4vmin 0 rgba(0,0,0,0.5); cursor: pointer; display: none; }
+
+/* SUPER MARIO BROS DEATH SCREEN TYYLI */
+#gameOverScreen, #storyGameOverScreen { background-color: #000; z-index: 150; }
+.mario-text-title { color: #FFF; font-size: 6vmin; margin-bottom: 5vmin; text-align: center; text-shadow: none; }
+.mario-text-stats { color: #FFF; font-size: 3vmin; margin-bottom: 2vmin; text-align: center; }
+
+#storyWinScreen { background: rgba(50,0,0,1); z-index: 150; } 
+.story-win-title { color: #FFF; font-size: 6vmin; margin-bottom: 3vmin; text-align: center; line-height: 1.5; text-shadow: 0.4vmin 0.4vmin 0 #000;}
+
+#winScreen { background: rgba(0,30,0,0.95); z-index: 150; }
