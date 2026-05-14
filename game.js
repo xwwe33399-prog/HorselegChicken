@@ -1397,5 +1397,3 @@ function update(dt) {
     });
 
     console.log("%ctesti ladattu JEE!", "color: lime; font-size: 16px");
-
-})();
