@@ -3,32 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Horseleg Chicken: Definitive Edition</title>
+    <title>Horseleg Chicken demo</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
     <style>
         :root {
             --mario-font: 'Press Start 2P', cursive;
             --primary-color: #FFD700;
             --secondary-color: #FF4500;
             --bg-color: #1a1a2e;
+            --ground-color: #2b2b2b;
         }
 
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: #000; overflow: hidden; touch-action: none; font-family: var(--mario-font); user-select: none; color: white; -webkit-tap-highlight-color: transparent; }
         canvas { display: block; width: 100%; height: 100%; }
 
+        /* AINA NÄKYVÄ SLIDING VAROITUS */
         #lagWarning { position: fixed; top: 0; left: 0; width: 100%; height: 3vmin; background: linear-gradient(90deg, #8B0000, #FF0000, #8B0000); background-size: 200% 100%; color: white; z-index: 10000; display: flex; align-items: center; overflow: hidden; pointer-events: none; animation: bgSlide 2s infinite linear; }
         .marquee-text { white-space: nowrap; font-size: 1.5vmin; animation: marqueeText 10s infinite linear; }
         @keyframes marqueeText { 0% { transform: translateX(100vw); } 100% { transform: translateX(-150%); } }
         @keyframes bgSlide { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
-
-        .notification { position: fixed; top: -10vmin; left: 50%; transform: translateX(-50%); background-color: #FF4500; color: #FFF; padding: 2vmin 4vmin; font-size: 2vmin; border: 0.4vmin solid #FFF; box-shadow: 0 0.8vmin 0 #8B0000; z-index: 10000; font-family: var(--mario-font); transition: top 0.5s ease-in-out; }
-        .notification.show { top: 10vmin; }
-
-        .modal-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 150; background: rgba(0,0,0,0.9); }
 
         #menuLayer, #gameUiLayer, #settingsLayer, #gameOverScreen, #winScreen, #storyGameOverScreen, #storyWinScreen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
         #menuLayer { display: flex; background-color: var(--bg-color); }
@@ -36,7 +29,7 @@
         .title { font-size: 6vmin; margin-bottom: 3vmin; text-transform: uppercase; letter-spacing: 0.2vmin; z-index: 10; text-align: center; line-height: 1.4; animation: titlePulse 1.5s infinite alternate ease-in-out; }
         @keyframes titlePulse { 0% { transform: scale(1); color: #FFD700; text-shadow: 0 0 10px #FFD700; } 100% { transform: scale(1.05); color: #FF4500; text-shadow: 0 0 20px #FF4500; } }
 
-        .menu-buttons { display: flex; flex-direction: column; align-items: center; z-index: 10; gap: 1.5vmin; }
+        .menu-buttons { display: flex; flex-direction: column; align-items: center; z-index: 10; gap: 1vmin; }
         .btn { padding: 2vmin 4vmin; font-size: 2vmin; background: linear-gradient(to bottom, #8B0000, #500000); color: white; border: 0.4vmin solid #fff; font-weight: bold; box-shadow: 0 0.6vmin 0 #300000, 0 1vmin 1vmin rgba(0,0,0,0.8); cursor: pointer; font-family: var(--mario-font); transition: transform 0.1s, box-shadow 0.1s; }
         .btn:active { transform: translateY(0.4vmin); box-shadow: 0 0.2vmin 0 #300000, 0 0.5vmin 1vmin rgba(0,0,0,0.8); }
         .btn-story { background: linear-gradient(to bottom, #0000CD, #000080); box-shadow: 0 0.6vmin 0 #000033, 0 1vmin 1vmin rgba(0,0,0,0.8); }
@@ -45,20 +38,22 @@
         .btn-destroy:active { box-shadow: 0 0.4vmin 0 #333300, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
         .btn-settings { background: linear-gradient(to bottom, #666, #333); box-shadow: 0 0.6vmin 0 #111, 0 1vmin 1vmin rgba(0,0,0,0.8); }
         .btn-settings:active { box-shadow: 0 0.4vmin 0 #111, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-copy { background: linear-gradient(to bottom, #008B8B, #005050); box-shadow: 0 0.6vmin 0 #003333, 0 1.2vmin 1.5vmin rgba(0,0,0,0.8); }
+        .btn-copy:active { box-shadow: 0 0.4vmin 0 #003333, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
         .btn-leaderboard { background: linear-gradient(to bottom, #4A0080, #2A0040); box-shadow: 0 0.6vmin 0 #1A0020, 0 1vmin 1vmin rgba(0,0,0,0.8); }
         .btn-leaderboard:active { box-shadow: 0 0.4vmin 0 #1A0020, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
-        .btn-copy { background: linear-gradient(to bottom, #008B8B, #005050); box-shadow: 0 0.6vmin 0 #003333, 0 1vmin 1vmin rgba(0,0,0,0.8); }
-        .btn-copy:active { box-shadow: 0 0.4vmin 0 #003333, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
 
         .copyright { position: absolute; bottom: 2vmin; font-size: 1.2vmin; color: rgba(255, 255, 255, 0.9); z-index: 10; text-align: center; line-height: 1.5; }
 
-        .settings-panel { background: #222; border: 0.6vmin solid #8B0000; padding: 4vmin; width: 85vw; max-width: 600px; max-height: 85vh; overflow-y: auto; text-align: center; box-shadow: 1vmin 1vmin 0 #000; }
+        #settingsLayer { background: rgba(0, 0, 0, 0.95); z-index: 110; }
+        .settings-panel { background: #222; border: 0.6vmin solid #8B0000; padding: 3vmin; width: 85vw; max-width: 600px; max-height: 85vh; overflow-y: auto; text-align: center; box-shadow: 1vmin 1vmin 0 #000; }
         .setting-item { margin: 2vmin 0; display: flex; justify-content: space-between; align-items: center; font-size: 1.8vmin; }
         input[type=range] { -webkit-appearance: none; width: 30vw; max-width: 150px; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 3vmin; width: 3vmin; background: #FFD700; cursor: pointer; border: 0.3vmin solid #fff; margin-top: -1vmin; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 1vmin; cursor: pointer; background: #555; border: 0.1vmin solid #000; }
         .toggle-btn { padding: 1vmin 2vmin; background: #444; border: 0.3vmin solid #fff; color: white; font-family: var(--mario-font); font-size: 1.5vmin; cursor: pointer; box-shadow: 0.3vmin 0.3vmin 0 #000; }
         .toggle-btn.active { background: #8B0000; }
+
         .credits-box { background: #111; padding: 2vmin; border: 0.4vmin dashed #666; margin-top: 3vmin; font-size: 1.5vmin; line-height: 2; color: #FFD700; text-align: left; }
 
         #gameUiLayer { pointer-events: none; z-index: 50; display: none; justify-content: flex-start; align-items: flex-start; padding: 4vmin 2vmin 2vmin 2vmin; }
@@ -74,11 +69,10 @@
         .game-btn:active { transform: translateY(0.4vmin); box-shadow: 0 0 0 #000; }
 
         #floatingTextContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        .floating-text { position: absolute; color: #FFD700; font-size: 2vmin; font-weight: bold; text-shadow: 0.2vmin 0.2vmin 0 #000; animation: floatUp 1.2s ease-out forwards; pointer-events: none; z-index: 200; text-align: center; }
+        .floating-text { position: absolute; color: #FFD700; font-size: 2vmin; font-weight: bold; text-shadow: 0.3vmin 0.3vmin 0 #000; animation: floatUp 1.2s ease-out forwards; pointer-events: none; z-index: 200; text-align: center; }
         .burger-text { color: #FF0000; font-size: 4vmin; animation: floatUpShake 1.5s ease-out forwards; }
         .oikotie-shout { color: #00FFFF; font-size: 3.5vmin; animation: popIn 1.5s ease-out forwards; }
-        .museum-label { position: absolute; color: #FFF; font-size: 1.5vmin; font-weight: bold; text-shadow: 0.2vmin 0.2vmin 0 #000; text-align: center; transform: translateX(-50%); }
-
+        
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-4vmin) scale(1.2); opacity: 1; } 100% { transform: translateY(-8vmin) scale(1); opacity: 0; } }
         @keyframes floatUpShake { 0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translateY(-2vmin) scale(1.5) rotate(10deg); opacity: 1; } 40% { transform: translateY(-4vmin) scale(1.5) rotate(-10deg); opacity: 1; } 60% { transform: translateY(-6vmin) scale(1.5) rotate(10deg); opacity: 1; } 100% { transform: translateY(-10vmin) scale(1) rotate(0deg); opacity: 0; } }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 20% { transform: scale(1.5); opacity: 1; } 80% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
@@ -90,6 +84,7 @@
         #kickBtn { bottom: 6vmin; right: 6vmin; width: 18vmin; height: 18vmin; background: #8B0000; border: 0.6vmin solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2.5vmin; box-shadow: inset -0.6vmin -0.6vmin 0 rgba(0,0,0,0.3), 0.6vmin 0.6vmin 0 rgba(0,0,0,0.5); cursor: pointer; }
         #jumpBtn { bottom: 26vmin; right: 10vmin; width: 12vmin; height: 12vmin; background: #008B8B; border: 0.4vmin solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2vmin; box-shadow: inset -0.4vmin -0.4vmin 0 rgba(0,0,0,0.3), 0.4vmin 0.4vmin 0 rgba(0,0,0,0.5); cursor: pointer; display: none; }
         
+        /* SUPER MARIO BROS DEATH SCREEN TYYLI */
         #gameOverScreen, #storyGameOverScreen { background-color: #000; z-index: 150; }
         .mario-text-title { color: #FFF; font-size: 6vmin; margin-bottom: 5vmin; text-align: center; text-shadow: none; }
         .mario-text-stats { color: #FFF; font-size: 3vmin; margin-bottom: 2vmin; text-align: center; }
@@ -105,8 +100,6 @@
 
     <div id="lagWarning"><div class="marquee-text">JOS LAGII NII ODOTA - GRAFIIKAT LATAUTUU TAUSTALLA - JOS LAGII NII ODOTA - GRAFIIKAT LATAUTUU TAUSTALLA</div></div>
 
-    <div id="inGameNotification" class="notification">Tulossa kohta!</div>
-
     <div id="menuLayer">
         <canvas id="menuCanvas" style="position: absolute; top:0; left:0; z-index: 1;"></canvas>
         <div class="title" style="position: relative;">Horseleg<br>Chicken<br><span style="font-size: 0.5em; color: #FFF; text-shadow:none; animation:none;">Definitive Edition</span></div>
@@ -114,7 +107,6 @@
             <button class="btn" id="playBtn">RAMPAGE MODE</button>
             <button class="btn btn-story" id="storyBtn">TARINA MODE</button>
             <button class="btn btn-destroy" id="destroyBtn">TUHOAMIS MODE</button>
-            <button class="btn btn-leaderboard" id="leaderboardBtn">TULOSTAULU</button>
             <button class="btn btn-settings" id="openSettingsBtn">ASETUKSET</button>
         </div>
         <div class="copyright">PC KONTROLLIT: WASD / NUOLET Liikkuminen | E tai Space Potku | SPACE Hyppy tuhoamismoodissa<br>IDEA: JANI NORONEN | &copy; LAKKULA 2026</div>
@@ -132,35 +124,7 @@
             <div class="setting-item"><span>Music Vol</span><input type="range" id="volMusic" min="0" max="100" value="50"></div>
             <div class="setting-item"><span>SFX Vol</span><input type="range" id="volSfx" min="0" max="100" value="100"></div>
             <div class="setting-item"><span>Puhe Vol</span><input type="range" id="volVoice" min="0" max="100" value="100"></div>
-            <div class="credits-box">
-                - Idea: Jani Noronen<br>
-                - Ohjelmointi: Lakkula<br>
-                - Sisältää Leaderboardin ja optimoinnit.
-            </div>
             <button class="btn" id="closeSettingsBtn" style="margin-top: 3vmin; padding: 1.5vmin 4vmin;">BACK</button>
-        </div>
-    </div>
-
-    <div id="leaderboardLayer" class="modal-layer">
-        <div class="settings-panel" style="max-width: 800px;">
-            <div class="tabs" style="display:flex; justify-content:center; gap:1vmin; margin-bottom: 3vmin;">
-                <button class="btn tab-btn active" id="tabTop3" style="padding: 1.5vmin; font-size: 1.5vmin; margin:0;">TOP 3 RAMPAGE</button>
-                <button class="btn btn-settings tab-btn" id="tab1v1" style="padding: 1.5vmin; font-size: 1.5vmin; margin:0; background: linear-gradient(to bottom, #444, #222);">1V1 MODE (Tulossa)</button>
-            </div>
-            <div id="lbContent" style="min-height: 20vmin;">
-                <div id="lbLoading" style="color:#FFD700; font-size: 2vmin; margin-top: 5vmin;">Ladataan...</div>
-                <ol id="lbList" style="text-align: left; font-size: 2.5vmin; line-height: 2.5; color: #FFF; display:none; padding-left: 4vmin;"></ol>
-            </div>
-            <button class="btn" id="closeLbBtn" style="margin-top: 4vmin; font-size: 1.5vmin; padding: 1.5vmin 4vmin;">SULJE</button>
-        </div>
-    </div>
-
-    <div id="nameInputLayer" class="modal-layer">
-        <div class="settings-panel">
-            <h2 class="title" style="font-size: 3vmin; color: #0F0; animation:none; margin-bottom: 4vmin; text-shadow:none;">Olet leaderboardilla!</h2>
-            <input type="text" id="playerNameInput" placeholder="Syötä nimesi..." maxlength="12" style="font-family: var(--mario-font); padding: 1.5vmin; font-size: 2vmin; width: 80%; margin-bottom: 3vmin; text-align:center;">
-            <br>
-            <button class="btn" id="submitNameBtn" style="padding: 1.5vmin 4vmin; font-size: 2vmin;">OK</button>
         </div>
     </div>
 
@@ -225,41 +189,90 @@
     <canvas id="gameCanvas" style="display:none;"></canvas>
 
 <script>
-    // --- FIREBASE SETUP ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyCM3kpYEim3YOB01lbgEeALvGITwYAASFY",
-        authDomain: "horselegchicken.firebaseapp.com",
-        projectId: "horselegchicken",
-        storageBucket: "horselegchicken.firebasestorage.app",
-        messagingSenderId: "327170897699",
-        appId: "1:327170897699:web:1d24dc5d3cd0637f9f7e96",
-        measurementId: "G-SYXBKXE5BR"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // --- GLOBAALIT MUUTTUJAT ---
+    // --- Laitteen tunnistus ---
     const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
+
+    // --- DOM Elements ---
+    const menuLayer = document.getElementById('menuLayer');
+    const gameUiLayer = document.getElementById('gameUiLayer');
+    const settingsLayer = document.getElementById('settingsLayer');
+    const controlsArea = document.getElementById('controlsArea');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const winScreen = document.getElementById('winScreen');
+    const storyGameOverScreen = document.getElementById('storyGameOverScreen');
+    const storyWinScreen = document.getElementById('storyWinScreen');
+    
+    const healthBar = document.getElementById('healthBar');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const distDisplay = document.getElementById('distDisplay');
+    const scoreWrapper = document.getElementById('scoreWrapper');
+    const distWrapper = document.getElementById('distWrapper');
+    const floatContainer = document.getElementById('floatingTextContainer');
+    const energyTitle = document.getElementById('energyTitle');
+    const jumpBtn = document.getElementById('jumpBtn');
+    
+    const menuCanvas = document.getElementById('menuCanvas');
+    const mCtx = menuCanvas.getContext('2d', { alpha: false });
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+
+    // --- GLOBALS JA MUUTTUJAT ---
     const keys = { w:false, a:false, s:false, d:false, space:false, e:false, up:false, down:false, left:false, right:false };
     const joystick = { active: false, dx: 0, dy: 0, touchId: null };
-    let isKickingMobile = false, isJumpingMobile = false;
-    let W, H, groundY;
-    let gameState = 'MENU', currentMode = 'rampage', gameLoopId, lastTime = 0, fadeAlpha = 0, endingTimer = 0, startTime = 0, finalTimeStr = "00:00", lastStepTime = 0, currentRampageTrack = 1, GOAL_X = 20000, score = 0;
-    let storyHouses = [], cityBuildings = [], destroyBuildings = [], museumLabels = [], oikotieActive = false, player, entities = [], particles = [];
+    let isKickingMobile = false;
+    let isJumpingMobile = false;
+    
+    let W, H;
+    let groundY;
+    let gameState = 'MENU'; 
+    let currentMode = 'rampage'; 
+    let gameLoopId;
+    let lastTime = 0;
+    let fadeAlpha = 0; 
+    let endingTimer = 0;
+    let startTime = 0;
+    let finalTimeStr = "00:00";
+    let lastStepTime = 0;
+    let currentRampageTrack = 1;
+    
+    let GOAL_X = 20000; 
+    let score = 0;
+    let storyHouses = [];
+    let cityBuildings = [];
+    let destroyBuildings = [];
+    let museumLabels = []; 
+    let oikotieActive = false;
+    
+    let player;
+    let entities = [];
+    let particles = [];
+    
+    // Asetukset
     let settings = { shadows: true, gore: true, particles: true, difficulty: 1 }; 
     let vols = { master: 1.0, music: 0.5, sfx: 1.0, voice: 1.0 };
+
     const Sprites = {};
     const phoneTexts = [ "jätkä tuulottaa", "se on oikotiä", "Miksi täällä juoksentelee kana? ", "Ostan asunnon..", "Kana lähestyy!", "Kaupat tuli!", "Näin hirviön..." ];
 
-    // --- DOM Elements ---
-    const menuLayer = document.getElementById('menuLayer'), gameUiLayer = document.getElementById('gameUiLayer'), settingsLayer = document.getElementById('settingsLayer'), controlsArea = document.getElementById('controlsArea'), gameOverScreen = document.getElementById('gameOverScreen'), winScreen = document.getElementById('winScreen'), storyGameOverScreen = document.getElementById('storyGameOverScreen'), storyWinScreen = document.getElementById('storyWinScreen'), leaderboardLayer = document.getElementById('leaderboardLayer'), nameInputLayer = document.getElementById('nameInputLayer'), healthBar = document.getElementById('healthBar'), scoreDisplay = document.getElementById('scoreDisplay'), distDisplay = document.getElementById('distDisplay'), scoreWrapper = document.getElementById('scoreWrapper'), distWrapper = document.getElementById('distWrapper'), floatContainer = document.getElementById('floatingTextContainer'), energyTitle = document.getElementById('energyTitle'), jumpBtn = document.getElementById('jumpBtn'), menuCanvas = document.getElementById('menuCanvas'), mCtx = menuCanvas.getContext('2d', { alpha: false }), canvas = document.getElementById('gameCanvas'), ctx = canvas.getContext('2d', { alpha: false });
-
     // --- AUDIO SYSTEM ---
-    let audioCtx, masterGain, musicGain, sfxGain, voiceGain, musicInterval, menuMusicInterval;
+    let audioCtx;
+    let masterGain, musicGain, sfxGain, voiceGain;
+    let musicInterval;
+    let menuMusicInterval;
+    
     const bgmNotes1 = [ 82.41, 82.41, 98.00, 82.41, 82.41, 110.00, 82.41, 82.41, 123.47, 82.41, 82.41, 110.00, 98.00, 82.41, 82.41, 73.42 ]; 
     const bgmNotes2 = [ 110.00, 110.00, 146.83, 164.81, 110.00, 110.00, 98.00, 103.83 ]; 
-    const menuBgmNotes = [ 392.00, 0, 392.00, 0, 392.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 0, 0, 587.33, 0, 587.33, 0, 587.33, 0, 622.25, 0, 466.16, 0, 370.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 0, 0, 783.99, 0, 392.00, 0, 392.00, 0, 783.99, 0, 739.99, 0, 698.46, 0, 659.25, 0, 622.25, 0, 659.25, 0, 0, 0, 415.30, 0, 554.37, 0, 523.25, 0, 493.88, 0, 466.16, 0, 440.00, 0, 466.16, 0, 0, 0, 311.13, 0, 370.00, 0, 311.13, 0, 370.00, 0, 466.16, 0, 392.00, 0, 466.16, 0, 587.33, 0, 0, 0, 783.99, 0, 392.00, 0, 392.00, 0, 783.99, 0, 739.99, 0, 698.46, 0, 659.25, 0, 622.25, 0, 659.25, 0, 0, 0, 415.30, 0, 554.37, 0, 523.25, 0, 493.88, 0, 466.16, 0, 440.00, 0, 466.16, 0, 0, 0, 311.13, 0, 466.16, 0, 392.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 0, 0 ]; 
-    let noteIndex = 0, menuNoteIndex = 0;
+    const menuBgmNotes = [ 
+        392.00, 0, 392.00, 0, 392.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 0, 0,
+        587.33, 0, 587.33, 0, 587.33, 0, 622.25, 0, 466.16, 0, 370.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 0, 0,
+        783.99, 0, 392.00, 0, 392.00, 0, 783.99, 0, 739.99, 0, 698.46, 0, 659.25, 0, 622.25, 0, 659.25, 0, 0, 0,
+        415.30, 0, 554.37, 0, 523.25, 0, 493.88, 0, 466.16, 0, 440.00, 0, 466.16, 0, 0, 0,
+        311.13, 0, 370.00, 0, 311.13, 0, 370.00, 0, 466.16, 0, 392.00, 0, 466.16, 0, 587.33, 0, 0, 0,
+        783.99, 0, 392.00, 0, 392.00, 0, 783.99, 0, 739.99, 0, 698.46, 0, 659.25, 0, 622.25, 0, 659.25, 0, 0, 0,
+        415.30, 0, 554.37, 0, 523.25, 0, 493.88, 0, 466.16, 0, 440.00, 0, 466.16, 0, 0, 0,
+        311.13, 0, 466.16, 0, 392.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 0, 0
+    ]; 
+    let noteIndex = 0; let menuNoteIndex = 0;
 
     function initAudio() {
         if (!audioCtx) {
@@ -272,142 +285,254 @@
         }
         if(audioCtx.state === 'suspended') audioCtx.resume();
     }
-    function updateVolumes() { if (!audioCtx) return; masterGain.gain.value = vols.master; musicGain.gain.value = vols.music; sfxGain.gain.value = vols.sfx; voiceGain.gain.value = vols.voice; }
+
+    function updateVolumes() {
+        if (!audioCtx) return;
+        masterGain.gain.value = vols.master;
+        musicGain.gain.value = vols.music;
+        sfxGain.gain.value = vols.sfx;
+        voiceGain.gain.value = vols.voice;
+    }
+
     document.getElementById('volMaster').addEventListener('input', e => { vols.master = e.target.value / 100; updateVolumes(); });
     document.getElementById('volMusic').addEventListener('input', e => { vols.music = e.target.value / 100; updateVolumes(); });
     document.getElementById('volSfx').addEventListener('input', e => { vols.sfx = e.target.value / 100; updateVolumes(); });
     document.getElementById('volVoice').addEventListener('input', e => { vols.voice = e.target.value / 100; updateVolumes(); });
     
     function startMenuBGM() {
-        if (menuMusicInterval) return; initAudio();
+        if (menuMusicInterval) return;
+        initAudio();
         menuMusicInterval = setInterval(() => {
-            if (gameState !== 'MENU' || !audioCtx) return;
+            if (gameState !== 'MENU') return;
+            if (!audioCtx) return;
             try {
                 let note = menuBgmNotes[menuNoteIndex];
                 if (note > 0) {
-                    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                    osc.connect(gain); gain.connect(musicGain); osc.type = 'square'; osc.frequency.setValueAtTime(note, audioCtx.currentTime); 
-                    gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain); gain.connect(musicGain); 
+                    osc.type = 'square'; osc.frequency.setValueAtTime(note, audioCtx.currentTime); 
+                    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
                     osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.2);
                 }
                 menuNoteIndex = (menuNoteIndex + 1) % menuBgmNotes.length;
             } catch(e) {}
         }, 150);
     }
-    function stopMenuBGM() { if (menuMusicInterval) { clearInterval(menuMusicInterval); menuMusicInterval = null; } }
+    function stopMenuBGM() {
+        if (menuMusicInterval) { clearInterval(menuMusicInterval); menuMusicInterval = null; }
+    }
 
     function startBGM() {
-        stopMenuBGM(); if (musicInterval) clearInterval(musicInterval); if (currentMode === 'destroy') return; 
+        stopMenuBGM();
+        if (musicInterval) clearInterval(musicInterval);
+        if (currentMode === 'destroy') return; 
+        
         musicInterval = setInterval(() => {
-            if ((gameState !== 'PLAYING' && gameState !== 'ANIMATION') || !audioCtx) return;
+            if (gameState !== 'PLAYING' && gameState !== 'ANIMATION') return;
+            if (!audioCtx) return;
             try {
-                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); const filter = audioCtx.createBiquadFilter();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+                
                 osc.connect(filter); filter.connect(gain); gain.connect(musicGain);
+                
                 if (currentMode === 'story') {
                     let note = menuBgmNotes[noteIndex % menuBgmNotes.length];
                     if (note > 0) {
-                        osc.type = 'triangle'; osc.frequency.setValueAtTime(note * 0.5, audioCtx.currentTime); filter.type = 'lowpass'; filter.frequency.value = 1000;
-                        gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                        osc.type = 'triangle'; osc.frequency.setValueAtTime(note * 0.5, audioCtx.currentTime); 
+                        filter.type = 'lowpass'; filter.frequency.value = 1000;
+                        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
                     } else { gain.gain.setValueAtTime(0, audioCtx.currentTime); }
                 } else {
                     let track = currentRampageTrack === 1 ? bgmNotes1 : bgmNotes2;
                     osc.type = 'sawtooth'; osc.frequency.setValueAtTime(track[noteIndex % track.length], audioCtx.currentTime); 
-                    filter.type = 'lowpass'; filter.frequency.setValueAtTime(300, audioCtx.currentTime); filter.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.05); filter.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    filter.type = 'lowpass'; filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+                    filter.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.05);
+                    filter.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+                    
+                    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    
                     if (noteIndex % 4 === 0) {
-                        const kickOsc = audioCtx.createOscillator(); const kickGain = audioCtx.createGain(); kickOsc.connect(kickGain); kickGain.connect(musicGain);
-                        kickOsc.type = 'sine'; kickOsc.frequency.setValueAtTime(150, audioCtx.currentTime); kickOsc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                        kickGain.gain.setValueAtTime(0.3, audioCtx.currentTime); kickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                        const kickOsc = audioCtx.createOscillator(); const kickGain = audioCtx.createGain();
+                        kickOsc.connect(kickGain); kickGain.connect(musicGain);
+                        kickOsc.type = 'sine'; kickOsc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                        kickOsc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                        kickGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                        kickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
                         kickOsc.start(audioCtx.currentTime); kickOsc.stop(audioCtx.currentTime + 0.1);
                     }
                 }
-                osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.3); noteIndex++;
+                osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.3);
+                noteIndex++;
             } catch(e) {}
         }, 180);
     }
+
     function stopBGM() { if (musicInterval) clearInterval(musicInterval); }
 
     function playSound(type) {
         if (!audioCtx) return;
         try {
             const now = audioCtx.currentTime;
+            
             if (type === 'kick') {
-                const gain = audioCtx.createGain(); gain.connect(sfxGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
-                gain.gain.setValueAtTime(0.6, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1);
+                const gain = audioCtx.createGain(); gain.connect(sfxGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+                gain.gain.setValueAtTime(0.6, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'jump') {
-                const gain = audioCtx.createGain(); gain.connect(sfxGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
-                osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
-                gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2); osc.start(now); osc.stop(now + 0.2);
+                const gain = audioCtx.createGain(); gain.connect(sfxGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+                gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
             } else if (type === 'step') {
-                const gain = audioCtx.createGain(); gain.connect(sfxGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
-                osc.type = 'sine'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(50, now + 0.05);
-                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05); osc.start(now); osc.stop(now + 0.05);
+                const gain = audioCtx.createGain(); gain.connect(sfxGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.05);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now); osc.stop(now + 0.05);
             } else if (type === 'hit') {
-                const gain = audioCtx.createGain(); gain.connect(sfxGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
-                osc.type = 'square'; osc.frequency.setValueAtTime(100, now); osc.frequency.exponentialRampToValueAtTime(20, now + 0.2);
-                gain.gain.setValueAtTime(0.8, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2); osc.start(now); osc.stop(now + 0.2);
+                const gain = audioCtx.createGain(); gain.connect(sfxGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'square'; osc.frequency.setValueAtTime(100, now);
+                osc.frequency.exponentialRampToValueAtTime(20, now + 0.2);
+                gain.gain.setValueAtTime(0.8, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
             } else if (type === 'metalHit') {
-                const gain = audioCtx.createGain(); gain.connect(sfxGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
-                gain.gain.setValueAtTime(0.7, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15); osc.start(now); osc.stop(now + 0.15);
-            } else if (type === 'pickup' || type === 'eat') {
-                const gain = audioCtx.createGain(); gain.connect(sfxGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
-                osc.type = 'triangle'; osc.frequency.setValueAtTime(1200, now); osc.frequency.exponentialRampToValueAtTime(2000, now + 0.1);
-                gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1);
+                const gain = audioCtx.createGain(); gain.connect(sfxGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+                gain.gain.setValueAtTime(0.7, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now); osc.stop(now + 0.15);
+            } else if (type === 'eat' || type === 'pickup') {
+                const gain = audioCtx.createGain(); gain.connect(sfxGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(1200, now);
+                osc.frequency.exponentialRampToValueAtTime(2000, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'speech') {
-                const gain = audioCtx.createGain(); gain.connect(voiceGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
-                osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
-                gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1);
+                const gain = audioCtx.createGain(); gain.connect(voiceGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'hamburgerVoice') {
                 const gain = audioCtx.createGain(); gain.connect(voiceGain);
-                let osc1 = audioCtx.createOscillator(); osc1.connect(gain); let osc2 = audioCtx.createOscillator(); osc2.connect(gain);
+                let osc1 = audioCtx.createOscillator(); osc1.connect(gain);
+                let osc2 = audioCtx.createOscillator(); osc2.connect(gain);
                 osc1.type = 'square'; osc2.type = 'sawtooth';
-                osc1.frequency.setValueAtTime(100, now); osc1.frequency.linearRampToValueAtTime(180, now + 0.2); osc1.frequency.setValueAtTime(130, now + 0.3); osc1.frequency.linearRampToValueAtTime(90, now + 0.6); 
-                osc2.frequency.setValueAtTime(105, now); osc2.frequency.linearRampToValueAtTime(185, now + 0.2); osc2.frequency.setValueAtTime(135, now + 0.3); osc2.frequency.linearRampToValueAtTime(95, now + 0.6); 
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.6, now + 0.1); gain.gain.setValueAtTime(0.6, now + 0.5); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-                osc1.start(now); osc1.stop(now + 0.6); osc2.start(now); osc2.stop(now + 0.6);
+                
+                osc1.frequency.setValueAtTime(100, now);
+                osc1.frequency.linearRampToValueAtTime(180, now + 0.2); 
+                osc1.frequency.setValueAtTime(130, now + 0.3); 
+                osc1.frequency.linearRampToValueAtTime(90, now + 0.6); 
+                
+                osc2.frequency.setValueAtTime(105, now);
+                osc2.frequency.linearRampToValueAtTime(185, now + 0.2); 
+                osc2.frequency.setValueAtTime(135, now + 0.3); 
+                osc2.frequency.linearRampToValueAtTime(95, now + 0.6); 
+
+                gain.gain.setValueAtTime(0, now); 
+                gain.gain.linearRampToValueAtTime(0.6, now + 0.1);
+                gain.gain.setValueAtTime(0.6, now + 0.5);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                
+                osc1.start(now); osc1.stop(now + 0.6);
+                osc2.start(now); osc2.stop(now + 0.6);
             } else if (type === 'evil_laugh') {
-                const gain = audioCtx.createGain(); gain.connect(voiceGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
+                const gain = audioCtx.createGain(); gain.connect(voiceGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
-                osc.frequency.setValueAtTime(150, now + 0.4); osc.frequency.exponentialRampToValueAtTime(80, now + 0.7);
-                osc.frequency.setValueAtTime(150, now + 0.8); osc.frequency.exponentialRampToValueAtTime(60, now + 1.2);
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.8, now + 0.1); gain.gain.exponentialRampToValueAtTime(0.01, now + 1.3);
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+                osc.frequency.setValueAtTime(150, now + 0.4);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.7);
+                osc.frequency.setValueAtTime(150, now + 0.8);
+                osc.frequency.exponentialRampToValueAtTime(60, now + 1.2);
+                
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.8, now + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.3);
                 osc.start(now); osc.stop(now + 1.3);
             } else if (type === 'scream') {
-                const gain = audioCtx.createGain(); gain.connect(voiceGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
+                const gain = audioCtx.createGain(); gain.connect(voiceGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(1000, now); osc.frequency.linearRampToValueAtTime(2000, now + 0.5); osc.frequency.exponentialRampToValueAtTime(500, now + 1.5);
-                gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(1.0, now + 0.2); gain.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+                osc.frequency.setValueAtTime(1000, now);
+                osc.frequency.linearRampToValueAtTime(2000, now + 0.5);
+                osc.frequency.exponentialRampToValueAtTime(500, now + 1.5);
+                
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(1.0, now + 0.2);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
                 osc.start(now); osc.stop(now + 1.5);
             } else if (type === 'crash') {
-                const gain = audioCtx.createGain(); gain.connect(sfxGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
-                osc.type = 'square'; osc.frequency.setValueAtTime(80, now); osc.frequency.exponentialRampToValueAtTime(10, now + 0.8);
+                const gain = audioCtx.createGain(); gain.connect(sfxGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'square'; osc.frequency.setValueAtTime(80, now);
+                osc.frequency.exponentialRampToValueAtTime(10, now + 0.8);
                 gain.gain.setValueAtTime(1.0, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
-                const nBuf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.8, audioCtx.sampleRate); const out = nBuf.getChannelData(0);
+                const nBuf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.8, audioCtx.sampleRate);
+                const out = nBuf.getChannelData(0);
                 for (let i = 0; i < nBuf.length; i++) { out[i] = Math.random() * 2 - 1; }
-                const nSrc = audioCtx.createBufferSource(); nSrc.buffer = nBuf; const nFilt = audioCtx.createBiquadFilter(); nFilt.type = 'lowpass'; nFilt.frequency.value = 800;
-                nSrc.connect(nFilt); nFilt.connect(gain); nSrc.start(now); osc.start(now); osc.stop(now + 0.8);
+                const nSrc = audioCtx.createBufferSource(); nSrc.buffer = nBuf;
+                const nFilt = audioCtx.createBiquadFilter(); nFilt.type = 'lowpass'; nFilt.frequency.value = 800;
+                nSrc.connect(nFilt); nFilt.connect(gain); nSrc.start(now);
+                osc.start(now); osc.stop(now + 0.8);
             } else if (type === 'brickBreak') {
-                const gain = audioCtx.createGain(); gain.connect(sfxGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now); osc.frequency.exponentialRampToValueAtTime(20, now + 0.3);
-                gain.gain.setValueAtTime(0.8, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3);
+                const gain = audioCtx.createGain(); gain.connect(sfxGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now);
+                osc.frequency.exponentialRampToValueAtTime(20, now + 0.3);
+                gain.gain.setValueAtTime(0.8, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
             } else if (type === 'win') {
-                const gain = audioCtx.createGain(); gain.connect(musicGain); let osc = audioCtx.createOscillator(); osc.connect(gain);
+                const gain = audioCtx.createGain(); gain.connect(musicGain);
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'square'; 
-                osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now+0.3); 
-                osc.frequency.setValueAtTime(783.99, now+0.6); osc.frequency.setValueAtTime(1046.50, now+0.9); 
-                gain.gain.setValueAtTime(0.5, now); gain.gain.linearRampToValueAtTime(0, now + 3.0);
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now+0.3); 
+                osc.frequency.setValueAtTime(783.99, now+0.6); 
+                osc.frequency.setValueAtTime(1046.50, now+0.9); 
+                gain.gain.setValueAtTime(0.5, now); 
+                gain.gain.linearRampToValueAtTime(0, now + 3.0);
                 osc.start(now); osc.stop(now + 3.0);
             }
         } catch(e) {}
     }
-    document.body.addEventListener('pointerdown', () => { if (!audioCtx) initAudio(); if (gameState === 'MENU' && !menuMusicInterval) startMenuBGM(); }, {once: true});
-    document.body.addEventListener('keydown', () => { if (!audioCtx) initAudio(); if (gameState === 'MENU' && !menuMusicInterval) startMenuBGM(); }, {once: true});
+
+    document.body.addEventListener('pointerdown', () => {
+        if (!audioCtx) initAudio();
+        if (gameState === 'MENU' && !menuMusicInterval) startMenuBGM();
+    }, {once: true});
+    document.body.addEventListener('keydown', () => {
+        if (!audioCtx) initAudio();
+        if (gameState === 'MENU' && !menuMusicInterval) startMenuBGM();
+    }, {once: true});
 
     // --- PIXEL ART ---
-    const PAL = { 'T': 'rgba(0,0,0,0)', 'B': '#000000', 'W': '#FFFFFF', 'R': '#FF0000', 'O': '#FFA500', 'H': '#654321', 'Y': '#FFFF00', 'U': '#0000FF', 'S': '#FFC0CB', 'G': '#777777', 'D': '#444444', 'L': '#8B4513', 'A': '#2b2b2b', 'K': '#555555', 'V': '#00FF00', 'M': '#FFD700', 'P': '#FF69B4', 'C': '#2E7D32', 'E': '#5D4037', 'F': '#795548', 'X': '#EEEEEE', 'Q': '#FF8C00' };
+    const PAL = {
+        'T': 'rgba(0,0,0,0)', 'B': '#000000', 'W': '#FFFFFF', 'R': '#FF0000', 'O': '#FFA500', 
+        'H': '#654321', 'Y': '#FFFF00', 'U': '#0000FF', 'S': '#FFC0CB', 'G': '#777777', 
+        'D': '#444444', 'L': '#8B4513', 'A': '#2b2b2b', 'K': '#555555', 'V': '#00FF00', 'M': '#FFD700', 'P': '#FF69B4',
+        'C': '#2E7D32', 'E': '#5D4037', 'F': '#795548', 'X': '#EEEEEE', 'Q': '#FF8C00'
+    };
 
     const SPRITES_DATA = {
         chicken_idle: [
@@ -579,6 +704,7 @@
         return canvas;
     }
 
+    // Synkroninen lataus varmistaa ettei grafiikat jää mustaksi
     function initAllSprites() {
         const S = 6; 
         for(let key in SPRITES_DATA) {
@@ -592,61 +718,14 @@
         }
     }
 
-    // --- LEADERBOARD & FIREBASE LOGIC ---
-    function submitScoreToFirebase(name, s) {
-        if(typeof db === 'undefined' || !db) return;
-        const userRef = db.ref('leaderboard/' + name);
-        userRef.get().then((snapshot) => {
-            if (snapshot.exists()) {
-                if (s > snapshot.val().score) { userRef.set({ score: s }); }
-            } else { userRef.set({ score: s }); }
-        }).catch((error) => { console.error(error); });
-    }
+    // SUORITETAAN VÄLITTÖMÄSTI KUN SIVU LATAUTUU
+    window.addEventListener('load', () => {
+        initAllSprites();
+        resize();
+        gameLoopId = requestAnimationFrame(gameLoop);
+    });
 
-    function loadLeaderboard() {
-        if(typeof db === 'undefined' || !db) {
-            document.getElementById('lbLoading').innerText = "Tietokanta ei yhdistetty.";
-            return;
-        }
-        const lbRef = db.ref('leaderboard');
-        lbRef.get().then((snapshot) => {
-            let listEl = document.getElementById('lbList');
-            let loadEl = document.getElementById('lbLoading');
-            listEl.innerHTML = '';
-            if (snapshot.exists()) {
-                let data = snapshot.val();
-                let arr = [];
-                for(let key in data) arr.push({name: key, score: data[key].score});
-                arr.sort((a,b) => b.score - a.score);
-                let top3 = arr.slice(0,3);
-                top3.forEach((item, index) => {
-                    let li = document.createElement('li');
-                    li.innerText = `${item.name} - ${item.score}`;
-                    listEl.appendChild(li);
-                });
-                loadEl.style.display = 'none';
-                listEl.style.display = 'block';
-            } else {
-                loadEl.innerText = "Ei tuloksia vielä.";
-            }
-        });
-    }
-
-    function checkQualifiesTop3(currentScore) {
-        return new Promise((resolve) => {
-            if(typeof db === 'undefined' || !db) return resolve(false);
-            db.ref('leaderboard').get().then(snapshot => {
-                if(!snapshot.exists()) return resolve(true);
-                let data = snapshot.val();
-                let arr = [];
-                for(let key in data) arr.push(data[key].score);
-                arr.sort((a,b) => b - a);
-                if(arr.length < 3) return resolve(true);
-                return resolve(currentScore > arr[2]);
-            }).catch(() => resolve(false));
-        });
-    }
-
+    // Tuhoamismoodin rakennukset
     class DestructibleBuilding {
         constructor(x, widthBlocks, heightBlocks) {
             this.x = x; this.z = -80;
@@ -663,7 +742,8 @@
             for(let b of this.blocks) {
                 if(!b.active) continue;
                 let bx = this.x + b.bx * this.blockSize - ctxOffset;
-                if (bx < -100 || bx > W + 100) continue; 
+                if (bx < -100 || bx > W + 100) continue; // Culling
+                
                 let by = groundY + this.z - (b.by + 1) * this.blockSize;
                 ctx.fillStyle = b.color;
                 ctx.fillRect(bx, by, this.blockSize, this.blockSize);
@@ -763,11 +843,15 @@
         if (currentMode !== 'rampage') return false; 
         for (let ent of entities) {
             if (ent.isDead) continue;
+            // Vain näytöllä olevat tarkistetaan optimoinnin takia
             if (Math.abs(ent.x - player.x) > 300) continue; 
+            
             if (['smoker', 'human_stand', 'human_dance', 'human_green', 'car', 'car_crashed', 'brick_wall', 'table', 'trash', 'tree', 'bench', 'bat_guy', 'butcher'].includes(ent.type)) {
                 let dx = nextX - ent.x;
                 let dz = nextZ - ent.z;
-                if (Math.abs(dx) < ent.width/2 + 10 && Math.abs(dz) < 15) return true;
+                if (Math.abs(dx) < ent.width/2 + 10 && Math.abs(dz) < 15) {
+                    return true;
+                }
             }
         }
         return false;
@@ -812,6 +896,41 @@
                 color: isPlayer ? '#8B0000' : '#445566', roofColor: isPlayer ? '#FFD700' : '#223344'
             });
         }
+    }
+
+    function initGame(mode) {
+        currentMode = mode;
+        score = 0; scoreDisplay.innerText = score; cameraX = 0; fadeAlpha = 0; endingTimer = 0; entities = []; particles = []; destroyBuildings = []; museumLabels = []; oikotieActive = false;
+        startTime = Date.now(); finalTimeStr = "00:00"; lastStepTime = 0;
+        
+        currentRampageTrack = Math.random() > 0.5 ? 1 : 2;
+        player = new Entity(W/2, groundY, 'chicken'); player.hp = 100; player.energy = 100; player.isKicking = false; player.kickTimer = 0; player.z = 0;
+        player.y = groundY; player.vy = 0;
+
+        menuLayer.style.display = 'none';
+        gameUiLayer.style.display = 'flex';
+        canvas.style.display = 'block';
+        
+        if (isMobile) {
+            controlsArea.style.display = 'block';
+            if (mode === 'destroy') jumpBtn.style.display = 'flex';
+            else jumpBtn.style.display = 'none';
+        } else {
+            controlsArea.style.display = 'none';
+        }
+
+        if (mode === 'rampage') {
+            scoreWrapper.style.display = 'inline'; distWrapper.style.display = 'inline'; energyTitle.innerText = "❤️ CHICKEN ENERGY"; 
+            GOAL_X = 20000; generateCity(); spawnRampageLevel(); startBGM();
+        } else if (mode === 'story') {
+            scoreWrapper.style.display = 'none'; distWrapper.style.display = 'none'; energyTitle.innerText = "❤️ CHICKEN ENERGY";
+            generateNeighborhood(); spawnStoryLevel(); startBGM();
+        } else if (mode === 'destroy') {
+            scoreWrapper.style.display = 'inline'; distWrapper.style.display = 'none'; energyTitle.innerText = "❤️ TUHOAMIS ENERGIA";
+            GOAL_X = 50000; spawnDestroyLevel(); stopBGM();
+        }
+        
+        gameState = 'PLAYING';
     }
 
     function spawnRampageLevel() {
@@ -945,9 +1064,9 @@
             if(e.changedTouches[i].identifier === joystick.touchId) { joystick.active = false; joystick.touchId = null; joystick.dx = 0; joystick.dy = 0; stick.style.transform = `translate(0px, 0px)`; }
         }
     }
-    const kickBtnEl = document.getElementById('kickBtn');
-    kickBtnEl.addEventListener('touchstart', e => { e.preventDefault(); isKickingMobile = true; }); kickBtnEl.addEventListener('touchend', e => { e.preventDefault(); isKickingMobile = false; });
-    kickBtnEl.addEventListener('mousedown', () => isKickingMobile = true); kickBtnEl.addEventListener('mouseup', () => isKickingMobile = false);
+    const kickBtn = document.getElementById('kickBtn');
+    kickBtn.addEventListener('touchstart', e => { e.preventDefault(); isKickingMobile = true; }); kickBtn.addEventListener('touchend', e => { e.preventDefault(); isKickingMobile = false; });
+    kickBtn.addEventListener('mousedown', () => isKickingMobile = true); kickBtn.addEventListener('mouseup', () => isKickingMobile = false);
 
     const jumpBtnMobile = document.getElementById('jumpBtn');
     jumpBtnMobile.addEventListener('touchstart', e => { e.preventDefault(); isJumpingMobile = true; }); jumpBtnMobile.addEventListener('touchend', e => { e.preventDefault(); isJumpingMobile = false; });
@@ -1014,7 +1133,7 @@
                 }
             }
 
-            // KICK trigger 
+            // KICK trigger (E, Spacebar in non-destroy, or mobile button)
             if ((keys.e || (currentMode !== 'destroy' && keys.space) || isKickingMobile)) {
                 if (Date.now() - (player.lastKickTime||0) > 250 && player.kickTimer <= 0) {
                     player.lastKickTime = Date.now();
@@ -1168,7 +1287,8 @@
                                 playSound('hamburgerVoice'); addFloatingText("OIKOTIÄ!", ent.x, ent.y - 100, '#00FFFF', 'oikotie-shout');
                                 let b = new Entity(ent.x, groundY, 'burger'); b.z = ent.z; b.y = ent.y - 30;
                                 let dx = player.x - b.x, dz = player.z - b.z; let dist = Math.hypot(dx, dz);
-                                b.vx = (dx / dist) * 14; b.vz = (dz / dist) * 14; entities.push(b);
+                                if (dist > 0) { b.vx = (dx / dist) * 14; b.vz = (dz / dist) * 14; }
+                                entities.push(b);
                             } else if (ent.actionTimer <= 0) ent.state = 2;
                         } else if (ent.state === 2) {
                             ent.y += 3; if (ent.y > groundY + ent.z + 150) { entities.splice(i, 1); oikotieActive = false; }
@@ -1182,7 +1302,7 @@
                         if (ent.z > 200 || ent.x < cameraX - 200 || ent.x > cameraX + W + 200) entities.splice(i, 1);
                     }
                 } else {
-                    if(!['basket','burger','oikotie','brick_wall','leg','bottle','restaurant','sign_crash','tree','bench','butcher','blood'].includes(ent.type)) {
+                    if(!['basket','burger','oikotie','brick_wall','leg','bottle','restaurant','sign_crash','tree','bench','butcher'].includes(ent.type)) {
                         ent.x += ent.vx; ent.y += ent.vy; ent.vy += 1; ent.dir += 0.2; 
                     }
                 }
@@ -1421,61 +1541,6 @@
         setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 1500);
     }
 
-    // --- LEADERBOARD & FIREBASE LOGIC ---
-    function submitScoreToFirebase(name, s) {
-        if(typeof db === 'undefined' || !db) return;
-        const userRef = db.ref('leaderboard/' + name);
-        userRef.get().then((snapshot) => {
-            if (snapshot.exists()) {
-                if (s > snapshot.val().score) { userRef.set({ score: s }); }
-            } else { userRef.set({ score: s }); }
-        }).catch((error) => { console.error(error); });
-    }
-
-    function loadLeaderboard() {
-        if(typeof db === 'undefined' || !db) {
-            document.getElementById('lbLoading').innerText = "Tietokanta ei yhdistetty.";
-            return;
-        }
-        const lbRef = db.ref('leaderboard');
-        lbRef.get().then((snapshot) => {
-            let listEl = document.getElementById('lbList');
-            let loadEl = document.getElementById('lbLoading');
-            listEl.innerHTML = '';
-            if (snapshot.exists()) {
-                let data = snapshot.val();
-                let arr = [];
-                for(let key in data) arr.push({name: key, score: data[key].score});
-                arr.sort((a,b) => b.score - a.score);
-                let top3 = arr.slice(0,3);
-                top3.forEach((item, index) => {
-                    let li = document.createElement('li');
-                    li.innerText = `${item.name} - ${item.score}`;
-                    listEl.appendChild(li);
-                });
-                loadEl.style.display = 'none';
-                listEl.style.display = 'block';
-            } else {
-                loadEl.innerText = "Ei tuloksia vielä.";
-            }
-        });
-    }
-
-    function checkQualifiesTop3(currentScore) {
-        return new Promise((resolve) => {
-            if(typeof db === 'undefined' || !db) return resolve(false);
-            db.ref('leaderboard').get().then(snapshot => {
-                if(!snapshot.exists()) return resolve(true);
-                let data = snapshot.val();
-                let arr = [];
-                for(let key in data) arr.push(data[key].score);
-                arr.sort((a,b) => b - a);
-                if(arr.length < 3) return resolve(true);
-                return resolve(currentScore > arr[2]);
-            }).catch(() => resolve(false));
-        });
-    }
-
     function gameOver() { 
         gameState = 'GAMEOVER'; stopBGM(); playSound('crash'); 
         document.getElementById('finalScore').innerText = score; 
@@ -1483,53 +1548,19 @@
         document.getElementById('goScore').innerText = score; 
         gameOverScreen.style.display = 'flex'; controlsArea.style.display = 'none'; 
     }
-
     function gameOverStory() {
         gameState = 'STORY_GAMEOVER'; stopBGM(); playSound('crash'); 
         document.getElementById('sGoTime').innerText = formatTime(Date.now() - startTime);
         storyGameOverScreen.style.display = 'flex'; controlsArea.style.display = 'none';
     }
-
-    async function winGame() { 
+    function winGame() { 
         gameState = 'WIN'; 
         let timeTaken = Date.now() - startTime; finalTimeStr = formatTime(timeTaken);
         score += Math.floor(player.energy * 100); 
-        
-        let qualifies = await checkQualifiesTop3(score);
-        if(qualifies && currentMode === 'rampage') {
-            document.getElementById('nameInputLayer').style.display = 'flex';
-        }
-
         document.getElementById('winScore').innerText = score; document.getElementById('winTime').innerText = finalTimeStr;
         winScreen.style.display = 'flex'; controlsArea.style.display = 'none'; 
     }
-
-    document.getElementById('submitNameBtn').addEventListener('click', () => {
-        let name = document.getElementById('playerNameInput').value.trim();
-        if(name.length > 0) {
-            submitScoreToFirebase(name, score);
-            document.getElementById('nameInputLayer').style.display = 'none';
-            document.getElementById('leaderboardLayer').style.display = 'flex';
-            loadLeaderboard();
-        }
-    });
-
-    document.getElementById('leaderboardBtn').addEventListener('click', () => {
-        document.getElementById('leaderboardLayer').style.display = 'flex';
-        loadLeaderboard();
-    });
-
-    document.getElementById('closeLbBtn').addEventListener('click', () => {
-        document.getElementById('leaderboardLayer').style.display = 'none';
-    });
-
-    document.getElementById('tab1v1').addEventListener('click', () => {
-        let note = document.getElementById('inGameNotification');
-        note.classList.add('show');
-        setTimeout(() => { note.classList.remove('show'); }, 2000);
-    });
-
-    function restartGame() { gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; storyGameOverScreen.style.display = 'none'; storyWinScreen.style.display = 'none'; initGame(currentMode); }
+    function restartGame() { gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; storyGameOverScreen.style.display = 'none'; storyWinScreen.style.display = 'none'; gameState = 'PLAYING'; if(isMobile) controlsArea.style.display = 'block'; initGame(currentMode); }
 
     let menuTime = 0;
     function drawMenu() {
@@ -1615,7 +1646,7 @@
     document.getElementById('openSettingsBtn').addEventListener('click', () => settingsLayer.style.display = 'flex');
     document.getElementById('closeSettingsBtn').addEventListener('click', () => settingsLayer.style.display = 'none');
     
-    const goToMenu = () => { gameState = 'MENU'; menuLayer.style.display = 'flex'; gameUiLayer.style.display = 'none'; controlsArea.style.display = 'none'; gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; storyGameOverScreen.style.display = 'none'; storyWinScreen.style.display = 'none'; canvas.style.display = 'none'; document.getElementById('leaderboardLayer').style.display='none'; document.getElementById('nameInputLayer').style.display='none'; stopBGM(); startMenuBGM(); };
+    const goToMenu = () => { gameState = 'MENU'; menuLayer.style.display = 'flex'; gameUiLayer.style.display = 'none'; controlsArea.style.display = 'none'; gameOverScreen.style.display = 'none'; winScreen.style.display = 'none'; storyGameOverScreen.style.display = 'none'; storyWinScreen.style.display = 'none'; canvas.style.display = 'none'; stopBGM(); startMenuBGM(); };
     document.getElementById('menuBtn').addEventListener('click', goToMenu); 
     document.getElementById('gameOverMenuBtn').addEventListener('click', goToMenu); 
     document.getElementById('winMenuBtn').addEventListener('click', goToMenu);
@@ -1623,7 +1654,7 @@
     document.getElementById('storyWinMenuBtn').addEventListener('click', goToMenu);
     
     document.getElementById('copyBtn').addEventListener('click', () => {
-        const resultText = `Horseleg chicken demo\nVaikeustaso: ${settings.difficulty === 0 ? "Helppo" : settings.difficulty === 1 ? "Normaali" : "Vaikea"}\nAika: ${finalTimeStr}\nLoppupisteet: ${score}\nOlet paras!`;
+        const resultText = `Horseleg Chicken: Definitive Edition\nVaikeustaso: ${settings.difficulty === 0 ? "Helppo" : settings.difficulty === 1 ? "Normaali" : "Vaikea"}\nAika: ${finalTimeStr}\nLoppupisteet: ${score}\nOlet paras!`;
         if (navigator.clipboard) { navigator.clipboard.writeText(resultText).then(() => alert("Kopioitu leikepöydälle!")); }
         else { alert("Kopiointi ei tuettu tässä selaimessa."); }
     });
