@@ -426,7 +426,7 @@
         
         <!-- Pöntön progress bar -->
         <div id="toiletProgressUi" style="display:none; position: absolute; left: 50%; top: 30%; transform: translateX(-50%); text-align: center; z-index: 100;">
-            <div style="color: #FFF; font-size: 10px; margin-bottom: 5px; text-shadow: 1px 1px 0 #000;">Istutaan pöntöllä...</div>
+            <div style="color: #FFF; font-size: 10px; margin-bottom: 5px; text-shadow: 1px 1px 0 #000;">Istutaan pöntöllä... kakka</div>
             <div style="width: 150px; height: 10px; background: #333; border: 2px solid #FFF;">
                 <div id="toiletProgressBar" style="width: 0%; height: 100%; background: #8B4513;"></div>
             </div>
@@ -473,7 +473,7 @@
     </div>
 
     <div id="storyWinScreen">
-        <div class="story-win-title">Jatkuu joskus..</div>
+        <div class="story-win-title">Jatkuu joskus.. tai sitten ei en tiiä</div>
         <button class="btn btn-settings" id="storyWinMenuBtn">PÄÄVALIKKO</button>
     </div>
     
@@ -673,7 +673,7 @@
     // Boss Intro & Fight variables
     let bossIntroState = 0;
     let bossIntroText = "";
-    let bossIntroFullText = "OIKOTIE... BRR. EIKUN.. SIIS.. OIKOTIÄ!";
+    let bossIntroFullText = "OIKOTIE... BRR. EIKUN.. SIIS.. OIKOTIÄ! USKALLATKO MUKA HAASTAA MUT";
     let bossIntroCharIdx = 0;
     let bossIntroTimer = 0;
     let bossIntroFade = 0;
@@ -1884,7 +1884,7 @@
                 if (ent && ent.type === 'toilet' && ent.state === 'dirty') {
                     ent.state = 'clean';
                     addScore(67, player.x, player.y - 100);
-                    sendGlobalEventMessage(`${myMpName} siivosi pöntön! +67 Auraa`);
+                    sendGlobalEventMessage(`${myMpName} siivosi kakat pöntöltä! +67 Auraa`);
                     break;
                 }
             }
@@ -2073,10 +2073,11 @@
                     }
                 }
             }
-            if (player.kickTimer > 0) { player.kickTimer -= tm; if (player.kickTimer < 10) player.isKicking = false; }
+if (player.kickTimer > 0) { player.kickTimer -= tm; if (player.kickTimer < 10) player.isKicking = false; }
 
             if (currentMode === 'rampage') {
-                let drain = settings.difficulty === 0 ? 0.025 : (settings.difficulty === 1 ? 0.06 : 0.10);
+                // Uudet kulutusarvot: Helppo (0.045), Normaali (0.12), Vaikea (0.20)
+                let drain = settings.difficulty === 0 ? 0.095 : (settings.difficulty === 1 ? 0.12 : 0.17);
                 player.energy -= drain * tm; 
                 if (player.energy <= 0) gameOver();
                 
