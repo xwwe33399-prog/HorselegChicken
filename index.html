@@ -30,12 +30,17 @@
             position: relative;
             width: 100vw;
             height: 100vh;
-            background-color: var(--bg-color);
+            background-color: #000;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+            box-shadow: none;
         }
 
-        canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+        canvas { display: block; image-rendering: pixelated; }
+        #gameCanvas, #menuCanvas {
+            position: absolute;
+            image-rendering: pixelated;
+            z-index: 2;
+        }
 
         /* ROTATE SCREEN OVERLAY */
         #rotateOverlay {
@@ -102,42 +107,45 @@
         .notification.show { top: 10%; }
 
         .modal-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 150; background: rgba(0,0,0,0.9); }
+        #nameInputLayer { z-index: 600 !important; }
+        #leaderboardLayer { z-index: 620 !important; }
 
-        #menuLayer, #gameUiLayer, #settingsLayer, #gameOverScreen, #winScreen, #storyGameOverScreen, #storyWinScreen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
-        #menuLayer { display: flex; background-color: var(--bg-color); }
+        #menuLayer, #settingsLayer, #gameOverScreen, #winScreen, #storyGameOverScreen, #storyWinScreen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
+        #menuLayer { display: flex; flex-direction: column; background-color: var(--bg-color); overflow-y: auto; overflow-x: hidden; padding: 2vh 0; box-sizing: border-box; }
 
-        .title { font-size: clamp(18px, 6vh, 48px); margin-bottom: 3vh; text-transform: uppercase; letter-spacing: 0.2vh; z-index: 10; text-align: center; line-height: 1.4; animation: titlePulse 1.5s infinite alternate ease-in-out; }
+        .title { font-size: clamp(16px, 5vmin, 42px); margin-bottom: 3vh; text-transform: uppercase; letter-spacing: 0.2vh; z-index: 10; text-align: center; line-height: 1.4; animation: titlePulse 1.5s infinite alternate ease-in-out; }
         @keyframes titlePulse { 0% { transform: scale(1); color: #FFD700; text-shadow: 0 0 10px #FFD700; } 100% { transform: scale(1.05); color: #FF4500; text-shadow: 0 0 20px #FF4500; } }
 
-        .menu-buttons { display: flex; flex-direction: column; align-items: center; z-index: 10; gap: 1.2vh; }
+        .menu-buttons { display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; gap: 1.5vh; width: 100%; max-width: 600px; padding: 0 20px; box-sizing: border-box; }
         .btn { 
-            padding: clamp(8px, 2vh, 18px) clamp(16px, 4vh, 36px); 
-            font-size: clamp(10px, 2vh, 18px); 
+            padding: clamp(10px, 2.5vmin, 20px) clamp(16px, 4vmin, 40px); 
+            font-size: clamp(10px, 2vmin, 18px); 
             background: linear-gradient(to bottom, #8B0000, #500000); 
-            color: white; border: 0.4vh solid #fff; font-weight: bold; 
-            box-shadow: 0 0.6vh 0 #300000, 0 1vh 1vh rgba(0,0,0,0.8); 
+            color: white; border: 0.4vmin solid #fff; font-weight: bold; 
+            box-shadow: 0 0.6vmin 0 #300000, 0 1vmin 1vmin rgba(0,0,0,0.8); 
             cursor: pointer; font-family: var(--mario-font); 
             transition: transform 0.1s, box-shadow 0.1s;
-            min-width: clamp(160px, 40vw, 300px);
+            width: 100%; max-width: 350px;
+            box-sizing: border-box; text-align: center;
         }
-        .btn:active { transform: translateY(0.4vh); box-shadow: 0 0.2vh 0 #300000, 0 0.5vh 1vh rgba(0,0,0,0.8); }
-        .btn-story { background: linear-gradient(to bottom, #0000CD, #000080); box-shadow: 0 0.6vh 0 #000033, 0 1vh 1vh rgba(0,0,0,0.8); }
-        .btn-story:active { box-shadow: 0 0.4vh 0 #000033, 0 0.8vh 1vh rgba(0,0,0,0.8); }
-        .btn-destroy { background: linear-gradient(to bottom, #8B8B00, #505000); box-shadow: 0 0.6vh 0 #333300, 0 1vh 1vh rgba(0,0,0,0.8); }
-        .btn-destroy:active { box-shadow: 0 0.4vh 0 #333300, 0 0.8vh 1vh rgba(0,0,0,0.8); }
-        .btn-mp { background: linear-gradient(to bottom, #006400, #004d00); box-shadow: 0 0.6vh 0 #003300, 0 1vh 1vh rgba(0,0,0,0.8); }
-        .btn-mp:active { box-shadow: 0 0.4vh 0 #003300, 0 0.8vh 1vh rgba(0,0,0,0.8); }
-        .btn-settings { background: linear-gradient(to bottom, #666, #333); box-shadow: 0 0.6vh 0 #111, 0 1vh 1vh rgba(0,0,0,0.8); }
-        .btn-settings:active { box-shadow: 0 0.4vh 0 #111, 0 0.8vh 1vh rgba(0,0,0,0.8); }
-        .btn-leaderboard { background: linear-gradient(to bottom, #4A0080, #2A0040); box-shadow: 0 0.6vh 0 #1A0020, 0 1vh 1vh rgba(0,0,0,0.8); }
-        .btn-leaderboard:active { box-shadow: 0 0.4vh 0 #1A0020, 0 0.8vh 1vh rgba(0,0,0,0.8); }
-        .btn-copy { background: linear-gradient(to bottom, #008B8B, #005050); box-shadow: 0 0.6vh 0 #003333, 0 1vh 1vh rgba(0,0,0,0.8); }
-        .btn-copy:active { box-shadow: 0 0.4vh 0 #003333, 0 0.8vh 1vh rgba(0,0,0,0.8); }
+        .btn:active { transform: translateY(0.4vmin); box-shadow: 0 0.2vmin 0 #300000, 0 0.5vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-story { background: linear-gradient(to bottom, #0000CD, #000080); box-shadow: 0 0.6vmin 0 #000033, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-story:active { box-shadow: 0 0.4vmin 0 #000033, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-mp { background: linear-gradient(to bottom, #006400, #004d00); box-shadow: 0 0.6vmin 0 #003300, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-mp:active { box-shadow: 0 0.4vmin 0 #003300, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-settings { background: linear-gradient(to bottom, #666, #333); box-shadow: 0 0.6vmin 0 #111, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-settings:active { box-shadow: 0 0.4vmin 0 #111, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-leaderboard { background: linear-gradient(to bottom, #4A0080, #2A0040); box-shadow: 0 0.6vmin 0 #1A0020, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-leaderboard:active { box-shadow: 0 0.4vmin 0 #1A0020, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-copy { background: linear-gradient(to bottom, #008B8B, #005050); box-shadow: 0 0.6vmin 0 #003333, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-copy:active { box-shadow: 0 0.4vmin 0 #003333, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-boss { background: linear-gradient(to bottom, #4B0082, #2d004e); box-shadow: 0 0.6vmin 0 #1a002e, 0 1vmin 1vmin rgba(0,0,0,0.8); }
+        .btn-boss:active { box-shadow: 0 0.4vmin 0 #1a002e, 0 0.8vmin 1vmin rgba(0,0,0,0.8); }
 
-        .copyright { position: absolute; bottom: 2vh; font-size: clamp(7px, 1.2vh, 12px); color: rgba(255, 255, 255, 0.9); z-index: 10; text-align: center; line-height: 1.8; padding: 0 10px; }
+        .copyright { margin-top: auto; font-size: clamp(7px, 1.2vh, 12px); color: rgba(255, 255, 255, 0.9); z-index: 10; text-align: center; line-height: 1.8; padding: 2vh 10px; }
 
         #settingsLayer { background: rgba(0, 0, 0, 0.95); z-index: 110; }
-        .settings-panel { background: #222; border: 0.6vh solid #8B0000; padding: 3vh 4vh; width: 85%; max-width: 600px; max-height: 88vh; overflow-y: auto; text-align: center; box-shadow: 1vh 1vh 0 #000; box-sizing: border-box; }
+        .settings-panel { background: #222; border: 0.6vmin solid #8B0000; padding: 3vmin 4vmin; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; text-align: center; box-shadow: 1vmin 1vmin 0 #000; box-sizing: border-box; }
         .setting-item { margin: 2vh 0; display: flex; justify-content: space-between; align-items: center; font-size: clamp(10px, 1.8vh, 16px); }
         input[type=range] { -webkit-appearance: none; width: 40%; max-width: 150px; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 3vh; width: 3vh; background: #FFD700; cursor: pointer; border: 0.3vh solid #fff; margin-top: -1vh; }
@@ -145,41 +153,45 @@
         .toggle-btn { padding: 1vh 2vh; background: #444; border: 0.3vh solid #fff; color: white; font-family: var(--mario-font); font-size: clamp(9px, 1.5vh, 14px); cursor: pointer; box-shadow: 0.3vh 0.3vh 0 #000; }
         .toggle-btn.active { background: #8B0000; }
 
-        #gameUiLayer { pointer-events: none; z-index: 50; display: none; justify-content: flex-start; align-items: flex-start; padding: 3% 2%; }
-        #topBar { width: 100%; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: auto; flex-wrap: wrap; gap: 1.5vh; }
-        #hud { background: rgba(0,0,0,0.8); padding: 1.5vh; border: 0.4vh solid #8B0000; font-size: clamp(10px, 2vh, 18px); box-shadow: 0.4vh 0.4vh 0 #000; }
-        .score-text { color: var(--primary-color); margin-bottom: 0.8vh; display: block; }
-        .progress-text { color: #00FFFF; margin-bottom: 0.8vh; display: block; font-size: clamp(8px, 1.5vh, 14px); }
-        .energy-title { font-size: clamp(9px, 1.8vh, 16px); display: flex; align-items: center; gap: 0.5vh; }
-        .bar-bg { width: 18vh; height: 2.5vh; background: #333; margin-top: 1vh; border: 0.3vh solid #fff; position: relative; }
-        .bar-fill { width: 100%; height: 100%; background: linear-gradient(to right, #f00, #0f0); transition: width 0.1s linear; }
-        .game-buttons { display: flex; flex-direction: column; gap: 1vh; align-items: flex-end; }
-        .game-btn { 
-            padding: clamp(8px, 1.5vh, 16px) clamp(10px, 2vh, 20px); 
-            font-size: clamp(9px, 1.4vh, 14px); 
-            background: rgba(0,0,0,0.85); 
-            color: white; border: 0.4vh solid #fff; cursor: pointer; 
-            font-family: var(--mario-font); box-shadow: 0.4vh 0.4vh 0 #000; 
-            min-width: clamp(100px, 18vw, 160px);
+        /* UI CONTAINER EXACTLY MATCHING CANVAS */
+        #gameUiLayer { 
+            position: absolute; width: 640px; height: 480px; 
+            pointer-events: none; z-index: 50; display: none; 
+            flex-direction: column; transform-origin: top left; 
         }
-        .game-btn:active { transform: translateY(0.4vh); box-shadow: 0 0 0 #000; }
+        #topBar { width: 100%; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: auto; flex-wrap: wrap; gap: 10px; padding: 15px; box-sizing: border-box; }
+        #hud { background: rgba(0,0,0,0.8); padding: 10px; border: 3px solid #8B0000; box-shadow: 3px 3px 0 #000; font-size: 12px; }
+        .score-text { color: var(--primary-color); margin-bottom: 5px; display: block; }
+        .progress-text { color: #00FFFF; margin-bottom: 5px; display: block; font-size: 10px; }
+        .energy-title { font-size: 10px; display: flex; align-items: center; gap: 5px; }
+        .bar-bg { width: 120px; height: 16px; background: #333; margin-top: 5px; border: 2px solid #fff; position: relative; }
+        .bar-fill { width: 100%; height: 100%; background: linear-gradient(to right, #f00, #0f0); transition: width 0.1s linear; }
+        .game-buttons { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+        .game-btn { 
+            padding: 8px 12px; font-size: 10px; background: rgba(0,0,0,0.85); 
+            color: white; border: 2px solid #fff; cursor: pointer; 
+            font-family: var(--mario-font); box-shadow: 3px 3px 0 #000; 
+            min-width: 120px; box-sizing: border-box; text-align: center;
+        }
+        .game-btn:active { transform: translateY(3px); box-shadow: 0 0 0 #000; }
 
         #floatingTextContainer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        .floating-text { position: absolute; color: #FFD700; font-size: 2.5vh; font-weight: bold; text-shadow: 0.2vh 0.2vh 0 #000; animation: floatUp 1.2s ease-out forwards; pointer-events: none; z-index: 200; text-align: center; }
-        .burger-text { color: #FF0000; font-size: 4vh; animation: floatUpShake 1.5s ease-out forwards; }
-        .oikotie-shout { color: #00FFFF; font-size: 3.5vh; animation: popIn 1.5s ease-out forwards; }
+        .floating-text { position: absolute; color: #FFD700; font-size: 16px; font-weight: bold; text-shadow: 2px 2px 0 #000; animation: floatUp 1.2s ease-out forwards; pointer-events: none; z-index: 200; text-align: center; }
+        .burger-text { color: #FF0000; font-size: 24px; animation: floatUpShake 1.5s ease-out forwards; }
+        .oikotie-shout { color: #00FFFF; font-size: 22px; animation: popIn 1.5s ease-out forwards; }
         
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-4vh) scale(1.2); opacity: 1; } 100% { transform: translateY(-8vh) scale(1); opacity: 0; } }
-        @keyframes floatUpShake { 0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translateY(-2vh) scale(1.5) rotate(10deg); opacity: 1; } 40% { transform: translateY(-4vh) scale(1.5) rotate(-10deg); opacity: 1; } 60% { transform: translateY(-6vh) scale(1.5) rotate(10deg); opacity: 1; } 100% { transform: translateY(-10vh) scale(1) rotate(0deg); opacity: 0; } }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-30px) scale(1.2); opacity: 1; } 100% { transform: translateY(-60px) scale(1); opacity: 0; } }
+        @keyframes floatUpShake { 0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translateY(-10px) scale(1.5) rotate(10deg); opacity: 1; } 40% { transform: translateY(-20px) scale(1.5) rotate(-10deg); opacity: 1; } 60% { transform: translateY(-30px) scale(1.5) rotate(10deg); opacity: 1; } 100% { transform: translateY(-50px) scale(1) rotate(0deg); opacity: 0; } }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 20% { transform: scale(1.5); opacity: 1; } 80% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
 
+        /* CONTROLS BOUND TO SCREEN CORNERS */
         #controlsArea { position: absolute; bottom: 0; left: 0; width: 100%; height: 35%; pointer-events: none; z-index: 60; display: none; }
         .control-zone { pointer-events: auto; position: absolute; }
-        #joystickBase { bottom: 5vh; left: 5vh; width: 20vh; height: 20vh; background: rgba(0,0,0,0.5); border: 0.6vh solid rgba(255,255,255,0.8); border-radius: 50%; box-shadow: 0 0 2vh rgba(0,0,0,0.5); }
+        #joystickBase { bottom: 5vh; left: 5vh; width: 22vh; height: 22vh; background: rgba(0,0,0,0.5); border: 0.6vh solid rgba(255,255,255,0.8); border-radius: 50%; box-shadow: 0 0 2vh rgba(0,0,0,0.5); }
         #joystickStick { position: absolute; top: 25%; left: 25%; width: 50%; height: 50%; background: var(--secondary-color); border: 0.4vh solid #fff; border-radius: 50%; }
-        #kickBtn { bottom: 6vh; right: 6vh; width: 16vh; height: 16vh; background: #8B0000; border: 0.6vh solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2.5vh; box-shadow: inset -0.6vh -0.6vh 0 rgba(0,0,0,0.3), 0.6vh 0.6vh 0 rgba(0,0,0,0.5); cursor: pointer; }
-        #jumpBtn { bottom: 25vh; right: 8vh; width: 12vh; height: 12vh; background: #008B8B; border: 0.4vh solid #fff; border-radius: 50%; display: none; justify-content: center; align-items: center; color: white; font-size: 2vh; box-shadow: inset -0.4vh -0.4vh 0 rgba(0,0,0,0.3), 0.4vh 0.4vh 0 rgba(0,0,0,0.5); cursor: pointer; }
-        #danceBtn { bottom: 25vh; right: 22vh; width: 12vh; height: 12vh; background: #DA70D6; border: 0.4vh solid #fff; border-radius: 50%; display: none; justify-content: center; align-items: center; color: white; font-size: 2vh; box-shadow: inset -0.4vh -0.4vh 0 rgba(0,0,0,0.3), 0.4vh 0.4vh 0 rgba(0,0,0,0.5); cursor: pointer; }
+        #kickBtn { bottom: 6vh; right: 6vh; width: 18vh; height: 18vh; background: #8B0000; border: 0.6vh solid #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 2.5vh; box-shadow: inset -0.6vh -0.6vh 0 rgba(0,0,0,0.3), 0.6vh 0.6vh 0 rgba(0,0,0,0.5); cursor: pointer; }
+        #jumpBtn { bottom: 28vh; right: 8vh; width: 12vh; height: 12vh; background: #008B8B; border: 0.4vh solid #fff; border-radius: 50%; display: none; justify-content: center; align-items: center; color: white; font-size: 2vh; box-shadow: inset -0.4vh -0.4vh 0 rgba(0,0,0,0.3), 0.4vh 0.4vh 0 rgba(0,0,0,0.5); cursor: pointer; }
+        #danceBtn { bottom: 28vh; right: 24vh; width: 12vh; height: 12vh; background: #DA70D6; border: 0.4vh solid #fff; border-radius: 50%; display: none; justify-content: center; align-items: center; color: white; font-size: 2vh; box-shadow: inset -0.4vh -0.4vh 0 rgba(0,0,0,0.3), 0.4vh 0.4vh 0 rgba(0,0,0,0.5); cursor: pointer; }
         
         #gameOverScreen, #storyGameOverScreen { background-color: #000; z-index: 150; }
         .mario-text-title { color: #FFF; font-size: clamp(20px, 6vh, 52px); margin-bottom: 5vh; text-align: center; text-shadow: none; }
@@ -188,14 +200,14 @@
         #storyWinScreen { background: rgba(50,0,0,1); z-index: 150; } 
         .story-win-title { color: #FFF; font-size: clamp(18px, 6vh, 52px); margin-bottom: 3vh; text-align: center; line-height: 1.5; text-shadow: 0.4vh 0.4vh 0 #000;}
 
-        #winScreen { background: rgba(0,30,0,0.95); z-index: 150; }
+        #winScreen { background: rgba(0,30,0,0.95); z-index: 350; }
         .win-title { color: #00FF00; font-size: clamp(20px, 7vh, 60px); margin-bottom: 3vh; text-align:center; text-shadow: 0.4vh 0.4vh 0 #000;}
 
         /* MULTIPLAYER LOBBY */
         #mpSetupLayer .settings-panel { max-width: 500px; }
         #mpNameInput, #playerNameInput { 
             font-family: var(--mario-font); padding: 1.5vh; 
-            font-size: clamp(10px, 2vh, 18px); width: 80%; 
+            font-size: clamp(10px, 2vh, 18px); width: 100%; max-width: 100%;
             margin-bottom: 3vh; text-align: center; 
             background: #111; color: #FFF; border: 2px solid #666;
             box-sizing: border-box;
@@ -247,6 +259,7 @@
         }
         #mpChatInput input {
             width: 100%;
+            max-width: 100%;
             font-family: var(--mario-font);
             font-size: clamp(8px, 1.5vh, 13px);
             background: rgba(0,0,0,0.85);
@@ -284,7 +297,6 @@
 </head>
 <body>
 
-<!-- ROTATE SCREEN OVERLAY -->
 <div id="rotateOverlay">
     <div class="rotate-phone-anim">
         <span class="rotate-arrow">↺</span>
@@ -302,17 +314,19 @@
 
     <div id="menuLayer">
         <canvas id="menuCanvas" style="position: absolute; top:0; left:0; z-index: 1;"></canvas>
-        <div class="title" style="position: relative;">Horseleg<br>Chicken<br><span style="font-size: 0.5em; color: #FFF; text-shadow:none; animation:none;">Päivitetty</span></div>
+        <div style="flex-grow: 1;"></div>
+        <div class="title" style="position: relative;">Horseleg<br>Chicken<br><span style="font-size: 0.5em; color: #FFF; text-shadow:none; animation:none;">BUGINEN VERSIO </span></div>
         <div class="menu-buttons">
-            <button class="btn" id="playBtn">RAMPAGE MODE</button>
-            <button class="btn btn-story" id="storyBtn">TARINA MODE</button>
-            <button class="btn btn-destroy" id="destroyBtn">TUHOAMIS MODE</button>
-            <button class="btn btn-mp" id="mpBtn">MONINPELI (Hengailu)</button>
-            <button class="btn btn-leaderboard" id="leaderboardBtn">TULOSTAULU</button>
+            <button class="btn" id="playBtn">RAMPAGE</button>
+            <button class="btn btn-boss" id="bossBtn">boss taistelu</button>
+            <button class="btn btn-story" id="storyBtn">Kana tarina </button>
+            <button class="btn btn-mp" id="mpBtn">Moninpeli</button>
+            <button class="btn btn-leaderboard" id="leaderboardBtn">Tulostaulu</button>
             <button class="btn btn-settings" id="openSettingsBtn">ASETUKSET</button>
         </div>
-        <div id="onlineCountMenu" style="position: absolute; bottom: 8vh; font-size: clamp(9px, 1.5vh, 14px); color: #0F0; z-index: 10;">Pelaajia linjoilla: 0</div>
-        <div class="copyright">PC KONTROLLIT: WASD / NUOLET Liikkuminen | E tai Space Potku | SPACE Hyppy | X Tanssi | T Chat<br>IDEA: JANI NORONEN | &copy; LAKKULA 2026</div>
+        <div id="onlineCountMenu" style="position: relative; margin-top: 3vh; font-size: clamp(9px, 1.5vh, 14px); color: #0F0; z-index: 10;">Pelaajia linjoilla: 0</div>
+        <div style="flex-grow: 1;"></div>
+        <div class="copyright" style="position:relative;">PC KONTROLLIT: WASD / NUOLET Liikkuminen | E / Space Potku | SPACE Hyppy | X Tanssi | T Chat | J Pelaa<br>IDEA: JANI NORONEN | &copy; LAKKULA 2026</div>
     </div>
 
     <div id="mpSetupLayer" class="modal-layer">
@@ -324,7 +338,7 @@
                 <label style="color:#FFF; cursor:pointer;"><input type="radio" name="mpChar" value="female"> Tyttö Kana</label>
             </div>
             <div style="margin-bottom: 2vh; font-size: clamp(9px, 1.6vh, 14px); color: #0F0;">
-                🟢 Online: <span id="mpLobbyCount">0</span> pelaajaa
+                Online: <span id="mpLobbyCount">0</span> pelaajaa
             </div>
             <button class="btn btn-mp" id="startMpBtn" style="padding: 1.5vh 4vh; font-size: clamp(10px, 2vh, 18px);">PELAA NYT</button>
             <br>
@@ -381,15 +395,27 @@
                 <div class="bar-bg" id="energyBarBg"><div class="bar-fill" id="healthBar"></div></div>
             </div>
             <div class="game-buttons">
-                <div id="onlineCountMp" style="color: #0F0; font-size: clamp(8px,1.2vh,12px); text-align:right; display:none;">Online: 0</div>
+                <div id="onlineCountMp" style="color: #0F0; font-size: 10px; text-align:right; display:none;">Online: 0</div>
+                <div id="mpPlayersHint" style="color: #9F9; font-size: 8px; text-align:right; display:none; max-width: 150px;">Muut kartalla: 0</div>
                 <button class="game-btn" id="fullscreenBtn">KOKONÄYTTÖ</button>
                 <button class="game-btn" id="menuBtn">PÄÄVALIKKO</button>
             </div>
         </div>
         <div id="floatingTextContainer"></div>
+        <div id="pcTooltips">
+            <b>KONTROLLIT (PC)</b><br>
+            WASD / Nuolet : Liiku<br>
+            Space / E : Potku<br>
+            Space : Hyppy<br>
+            X : Tanssi<br>
+            T : Chat<br>
+            J : Pelaa Kasinoa
+        </div>
+        <button id="mobileChatBtn" style="display:none; position:absolute; left: 15px; bottom: 100px; width: 60px; height: 60px; background: rgba(0,0,0,0.5); border: 2px solid #FFF; border-radius: 50%; color: #FFF; font-family: var(--mario-font); font-size: 10px; z-index: 80; align-items:center; justify-content:center; cursor: pointer; pointer-events: auto;">CHAT</button>
+        <div id="mobileCasinoBtn" style="display:none; position:absolute; right: 120px; bottom: 180px; width: 60px; height: 60px; background: #FFD700; border-radius: 50%; color: #000; font-weight: bold; font-size: 10px; justify-content: center; align-items: center; z-index: 80; box-shadow: inset -2px -2px 0 rgba(0,0,0,0.3), 2px 2px 0 rgba(0,0,0,0.5); cursor: pointer; pointer-events: auto;">PELAA</div>
+        <div id="pcCasinoText">Paina J pelataksesi</div>
     </div>
 
-    <!-- MULTIPLAYER CHAT -->
     <div id="mpChat"><div id="mpChatMessages"></div></div>
     <div id="mpChatInput"><input type="text" id="mpChatField" placeholder="Kirjoita viesti... (Enter)" maxlength="40"></div>
 
@@ -404,9 +430,9 @@
     </div>
     
     <div id="winScreen">
-        <div class="mario-text-title" style="color:#0F0;">VOITIT!</div>
+        <div class="mario-text-title" id="winTitleText" style="color:#0F0;">VOITIT!</div>
         <div class="mario-text-stats">AIKA: <span id="winTime" style="color: #FFD700;">00:00</span></div>
-        <div class="mario-text-stats">SCORE: <span id="winScore" style="color: #00FFFF;">0</span></div>
+        <div class="mario-text-stats" id="winScoreContainer">SCORE: <span id="winScore" style="color: #00FFFF;">0</span></div>
         <div id="winLbSection">
             <h3>🏆 TOP 3 RAMPAGE</h3>
             <ol id="winLbList"><li style="color:#888;">Ladataan...</li></ol>
@@ -497,9 +523,9 @@
         document.getElementById('mpLobbyCount').innerText = onlineCount;
     });
 
-    // Multiplayer sync
+    // Multiplayer sync (Strict isolation)
     function updateMultiplayer() {
-        if (gameState !== 'PLAYING' || currentMode !== 'multiplayer' || !myMpId) return;
+        if (gameState !== 'PLAYING' || currentMode !== 'multiplayer' || !myMpId || !player) return;
         db.ref('players/' + myMpId).set({
             x: player.x,
             y: player.y,
@@ -515,7 +541,7 @@
     setInterval(updateMultiplayer, 50);
 
     db.ref('players').on('value', snap => {
-        if (currentMode !== 'multiplayer') return;
+        if (currentMode !== 'multiplayer') return; // Älä vuoda dataa muihin moodeihin!
         let data = snap.val() || {};
         let now = Date.now();
         otherPlayers = {};
@@ -524,12 +550,12 @@
             if (now - data[id].timestamp > 5000) continue;
             otherPlayers[id] = data[id];
             let p = otherPlayers[id];
-            if (p.isKicking && player) {
-                let dx = p.x - player.x, dy = p.y - player.y, dz = p.z - player.z;
-                if (Math.hypot(dx, dy) < 60 && Math.abs(dz) < 40) {
+            if (p && p.isKicking && player) {
+                let dx = p.x - player.x, dy = p.z - player.z;
+                if (Math.hypot(dx, dy) < 60 && Math.abs(dy) < 40) {
                     if ((p.dir === 1 && dx < 0) || (p.dir === -1 && dx > 0)) {
-                        player.x = 500 + Math.random()*200;
-                        player.y = groundY;
+                        player.x = 200 + Math.random()*200;
+                        player.z = 0;
                         playSound('hit');
                         createParticles(player.x, player.y, 15, '#F00');
                     }
@@ -558,7 +584,6 @@
     function sendChatMessage(text) {
         if(!text.trim() || !myMpId) return;
         db.ref('chat').push({ name: myMpName, text: text.trim(), t: Date.now() });
-        // Clean old chat
         db.ref('chat').orderByChild('t').endAt(Date.now() - 30000).limitToFirst(50).once('value', snap => {
             snap.forEach(child => child.ref.remove());
         });
@@ -570,26 +595,37 @@
 
     // --- GLOBALS ---
     const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
-    const keys = { w:false, a:false, s:false, d:false, space:false, e:false, x:false, t:false, up:false, down:false, left:false, right:false };
+    const keys = { w:false, a:false, s:false, d:false, space:false, e:false, x:false, t:false, j:false, up:false, down:false, left:false, right:false };
     const joystick = { active: false, dx: 0, dy: 0, touchId: null };
     let isKickingMobile = false, isJumpingMobile = false;
     let cameraX = 0;
     
-    const INTERNAL_W = 800;
-    const INTERNAL_H = 600;
-    let W = INTERNAL_W, H = INTERNAL_H;
-    let groundY = 450;
+    const VIRTUAL_W = 640;
+    const VIRTUAL_H = 480;
+    const groundY = 360;
+    let displayScale = 1, displayOffsetX = 0, displayOffsetY = 0;
+    let isNearCasino = false;
     
     let gameState = 'MENU', currentMode = 'rampage', gameLoopId, lastTime = 0;
     let fadeAlpha = 0, endingTimer = 0, startTime = 0, finalTimeStr = "00:00";
     let lastStepTime = 0, currentRampageTrack = 1, GOAL_X = 20000, score = 0;
     let storyCarTimer = 0;
     let storyHouses = [], cityBuildings = [], destroyBuildings = [], museumLabels = [], oikotieActive = false;
-    let player, entities = [], particles = [];
+    let oikotieProgressTriggers = [], oikotieProgressFired = [];
+    let player = null, entities = [], particles = [];
     let settings = { shadows: true, gore: true, particles: true, difficulty: 1, hideNames: false }; 
     let vols = { master: 1.0, music: 0.5, sfx: 1.0, voice: 0.4 };
     const Sprites = {};
     const phoneTexts = [ "jätkä tuulottaa", "se on oikotiä", "Miksi täällä juoksentelee kana?", "Ostan kakkaa haha ei vaa..", "Kana lähestyy!", "Kaupat tuli!", "Näin hirviön..." ];
+
+    // Boss Intro & Fight variables
+    let bossIntroState = 0;
+    let bossIntroText = "";
+    let bossIntroFullText = "OIKOTIE... BRR. EIKUN.. SIIS.. OIKOTIÄ!";
+    let bossIntroCharIdx = 0;
+    let bossIntroTimer = 0;
+    let bossIntroFade = 0;
+    let bossSpectators = [];
 
     const menuLayer = document.getElementById('menuLayer');
     const gameUiLayer = document.getElementById('gameUiLayer');
@@ -615,79 +651,230 @@
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d', { alpha: false });
 
-    menuCanvas.width = INTERNAL_W; menuCanvas.height = INTERNAL_H;
-    canvas.width = INTERNAL_W; canvas.height = INTERNAL_H;
+    menuCanvas.width = VIRTUAL_W; menuCanvas.height = VIRTUAL_H;
+    canvas.width = VIRTUAL_W; canvas.height = VIRTUAL_H;
 
-    // --- AUDIO ---
-    let audioCtx, masterGain, musicGain, sfxGain, voiceGain, musicInterval, menuMusicInterval;
-    const bgmNotes1 = [ 82.41, 82.41, 98.00, 82.41, 82.41, 110.00, 82.41, 82.41, 123.47, 82.41, 82.41, 110.00, 98.00, 82.41, 82.41, 73.42 ]; 
-    const bgmNotes2 = [ 110.00, 110.00, 146.83, 164.81, 110.00, 110.00, 98.00, 103.83 ]; 
-    const menuBgmNotes = [ 392.00, 0, 392.00, 0, 392.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 0, 0, 587.33, 0, 587.33, 0, 587.33, 0, 622.25, 0, 466.16, 0, 370.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 0, 0, 783.99, 0, 392.00, 0, 392.00, 0, 783.99, 0, 739.99, 0, 698.46, 0, 659.25, 0, 622.25, 0, 659.25, 0, 0, 0, 415.30, 0, 554.37, 0, 523.25, 0, 493.88, 0, 466.16, 0, 440.00, 0, 466.16, 0, 0, 0, 311.13, 0, 370.00, 0, 311.13, 0, 370.00, 0, 466.16, 0, 392.00, 0, 466.16, 0, 587.33, 0, 0, 0, 783.99, 0, 392.00, 0, 392.00, 0, 783.99, 0, 739.99, 0, 698.46, 0, 659.25, 0, 622.25, 0, 659.25, 0, 0, 0, 415.30, 0, 554.37, 0, 523.25, 0, 493.88, 0, 466.16, 0, 440.00, 0, 466.16, 0, 0, 0, 311.13, 0, 466.16, 0, 392.00, 0, 311.13, 0, 466.16, 0, 392.00, 0, 0, 0 ]; 
-    let noteIndex = 0, menuNoteIndex = 0;
+    // ==============================================================================
+    // HORSELEG CHICKEN - ULTIMATE AUDIO ENGINE V8
+    // ==============================================================================
+
+    let audioCtx = null;
+    let masterCompressor = null; 
+    let musicInterval = null;
+    let currentTick = 0;
+    
+    let masterGain, musicGain, sfxGain, voiceGain;
+
+    const N = {
+        'C1': 32.70, 'C#1': 34.65, 'D1': 36.71, 'D#1': 38.89, 'E1': 41.20, 'F1': 43.65, 'F#1': 46.25, 'G1': 49.00, 'G#1': 51.91, 'A1': 55.00, 'A#1': 58.27, 'B1': 61.74,
+        'C2': 65.41, 'C#2': 69.30, 'D2': 77.78, 'D#2': 82.41, 'E2': 87.31, 'F2': 92.50, 'F#2': 98.00, 'G2': 103.83, 'G#2': 110.00, 'A2': 116.54, 'A#2': 123.47, 'B2': 130.81,
+        'C3': 130.81, 'C#3': 138.59, 'D3': 146.83, 'D#3': 155.56, 'E3': 164.81, 'F3': 174.61, 'F#3': 185.00, 'G3': 196.00, 'G#3': 207.65, 'A3': 220.00, 'A#3': 233.08, 'B3': 246.94,
+        'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23, 'F#4': 369.99, 'G4': 392.00, 'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88,
+        'C5': 523.25, 'C#5': 554.37, 'D5': 587.33, 'D#5': 622.25, 'E5': 659.25, 'F5': 698.46, 'F#5': 740.00, 'G5': 783.99, 'G#5': 830.61, 'A5': 880.00, 'A#5': 932.33, 'B5': 987.77,
+        'C6': 1046.50, 'C#6': 1108.73, 'D6': 1174.66, 'D#6': 1244.51, 'E6': 1318.51, 'F6': 1396.91, 'F#6': 1479.98, 'G6': 1567.98, 'G#6': 1661.22, 'A6': 1760.00, 'A#6': 1864.66, 'B6': 1975.53
+    };
+
+    function p(str) { return str.trim().replace(/\|/g, '').split(/\s+/).map(n => n === '.' ? null : n); }
 
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            masterGain = audioCtx.createGain(); masterGain.connect(audioCtx.destination);
+            masterCompressor = audioCtx.createDynamicsCompressor();
+            masterCompressor.threshold.setValueAtTime(-15, audioCtx.currentTime);
+            masterCompressor.knee.setValueAtTime(10, audioCtx.currentTime);
+            masterCompressor.ratio.setValueAtTime(12, audioCtx.currentTime);
+            masterCompressor.attack.setValueAtTime(0.005, audioCtx.currentTime);
+            masterCompressor.release.setValueAtTime(0.1, audioCtx.currentTime);
+            masterCompressor.connect(audioCtx.destination);
+            
+            masterGain = audioCtx.createGain(); masterGain.connect(masterCompressor);
             musicGain = audioCtx.createGain(); musicGain.connect(masterGain);
             sfxGain = audioCtx.createGain(); sfxGain.connect(masterGain);
             voiceGain = audioCtx.createGain(); voiceGain.connect(masterGain);
             updateVolumes();
         }
-        if(audioCtx.state === 'suspended') audioCtx.resume();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
     }
-    function updateVolumes() { if (!audioCtx) return; masterGain.gain.value = vols.master; musicGain.gain.value = vols.music; sfxGain.gain.value = vols.sfx; voiceGain.gain.value = vols.voice; }
+    
+    function updateVolumes() { 
+        if (!audioCtx) return; 
+        masterGain.gain.value = vols.master; 
+        musicGain.gain.value = vols.music; 
+        sfxGain.gain.value = vols.sfx; 
+        voiceGain.gain.value = vols.voice; 
+    }
     document.getElementById('volMaster').addEventListener('input', e => { vols.master = e.target.value / 100; updateVolumes(); });
     document.getElementById('volMusic').addEventListener('input', e => { vols.music = e.target.value / 100; updateVolumes(); });
     document.getElementById('volSfx').addEventListener('input', e => { vols.sfx = e.target.value / 100; updateVolumes(); });
     document.getElementById('volVoice').addEventListener('input', e => { vols.voice = e.target.value / 100; updateVolumes(); });
-    
-    function startMenuBGM() {
-        if (menuMusicInterval) return; initAudio();
-        menuMusicInterval = setInterval(() => {
-            if (gameState !== 'MENU' || !audioCtx) return;
-            try {
-                let note = menuBgmNotes[menuNoteIndex];
-                if (note > 0) {
-                    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-                    osc.connect(gain); gain.connect(musicGain); osc.type = 'square'; osc.frequency.setValueAtTime(note, audioCtx.currentTime); 
-                    gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.18);
-                    osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.2);
-                }
-                menuNoteIndex = (menuNoteIndex + 1) % menuBgmNotes.length;
-            } catch(e) {}
-        }, 150);
-    }
-    function stopMenuBGM() { if (menuMusicInterval) { clearInterval(menuMusicInterval); menuMusicInterval = null; } }
 
-    function startBGM() {
-        stopMenuBGM(); if (musicInterval) clearInterval(musicInterval); if (currentMode === 'destroy' || currentMode === 'multiplayer') return; 
+    function playDrumEngine(type, time) {
+        const gain = audioCtx.createGain(); gain.connect(musicGain); 
+        if (type === 'kick') {
+            const osc = audioCtx.createOscillator(); osc.connect(gain);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(120, time); osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.1);
+            gain.gain.setValueAtTime(0.9, time); gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+            osc.start(time); osc.stop(time + 0.1);
+        } else if (type === 'snare') {
+            const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.1, audioCtx.sampleRate);
+            const data = buf.getChannelData(0); for (let i = 0; i < buf.length; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource(); noise.buffer = buf;
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'highpass'; filter.frequency.value = 1000;
+            gain.gain.setValueAtTime(0.6, time); gain.gain.exponentialRampToValueAtTime(0.01, time + 0.15);
+            noise.connect(filter); filter.connect(gain); noise.start(time); noise.stop(time + 0.15);
+        } else if (type === 'hat') {
+            const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.05, audioCtx.sampleRate);
+            const data = buf.getChannelData(0); for (let i = 0; i < buf.length; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource(); noise.buffer = buf;
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 8000;
+            gain.gain.setValueAtTime(0.2, time); gain.gain.exponentialRampToValueAtTime(0.01, time + 0.05);
+            noise.connect(filter); filter.connect(gain); noise.start(time); noise.stop(time + 0.05);
+        }
+    }
+
+    function playSynth(note, time, dur, type, vol, filterHz) {
+        if (!note || !N[note]) return;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.type = type; osc.frequency.setValueAtTime(N[note], time);
+        if (filterHz) {
+            const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass'; 
+            filter.frequency.setValueAtTime(filterHz, time); filter.frequency.exponentialRampToValueAtTime(100, time + dur);
+            osc.connect(filter); filter.connect(gain);
+        } else {
+            osc.connect(gain);
+        }
+        gain.gain.setValueAtTime(0, time); gain.gain.linearRampToValueAtTime(vol, time + 0.02); 
+        gain.gain.setValueAtTime(vol, time + dur - 0.05); gain.gain.linearRampToValueAtTime(0, time + dur);
+        gain.connect(musicGain); osc.start(time); osc.stop(time + dur);
+    }
+    
+    function playEpicLead(note, time, dur) {
+        if (!note || !N[note]) return;
+        const osc1 = audioCtx.createOscillator(); const osc2 = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc1.type = 'square'; osc1.frequency.setValueAtTime(N[note], time);
+        osc2.type = 'sawtooth'; osc2.frequency.setValueAtTime(N[note]*1.01, time); 
+        gain.gain.setValueAtTime(0, time); gain.gain.linearRampToValueAtTime(0.2, time + 0.02); 
+        gain.gain.setValueAtTime(0.2, time + dur - 0.05); gain.gain.linearRampToValueAtTime(0, time + dur);
+        osc1.connect(gain); osc2.connect(gain); gain.connect(musicGain);
+        osc1.start(time); osc2.start(time); osc1.stop(time + dur); osc2.stop(time + dur);
+    }
+
+    function playHorn(note, time, dur) {
+        if (!note || !N[note]) return;
+        const osc1 = audioCtx.createOscillator(); const osc2 = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc1.type = 'sawtooth'; osc1.frequency.setValueAtTime(N[note], time);
+        osc2.type = 'square'; osc2.frequency.setValueAtTime(N[note]*1.02, time); 
+        const filter = audioCtx.createBiquadFilter(); filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, time); filter.frequency.linearRampToValueAtTime(4000, time + 0.08); 
+        gain.gain.setValueAtTime(0, time); gain.gain.linearRampToValueAtTime(0.4, time + 0.02); gain.gain.setValueAtTime(0.4, time + dur - 0.05); gain.gain.linearRampToValueAtTime(0, time + dur);
+        osc1.connect(filter); osc2.connect(filter); filter.connect(gain); gain.connect(musicGain);
+        osc1.start(time); osc2.start(time); osc1.stop(time + dur); osc2.stop(time + dur);
+    }
+
+    function playChillPiano(note, time, dur) {
+        if (!note || !N[note]) return;
+        const osc1 = audioCtx.createOscillator(); const osc2 = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc1.type = 'sine'; osc1.frequency.setValueAtTime(N[note], time);
+        osc2.type = 'triangle'; osc2.frequency.setValueAtTime(N[note], time);
+        gain.gain.setValueAtTime(0, time); gain.gain.linearRampToValueAtTime(0.3, time + 0.05); gain.gain.exponentialRampToValueAtTime(0.001, time + dur * 4);
+        osc1.connect(gain); osc2.connect(gain); gain.connect(musicGain);
+        osc1.start(time); osc2.start(time); osc1.stop(time + dur * 4); osc2.stop(time + dur * 4);
+    }
+
+    const menuBassStr = `
+        D2 . . . D2 . . . A#1 . . . A#1 . . . F1 . . . F1 . . . C2 . . . C2 . . . 
+        D2 . . . D2 . . . A#1 . . . A#1 . . . F1 . . . F1 . . . C2 . . . C2 . . . 
+        D2 . D3 . D2 . D3 . A#1 . A#2 . A#1 . A#2 . F1 . F2 . F1 . F2 . C2 . C3 . C2 . C3 . 
+        D2 . D3 . D2 . D3 . A#1 . A#2 . A#1 . A#2 . F1 . F2 . F1 . F2 . C2 . C3 . C2 . C3 . 
+        D2 D3 D2 D3 D2 D3 D2 D3 A#1 A#2 A#1 A#2 A#1 A#2 A#1 A#2 F1 F2 F1 F2 F1 F2 F1 F2 C2 C3 C2 C3 C2 C3 C2 C3 
+        D2 D3 D2 D3 D2 D3 D2 D3 A#1 A#2 A#1 A#2 A#1 A#2 A#1 A#2 F1 F2 F1 F2 F1 F2 F1 F2 C2 C3 C2 C3 C2 C3 C2 C3 
+        D2 D3 D2 D3 D2 D3 D2 D3 A#1 A#2 A#1 A#2 A#1 A#2 A#1 A#2 F1 F2 F1 F2 F1 F2 F1 F2 C2 C3 C2 C3 C2 C3 C2 C3 
+        D2 D3 D2 D3 D2 D3 D2 D3 A#1 A#2 A#1 A#2 A#1 A#2 A#1 A#2 F1 F2 F1 F2 F1 F2 F1 F2 C2 C3 C2 C3 C2 C3 C2 C3 
+    `;
+    const menuLeadStr = `
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+        D4 . . . F4 . . . A4 . . . . . . . A#4 . A4 . G4 . F4 . C5 . . . . . . . 
+        A4 . . . G4 . . . E4 . . . C4 . . . D4 . . . F4 . . . A4 . . . . . . . 
+        A#4 . A4 . G4 . F4 . C5 . . . A4 . . . G4 . A4 . D5 . . . . . . . 
+        D5 . . . . . C5 . D5 . . . . . . . F5 . . . . . E5 . C5 . . . . . . . 
+        A4 . . . . . G4 . A4 . . . . . . . C5 . . . . . G4 . E4 . . . . . . . 
+        D5 F4 G4 A4 D5 F4 G4 A4 D5 F4 G4 A4 D5 F4 G4 A4 C5 E4 F4 G4 C5 E4 F4 G4 C5 E4 F4 G4 C5 E4 F4 G4 
+    `;
+    const menuDrumsStr = `
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+        kick . . . . . . . kick . . . . . . . kick . . . . . . . kick . . . . . . .
+        kick . . . . . . . kick . . . . . . . kick . . . . . . . kick . . . . . . .
+        kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat 
+        kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat 
+        kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat 
+        kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat kick hat hat hat snare hat kick hat 
+    `;
+    const trackMenu = { tickMs: 140, bass: p(menuBassStr), lead: p(menuLeadStr), drums: p(menuDrumsStr), playFns: { d: playDrumEngine, b: (n,t,d) => playSynth(n,t,d,'sawtooth',0.3, 1000), l: (n,t,d) => playSynth(n,t,d,'square',0.15) } };
+
+    const batBassPart1 = "G2 G2 F#2 F#2 F2 F2 F#2 F#2 ".repeat(4);
+    const batBassPart2 = "C3 C3 B2 B2 A#2 A#2 B2 B2 ".repeat(2);
+    const batBassPart3 = "G2 G2 F#2 F#2 F2 F2 F#2 F#2 ".repeat(2);
+    const batBassPart4 = "D3 D3 C#3 C#3 C3 C3 C#3 C#3 C3 C3 B2 B2 A#2 A#2 B2 B2 ";
+    const batBassPart5 = "G2 G2 F#2 F#2 F2 F2 F#2 F#2 ".repeat(2);
+    const batBassStr = batBassPart1 + batBassPart2 + batBassPart3 + batBassPart4 + batBassPart5 + batBassPart1 + batBassPart2 + batBassPart3 + batBassPart4 + batBassPart5 + batBassPart1 + batBassPart2 + batBassPart3 + batBassPart4 + batBassPart5;
+    const batLeadStr = `
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . F4 F4 G4 G4 
+        . . . . . . . . . . . . . . . . . . . . C5 C5 D5 D5 . . . . . . . . 
+        . . . . F4 F4 G4 G4 . . . . . . . . . . . . . . . . D5 D5 . . C5 C5 . . 
+        . . . . F4 F4 G4 G4 . . . . . . . . . . . . . . . . . . . . F4 F4 G4 G4 
+        . . . . . . . . . . . . . . . . . . . . C5 C5 D5 D5 . . . . . . . . 
+        . . . . F4 F4 G4 G4 . . . . . . . . . . . . . . . . D5 D5 . . C5 C5 . . 
+        . . . . F4 F4 G4 G4 . . . . . . . . . . . . . . . . . . . . F4 F4 G4 G4 
+        D5 C5 A#4 C5 D5 C5 A#4 C5 D5 C5 A#4 C5 D5 C5 A#4 C5 G4 F4 D4 F4 G4 F4 D4 F4 
+        G4 F4 D4 F4 G4 F4 D4 F4 D5 C5 A#4 C5 D5 C5 A#4 C5 D5 C5 A#4 C5 D5 C5 A#4 C5 
+        G4 F4 D4 F4 G4 F4 D4 F4 G4 F4 D4 F4 G4 F4 D4 F4 . . . . . . . . . . . . F4 F4 G4 G4
+    `;
+    const trackBatman = { tickMs: 140, bass: p(batBassStr), lead: p(batLeadStr), drums: p("kick hat snare hat ".repeat(120)), playFns: { d: playDrumEngine, b: (n,t,d) => playSynth(n,t,d,'sawtooth',0.5, 1200), l: (n,t,d) => { if(n==='F4' || n==='G4') playHorn(n,t,d); else playSynth(n,t,d,'square',0.2); } } };
+
+    const mpBassStr = `
+        C3 . . . . . . . . . . . . . . . 
+        A2 . . . . . . . . . . . . . . . 
+        F2 . . . . . . . . . . . . . . . 
+        G2 . . . . . . . . . . . . . . . 
+    `;
+    const mpLeadStr = `
+        C4 . E4 . G4 . C5 . G4 . E4 . C4 . G3 . 
+        A3 . C4 . E4 . A4 . E4 . C4 . A3 . E3 . 
+        F3 . A3 . C4 . F4 . C4 . A3 . F3 . C3 . 
+        G3 . B3 . D4 . G4 . D4 . B3 . G3 . D3 . 
+    `;
+    const trackMultiplayer = { tickMs: 250, bass: p(mpBassStr), lead: p(mpLeadStr), drums: p(". ".repeat(64)), playFns: { d: null, b: (n,t,d) => playChillPiano(n,t,d*4), l: (n,t,d) => playChillPiano(n,t,d) } };
+
+    const trackBoss = {
+        tickMs: 110, 
+        bass: p("E2 E2 E2 E2 C2 C2 C2 C2 D2 D2 D2 D2 B1 B1 B1 B1 ".repeat(8)),
+        lead: p("E4 . . . B4 . . . A4 . . . G4 . F#4 . E4 . . . C5 . . . B4 . . . . . . . E4 . . . B4 . . . D5 . . . C5 . B4 . E5 . . . D5 . . . C5 . . . B4 . . . E5 E5 B4 B4 G4 G4 E4 E4 C5 C5 G4 G4 E4 E4 C4 C4 D5 D5 A4 A4 F#4 F#4 D4 D4 B4 B4 F#4 F#4 D4 D4 B3 B3 E5 . . . . . . . F#5 . . . . . . . G5 . . . . . . . A5 . . . B5 . . . "),
+        drums: p("kick hat snare hat kick hat snare hat ".repeat(16)),
+        playFns: { d: playDrumEngine, b: (n,t,d) => playSynth(n,t,d,'sawtooth',0.3, 1000), l: (n,t,d) => playEpicLead(n,t,d) }
+    };
+
+    function playEngineTrack(trackData) {
+        if (musicInterval) clearInterval(musicInterval);
+        initAudio(); 
+        currentTick = 0;
         musicInterval = setInterval(() => {
-            if ((gameState !== 'PLAYING' && gameState !== 'ANIMATION') || !audioCtx) return;
-            try {
-                const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); const filter = audioCtx.createBiquadFilter();
-                osc.connect(filter); filter.connect(gain); gain.connect(musicGain);
-                if (currentMode === 'story') {
-                    let note = menuBgmNotes[noteIndex % menuBgmNotes.length];
-                    if (note > 0) {
-                        osc.type = 'triangle'; osc.frequency.setValueAtTime(note * 0.5, audioCtx.currentTime); filter.type = 'lowpass'; filter.frequency.value = 1000;
-                        gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                    } else { gain.gain.setValueAtTime(0, audioCtx.currentTime); }
-                } else {
-                    let track = currentRampageTrack === 1 ? bgmNotes1 : bgmNotes2;
-                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(track[noteIndex % track.length], audioCtx.currentTime); 
-                    filter.type = 'lowpass'; filter.frequency.setValueAtTime(300, audioCtx.currentTime); filter.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.05); filter.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.02); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-                    if (noteIndex % 4 === 0) {
-                        const kickOsc = audioCtx.createOscillator(); const kickGain = audioCtx.createGain(); kickOsc.connect(kickGain); kickGain.connect(musicGain);
-                        kickOsc.type = 'sine'; kickOsc.frequency.setValueAtTime(150, audioCtx.currentTime); kickOsc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                        kickGain.gain.setValueAtTime(0.3, audioCtx.currentTime); kickGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                        kickOsc.start(audioCtx.currentTime); kickOsc.stop(audioCtx.currentTime + 0.1);
-                    }
-                }
-                osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.3); noteIndex++;
-            } catch(e) {}
-        }, 180);
+            const time = audioCtx.currentTime;
+            let d = trackData.drums[currentTick]; let b = trackData.bass[currentTick]; let l = trackData.lead[currentTick];
+            if (d && trackData.playFns.d) trackData.playFns.d(d, time);
+            if (b && trackData.playFns.b) trackData.playFns.b(b, time, trackData.tickMs / 1000);
+            if (l && trackData.playFns.l) trackData.playFns.l(l, time, (trackData.tickMs / 1000) * 1.5);
+            currentTick++;
+            if (currentTick >= trackData.bass.length) currentTick = 0; 
+        }, trackData.tickMs);
+    }
+
+    function startMenuBGM() { playEngineTrack(trackMenu); }
+    function startBGM() {
+        if (currentMode === 'rampage') { playEngineTrack(trackBatman); } 
+        else if (currentMode === 'multiplayer' || currentMode === 'story') { playEngineTrack(trackMultiplayer); }
+        else if (currentMode === 'boss_fight') { playEngineTrack(trackBoss); }
     }
     function stopBGM() { if (musicInterval) clearInterval(musicInterval); }
 
@@ -695,8 +882,12 @@
         if (!audioCtx || vols.master === 0) return;
         try {
             const now = audioCtx.currentTime;
-            const gain = audioCtx.createGain(); gain.connect(audioCtx.destination);
             let sVol = vols.master * vols.sfx; let vVol = vols.master * vols.voice; let mVol = vols.master * vols.music;
+            const gain = audioCtx.createGain(); 
+            if(['speech', 'hamburgerVoice', 'evil_laugh', 'scream', 'beep'].includes(type)) { gain.connect(voiceGain); } 
+            else if (type === 'win') { gain.connect(musicGain); } 
+            else { gain.connect(sfxGain); }
+
             if (type === 'kick' && sVol > 0) {
                 let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'triangle'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
@@ -725,6 +916,10 @@
                 let osc = audioCtx.createOscillator(); osc.connect(gain);
                 osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
                 gain.gain.setValueAtTime(0.4 * vVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'beep' && vVol > 0) {
+                let osc = audioCtx.createOscillator(); osc.connect(gain);
+                osc.type = 'square'; osc.frequency.setValueAtTime(400, now);
+                gain.gain.setValueAtTime(0.15 * vVol, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05); osc.start(now); osc.stop(now + 0.05);
             } else if (type === 'hamburgerVoice' && vVol > 0) {
                 let osc1 = audioCtx.createOscillator(); osc1.connect(gain); let osc2 = audioCtx.createOscillator(); osc2.connect(gain);
                 osc1.type = 'square'; osc2.type = 'sawtooth';
@@ -883,8 +1078,9 @@
         ],
         table: [
             "TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT",
-            "TTTTTTTTTTTTTTTT","LLLLLLLLLLLLLLLL","LLLLLLLLLLLLLLLL","TDDTTTTTTTTTTDDT",
-            "TDDTTTTTTTTTTDDT","TDDTTTTTTTTTTDDT","TDDTTTTTTTTTTDDT","TDDTTTTTTTTTTDDT"
+            "TTTTTTLLLLTTTTTT","TTTLLLLLLLLLLTTT","TTLLLLLLLLLLLLTT","TLLLLLLLLLLLLLLT",
+            "TLLLLLLLLLLLLLLT","TTLLLLLLLLLLLLTT","TTTLLLLLLLLLLTTT","TTTTTTDDDDTTTTTT",
+            "TTTTTDDDDDDTTTTT","TTTTDDDDDDDDTTTT","TTTTTTDDDDTTTTTT","TTTTTTTTTTTTTTTT"
         ],
         bench: [
             "TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT",
@@ -897,9 +1093,10 @@
             "TTTRWRWRWRWTTTTT","TTTWRWRWRWRTTTTT","TTTWRWRWRWRTTTTT","TTTWRWRWRWRTTTTT"
         ],
         brick_wall: [
-            "TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT","TTTTTTTTTTTTTTTT",
-            "LLLLLLLLLLLLLLLL","BDDBBDDBBDDBBDDB","LLLLLLLLLLLLLLLL","DBBDDBBDDBBDDBBD",
-            "LLLLLLLLLLLLLLLL","BDDBBDDBBDDBBDDB","LLLLLLLLLLLLLLLL","DBBDDBBDDBBDDBBD"
+            "TTTTTTLLLLTTTTTT","TTTTTBDDBBTTTTTT","TTTTTDBBDDTTTTTT","TTTTTBDDBBTTTTTT",
+            "TTTTTDBBDDTTTTTT","TTTTTBDDBBTTTTTT","TTTTTDBBDDTTTTTT","TTTTTBDDBBTTTTTT",
+            "TTTTTDBBDDTTTTTT","TTTTTBDDBBTTTTTT","TTTTTDBBDDTTTTTT","TTTTTBDDBBTTTTTT",
+            "TTTTTDBBDDTTTTTT","TTTTTBDDBBTTTTTT","TTTTTDBBDDTTTTTT","TTTTLLLLLLLLTTTT"
         ],
         trash: [
             "TTTTTTTTTTTTTTTT","TTTTTDTTDTTTTTTT","TTTTDDDDDDTTTTTT","TTTGGGGGGGGTTTTT",
@@ -934,9 +1131,7 @@
         for (let y = 0; y < h; y++) {
             for (let x = 0; x < w; x++) {
                 const char = asciiArray[y][x];
-                if (char !== 'T' && PAL[char]) {
-                    octx.fillStyle = PAL[char]; octx.fillRect(x * scale, y * scale, scale, scale);
-                }
+                if (char !== 'T' && PAL[char]) { octx.fillStyle = PAL[char]; octx.fillRect(x * scale, y * scale, scale, scale); }
             }
         }
         return offscreen;
@@ -958,51 +1153,10 @@
     window.addEventListener('load', () => {
         initAllSprites();
         resize();
+        initAudio();
         startMenuBGM();
         gameLoopId = requestAnimationFrame(gameLoop);
     });
-
-    // --- DESTRUCTIBLE BUILDINGS ---
-    class DestructibleBuilding {
-        constructor(x, widthBlocks, heightBlocks) {
-            this.x = x; this.z = -80;
-            this.blocks = [];
-            this.blockSize = 40;
-            for(let r=0; r<heightBlocks; r++) {
-                for(let c=0; c<widthBlocks; c++) {
-                    this.blocks.push({ bx: c, by: r, active: true, color: Math.random()>0.5 ? '#556677' : '#445566' });
-                }
-            }
-            this.wBlocks = widthBlocks; this.hBlocks = heightBlocks;
-        }
-        draw(ctxOffset) {
-            for(let b of this.blocks) {
-                if(!b.active) continue;
-                let bx = this.x + b.bx * this.blockSize - ctxOffset;
-                if (bx < -100 || bx > W + 100) continue; 
-                let by = groundY + this.z - (b.by + 1) * this.blockSize;
-                ctx.fillStyle = b.color;
-                ctx.fillRect(Math.floor(bx), Math.floor(by), this.blockSize, this.blockSize);
-                ctx.fillStyle = '#111'; ctx.fillRect(Math.floor(bx + 10), Math.floor(by + 10), 20, 20); 
-            }
-        }
-        checkHit(px, py, pz, pdir) {
-            let hit = false;
-            let hx = px + pdir*40; let hy = py; let hr = 50;
-            if(Math.abs(pz - this.z) > 60) return false;
-            for(let b of this.blocks) {
-                if(!b.active) continue;
-                let bx = this.x + b.bx * this.blockSize + this.blockSize/2;
-                let by = groundY + this.z - (b.by) * this.blockSize - this.blockSize/2;
-                if(Math.hypot(bx - hx, by - hy) < hr) {
-                    b.active = false; hit = true;
-                    createParticles(bx, by, 5, '#556677');
-                    playSound('brickBreak');
-                }
-            }
-            return hit;
-        }
-    }
 
     // --- ENTITY CLASS ---
     class Entity {
@@ -1018,6 +1172,8 @@
                 this.idleType = 'smoke';
             } else if (type === 'human_stand') {
                 this.idleType = 'phone'; this.speechText = ""; this.speechTimer = 0;
+            } else if (type === 'human_sit') {
+                this.idleType = 'sit'; this.speechText = ""; this.speechTimer = 0;
             } else if (type === 'human_dance') {
                 this.speechText = "jätkä tuulottaa"; this.speechTimer = 0; this.hasSpoken = false;
             } else if (type === 'human_green') {
@@ -1026,7 +1182,8 @@
                 this.width = 40; this.height = 50;
             } else if(type === 'car' || type === 'car_crashed') {
                 this.carType = Math.random() > 0.5 ? 'car_blue' : 'car_red'; this.width = 120;
-            } else if (type === 'table' || type === 'brick_wall' || type === 'sign_crash') { this.width = 80;
+            } else if (type === 'table' || type === 'sign_crash') { this.width = 80;
+            } else if (type === 'brick_wall') { this.width = 40;
             } else if (type === 'basket' || type === 'burger' || type === 'leg' || type === 'bottle') { this.width = 40; this.height = 40;
             } else if (type === 'oikotie') {
                 this.width = 80; this.height = 100; this.state = 0; this.actionTimer = 0;
@@ -1038,11 +1195,17 @@
                 this.width = 80; this.height = 150;
             } else if (type === 'bench') {
                 this.width = 80; this.height = 40;
+            } else if (type === 'arcade') {
+                this.width = 60; this.height = 100; this.state = 0;
+            } else if (type === 'platform') {
+                this.width = 400; this.height = 20;
+            } else if (type === 'boss') {
+                this.width = 80; this.height = 100; this.hp = 500;
             }
         }
 
         takeDamage(amount, forceX) {
-            if (this.isDead || ['basket','burger','oikotie','leg','bottle','restaurant','sign_crash','blood','bat_guy','tree','bench','butcher'].includes(this.type)) return;
+            if (this.isDead || ['basket','burger','oikotie','leg','bottle','restaurant','sign_crash','blood','bat_guy','tree','bench','butcher','arcade','platform'].includes(this.type)) return;
             if (this.type === 'car' || this.type === 'car_crashed') {
                 this.kicksReceived++; this.hitTimer = 10;
                 if (this.kicksReceived >= 3) {
@@ -1061,6 +1224,14 @@
             } else if (['npc_chicken', 'chicken_girl', 'chicken_baby'].includes(this.type)) {
                 this.isDead = true; this.vx = forceX; playSound('hit');
                 createParticles(this.x, this.y, 10, '#FFF'); addScore(20, this.x, this.y - 20);
+            } else if (this.type === 'boss') {
+                this.hp -= amount; this.shakeTimer = 15; playSound('hit');
+                createParticles(this.x, this.y, 10, '#FF0000');
+                if (this.hp <= 0) {
+                    this.isDead = true;
+                    addScore(5000, this.x, this.y - 50);
+                    winGame();
+                }
             } else {
                 this.hp -= amount; this.shakeTimer = 15; this.vx = forceX; playSound('hit');
                 if (this.hp <= 0) {
@@ -1072,79 +1243,127 @@
         }
     }
 
+    function generateSpectators() {
+        bossSpectators = [];
+        let types = ['chicken_idle', 'human_stand', 'smoker_1', 'bat_guy_1', 'human_dance1', 'human_green', 'chicken_girl'];
+        for(let i=0; i<40; i++) {
+            bossSpectators.push({
+                x: VIRTUAL_W/2 - 250 + Math.random()*500,
+                y: groundY - 120 - Math.random()*80,
+                sprite: types[Math.floor(Math.random()*types.length)],
+                flip: Math.random() > 0.5
+            });
+        }
+        for(let i=0; i<20; i++) {
+            bossSpectators.push({
+                x: VIRTUAL_W/2 - 280 + Math.random()*60,
+                y: groundY - 60 + Math.random()*120,
+                sprite: types[Math.floor(Math.random()*types.length)],
+                flip: true
+            });
+        }
+        for(let i=0; i<20; i++) {
+            bossSpectators.push({
+                x: VIRTUAL_W/2 + 220 + Math.random()*60,
+                y: groundY - 60 + Math.random()*120,
+                sprite: types[Math.floor(Math.random()*types.length)],
+                flip: false
+            });
+        }
+        bossSpectators.sort((a,b) => a.y - b.y);
+    }
+
     // --- SPAWN FUNCTIONS ---
     function spawnRampageLevel() {
         entities = [];
-        let spacing = 300;
-        for (let x = 800; x < GOAL_X; x += spacing + Math.random() * 200) {
-            let r = Math.random();
-            if (r < 0.2) {
-                let e = new Entity(x, groundY, 'human_stand'); e.z = (Math.random()-0.5)*60; entities.push(e);
-            } else if (r < 0.35) {
-                let e = new Entity(x, groundY, 'smoker'); e.z = (Math.random()-0.5)*60; entities.push(e);
-            } else if (r < 0.45) {
-                let e = new Entity(x, groundY, 'human_dance'); e.z = (Math.random()-0.5)*60; entities.push(e);
-            } else if (r < 0.55) {
-                let e = new Entity(x, groundY, 'car'); e.z = (Math.random()-0.5)*40; entities.push(e);
-            } else if (r < 0.62) {
-                let e = new Entity(x, groundY, 'brick_wall'); e.z = (Math.random()-0.5)*30; entities.push(e);
-            } else if (r < 0.69) {
-                let e = new Entity(x, groundY, 'trash'); e.z = (Math.random()-0.5)*60; entities.push(e);
-            } else if (r < 0.75) {
-                let e = new Entity(x, groundY, 'tree'); e.z = -60 + Math.random()*20; entities.push(e);
-            } else if (r < 0.80) {
-                let e = new Entity(x, groundY, 'bench'); e.z = (Math.random()-0.5)*40; entities.push(e);
-            } else if (r < 0.85) {
-                let e = new Entity(x, groundY, 'npc_chicken'); e.z = (Math.random()-0.5)*60; entities.push(e);
-            } else if (r < 0.90) {
-                let e = new Entity(x, groundY, 'bat_guy'); e.z = (Math.random()-0.5)*60; entities.push(e);
-            } else if (r < 0.94) {
-                let e = new Entity(x, groundY, 'basket'); e.z = (Math.random()-0.5)*60; entities.push(e);
-            } else {
-                let e = new Entity(x, groundY, 'leg'); e.z = (Math.random()-0.5)*60; entities.push(e);
-            }
-        }
-        // Special restaurant at end
-        let rest = new Entity(GOAL_X - 500, groundY, 'restaurant'); rest.z = -80; entities.push(rest);
-        // Green man near end
-        let green = new Entity(GOAL_X - 1000, groundY, 'human_green'); green.z = 0; entities.push(green);
-    }
+        let pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        let humans = ['human_stand','smoker','human_dance','human_sit','human_green'];
 
-    function spawnDestroyLevel() {
-        entities = [];
-        destroyBuildings = [];
-        museumLabels = [];
-        let buildingX = 400;
-        let buildingNames = ["MUSEO", "KIRJASTO", "KAUPPAKESKUS", "PANKKI", "STADION", "TORNI"];
-        for (let i = 0; i < 30; i++) {
-            let w = 3 + Math.floor(Math.random() * 5);
-            let h = 4 + Math.floor(Math.random() * 8);
-            let b = new DestructibleBuilding(buildingX, w, h);
-            destroyBuildings.push(b);
-            if (i % 5 === 0) {
-                museumLabels.push({ x: buildingX + (w * 40)/2, z: -80, yOffset: 30, text: buildingNames[Math.floor(i/5) % buildingNames.length] });
+        entities.push(new Entity(400, groundY, 'basket'));
+        entities.push(new Entity(GOAL_X * 0.25, groundY, 'basket'));
+        entities.push(new Entity(GOAL_X * 0.50, groundY, 'basket'));
+        entities.push(new Entity(GOAL_X * 0.75, groundY, 'basket'));
+
+        for (let i = 1; i <= 19; i++) {
+            if (i % 5 !== 0) {
+                let leg = new Entity(GOAL_X * (i / 20), groundY, 'leg');
+                leg.z = -80 + Math.random() * 180; 
+                entities.push(leg);
             }
-            buildingX += w * 40 + 100 + Math.random() * 200;
-            // Add some collectibles
-            let basket = new Entity(buildingX - 50, groundY, 'basket'); basket.z = 0; entities.push(basket);
         }
-        GOAL_X = buildingX + 500;
+
+        let crashSpawned = false;
+        for (let x = 800; x < GOAL_X - 1000; x += 500 + Math.random() * 400) {
+            
+            if (!crashSpawned && x > GOAL_X * 0.6) {
+                crashSpawned = true;
+                let crashCar = new Entity(x, groundY, 'car_crashed'); crashCar.z = 10; entities.push(crashCar);
+                let sign = new Entity(x - 80, groundY, 'sign_crash'); sign.z = 0; entities.push(sign);
+                let h1 = new Entity(x - 50, groundY, 'human_green'); h1.z = 20; 
+                let h2 = new Entity(x + 50, groundY, 'human_stand'); h2.z = 20;
+                let h3 = new Entity(x, groundY, 'human_stand'); h3.z = 40;
+                let h4 = new Entity(x - 40, groundY, 'human_stand'); h4.z = -10;
+                let h5 = new Entity(x + 40, groundY, 'human_stand'); h5.z = -10;
+                entities.push(h1, h2, h3, h4, h5);
+                x += 200; 
+                continue;
+            }
+
+            let rand = Math.random();
+            if (rand < 0.4) {
+                let table = new Entity(x, groundY, 'table');
+                table.z = -50 + Math.random() * 120;
+                entities.push(table);
+                let pCount = 2 + Math.floor(Math.random() * 2);
+                for(let pc=0; pc<pCount; pc++) {
+                    let sit = new Entity(table.x - 30 + pc*30, groundY, 'human_sit');
+                    sit.z = table.z + 10;
+                    entities.push(sit);
+                }
+            } else if (rand < 0.8) {
+                let t1 = pick(humans);
+                let e1 = new Entity(x, groundY, t1);
+                e1.z = -60 + Math.random() * 150;
+                entities.push(e1);
+                if (Math.random() < 0.5) {
+                    let t2 = pick(humans);
+                    let e2 = new Entity(x + 40, groundY, t2);
+                    e2.z = e1.z + 20;
+                    entities.push(e2);
+                }
+            } else {
+                let bottle = new Entity(x, groundY, 'bottle');
+                bottle.z = -60 + Math.random() * 150;
+                entities.push(bottle);
+            }
+        }
+
+        let rest = new Entity(GOAL_X, groundY, 'restaurant'); 
+        rest.z = -80; 
+        entities.push(rest);
+        
+        entities.forEach(ent => {
+            if (ent.type !== 'burger' && ent.type !== 'oikotie') { ent.y = groundY + ent.z; }
+        });
     }
 
     function spawnStoryLevel() {
         entities = [];
         generateNeighborhood();
-        // Add some NPCs on the street
         for (let h of storyHouses) {
-            let npc = new Entity(h.x + 150, groundY, 'human_stand'); npc.z = 20; entities.push(npc);
+            let npc1 = new Entity(h.x + 100, groundY, 'npc_chicken'); npc1.z = -50; entities.push(npc1);
+            let npc2 = new Entity(h.x + 150, groundY, 'chicken_baby'); npc2.z = -40; entities.push(npc2);
+            let npc3 = new Entity(h.x + 200, groundY, 'chicken_baby'); npc3.z = -60; entities.push(npc3);
         }
         let green = new Entity(storyHouses[5].x - 300, groundY, 'human_green'); green.z = 0; entities.push(green);
+        entities.forEach(ent => { ent.y = groundY + ent.z; });
     }
 
     function spawnStoryCar() {
         let fromRight = Math.random() > 0.5;
-        let car = new Entity(fromRight ? cameraX + W + 200 : cameraX - 200, groundY, 'car');
-        car.z = (Math.random() - 0.5) * 30;
+        let car = new Entity(fromRight ? cameraX + VIRTUAL_W + 200 : cameraX - 200, groundY, 'car');
+        car.z = 88 + (Math.random() - 0.5) * 6;
+        car.y = groundY + car.z;
         car.vx = fromRight ? -6 : 6;
         car.dir = fromRight ? -1 : 1;
         entities.push(car);
@@ -1153,9 +1372,12 @@
     function spawnOikotie() {
         if (oikotieActive) return;
         oikotieActive = true;
-        let oik = new Entity(player.x + player.dir * 200, groundY - 200, 'oikotie');
-        oik.z = player.z;
-        oik.vy = 3;
+        let peekFromRight = Math.random() > 0.5;
+        let edgeX = peekFromRight ? (cameraX + VIRTUAL_W - 42) : (cameraX + 42);
+        let roadZ = -100; 
+        let oik = new Entity(edgeX, groundY - 200, 'oikotie');
+        oik.z = roadZ;
+        oik.vy = 4;
         oik.y = groundY - 200;
         entities.push(oik);
     }
@@ -1237,13 +1459,12 @@
         return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
     }
 
-    // --- COLLISION ---
     function checkCollision(nextX, nextZ) {
-        if (currentMode !== 'rampage') return false; 
+        if (currentMode === 'multiplayer' || currentMode === 'boss_fight') return false; 
         for (let ent of entities) {
-            if (ent.isDead) continue;
+            if (!ent || ent.isDead) continue;
             if (Math.abs(ent.x - player.x) > 300) continue; 
-            if (['smoker', 'human_stand', 'human_dance', 'human_green', 'car', 'car_crashed', 'brick_wall', 'table', 'trash', 'tree', 'bench', 'bat_guy', 'butcher'].includes(ent.type)) {
+            if (['car', 'car_crashed', 'brick_wall', 'table', 'trash', 'tree', 'bench', 'arcade'].includes(ent.type)) {
                 let dx = nextX - ent.x;
                 let dz = nextZ - ent.z;
                 if (Math.abs(dx) < ent.width/2 + 10 && Math.abs(dz) < 15) {
@@ -1263,15 +1484,11 @@
         }
         ctx.fillRect(Math.floor(startX - cameraX), Math.floor(groundY - 70), Math.floor(endX - startX), 5);
         ctx.fillRect(Math.floor(startX - cameraX), Math.floor(groundY - 50), Math.floor(endX - startX), 5);
-        if (isPlayerHouse) {
-            ctx.fillStyle = '#4CAF50';
-            ctx.fillRect(Math.floor(startX + (endX-startX)/2 - 50 - cameraX), Math.floor(groundY - 90), 100, 50);
-        }
     }
 
     function generateCity() {
-        cityBuildings = []; let curX = -W;
-        while(curX < GOAL_X + W) {
+        cityBuildings = []; let curX = -VIRTUAL_W;
+        while(curX < GOAL_X + VIRTUAL_W) {
             let width = 100 + Math.random() * 200; let height = 200 + Math.random() * 400;
             let building = { x: curX, w: width, h: height, color: `rgb(${20+Math.random()*30},${20+Math.random()*30},${40+Math.random()*40})`, windows: [] };
             for(let r=0; r<Math.floor(height/40); r++) {
@@ -1288,7 +1505,7 @@
         for (let i=0; i<7; i++) {
             let isPlayer = (i === 5);
             storyHouses.push({
-                x: 1000 + i * 1200, w: 300, h: 150, 
+                x: 1000 + i * 1200, w: 350, h: 100, 
                 isPlayerHouse: isPlayer,
                 color: isPlayer ? '#8B0000' : '#445566', roofColor: isPlayer ? '#FFD700' : '#223344'
             });
@@ -1300,59 +1517,111 @@
         currentMode = mode;
         score = 0; scoreDisplay.innerText = score; cameraX = 0; fadeAlpha = 0; endingTimer = 0;
         entities = []; particles = []; destroyBuildings = []; museumLabels = []; oikotieActive = false;
+        oikotieProgressTriggers = []; oikotieProgressFired = [];
         startTime = Date.now(); finalTimeStr = "00:00"; lastStepTime = 0; storyCarTimer = 0; isDancing = false;
-        noteIndex = 0;
         
-        currentRampageTrack = Math.random() > 0.5 ? 1 : 2;
-        player = new Entity(W/2, groundY, 'chicken');
-        player.hp = 100; player.energy = 100; player.isKicking = false;
-        player.kickTimer = 0; player.z = 0; player.y = groundY; player.vy = 0;
-
         menuLayer.style.display = 'none';
         document.getElementById('mpSetupLayer').style.display = 'none';
         gameUiLayer.style.display = 'flex';
         canvas.style.display = 'block';
         document.getElementById('mpChatInput').style.display = 'none';
         document.getElementById('mpChat').style.display = 'none';
+        controlsArea.style.display = isMobile ? 'block' : 'none';
         
+        if (mode === 'boss_intro') {
+            gameState = 'BOSS_INTRO';
+            gameUiLayer.style.display = 'none';
+            controlsArea.style.display = 'none';
+            bossIntroState = 0;
+            bossIntroCharIdx = 0;
+            bossIntroTimer = 0;
+            bossIntroFade = 0;
+            bossIntroFullText = "OIKOTIE... BRR. EIKUN.. SIIS.. OIKOTIÄ!";
+            bossIntroText = "";
+            generateSpectators();
+            playEngineTrack(trackBoss);
+            return;
+        }
+
+        player = new Entity(VIRTUAL_W/2, groundY, 'chicken');
+        player.hp = 100; player.energy = 100; player.isKicking = false;
+        player.kickTimer = 0; player.z = 0; player.y = groundY; player.vy = 0;
+
         if (isMobile) {
-            controlsArea.style.display = 'block';
-            if (mode === 'destroy') {
-                jumpBtn.style.display = 'flex';
-                danceBtn.style.display = 'none';
-            } else if (mode === 'multiplayer') {
+            document.getElementById('pcTooltips').style.display = 'none';
+            if (mode === 'multiplayer') {
                 jumpBtn.style.display = 'flex';
                 danceBtn.style.display = 'flex';
+                document.getElementById('mobileChatBtn').style.display = 'flex';
             } else {
                 jumpBtn.style.display = 'none';
                 danceBtn.style.display = 'none';
             }
         } else {
-            controlsArea.style.display = 'none';
+            document.getElementById('pcTooltips').style.display = 'block';
+            document.getElementById('mobileChatBtn').style.display = 'none';
         }
 
         if (mode === 'rampage') {
             scoreWrapper.style.display = 'inline'; distWrapper.style.display = 'inline'; energyTitle.innerText = "❤️ CHICKEN ENERGY";
             document.getElementById('onlineCountMp').style.display = 'none';
+            document.getElementById('mpPlayersHint').style.display = 'none';
+            document.getElementById('winTitleText').innerText = "VOITIT!";
+            document.getElementById('winScoreContainer').style.display = "block";
+            document.getElementById('winLbSection').style.display = "block";
+            
             GOAL_X = 20000; generateCity(); spawnRampageLevel(); startBGM();
+            if (settings.difficulty === 0) { oikotieProgressTriggers = []; oikotieProgressFired = []; }
+            else if (settings.difficulty === 1) { oikotieProgressTriggers = [50]; oikotieProgressFired = [false]; }
+            else { oikotieProgressTriggers = [25, 50, 80]; oikotieProgressFired = [false, false, false]; }
         } else if (mode === 'story') {
             scoreWrapper.style.display = 'none'; distWrapper.style.display = 'none'; energyTitle.innerText = "❤️ CHICKEN ENERGY";
             document.getElementById('onlineCountMp').style.display = 'none';
+            document.getElementById('mpPlayersHint').style.display = 'none';
             generateNeighborhood(); spawnStoryLevel(); startBGM();
-        } else if (mode === 'destroy') {
-            scoreWrapper.style.display = 'inline'; distWrapper.style.display = 'none'; energyTitle.innerText = "❤️ TUHOAMIS ENERGIA";
-            document.getElementById('onlineCountMp').style.display = 'none';
-            spawnDestroyLevel(); stopBGM();
         } else if (mode === 'multiplayer') {
             scoreWrapper.style.display = 'none'; distWrapper.style.display = 'none'; energyTitle.innerText = "❤️ KANA ENERGIA";
             document.getElementById('onlineCountMp').style.display = 'block';
+            document.getElementById('mpPlayersHint').style.display = 'block';
             document.getElementById('mpChat').style.display = 'block';
-            GOAL_X = 50000; generateCity();
-            stopBGM();
+            
+            GOAL_X = 800; // Erittäin lyhyt multiplayer
+            generateCity(); 
+            
+            let a1 = new Entity(VIRTUAL_W/2 - 150, groundY, 'arcade'); a1.z = 20; entities.push(a1);
+            let t1 = new Entity(VIRTUAL_W/2 - 400, groundY, 'tree'); t1.z = -20; entities.push(t1);
+            let t2 = new Entity(VIRTUAL_W/2 + 400, groundY, 'tree'); t2.z = -20; entities.push(t2);
+            let b1 = new Entity(VIRTUAL_W/2 - 250, groundY, 'bench'); b1.z = -10; entities.push(b1);
+            let b2 = new Entity(VIRTUAL_W/2 + 250, groundY, 'bench'); b2.z = -10; entities.push(b2);
+            let trash = new Entity(VIRTUAL_W/2 + 500, groundY, 'trash'); trash.z = 10; entities.push(trash);
+            
+            entities.forEach(ent => { ent.y = groundY + ent.z; });
+
             myMpName = document.getElementById('mpNameInput').value.trim() || "Pelaaja";
             myMpChar = document.querySelector('input[name="mpChar"]:checked').value;
             myMpId = db.ref('players').push().key;
             db.ref('players/' + myMpId).onDisconnect().remove();
+            startBGM();
+            setTimeout(() => { addChatMessage('🗺️', 'Moninpeli: näet muut kartalla (HUD). T = chat.'); }, 500);
+        } else if (mode === 'boss_fight') {
+            scoreWrapper.style.display = 'none'; distWrapper.style.display = 'none'; energyTitle.innerText = "❤️ CHICKEN ENERGY";
+            document.getElementById('onlineCountMp').style.display = 'none';
+            document.getElementById('mpPlayersHint').style.display = 'none';
+            document.getElementById('winTitleText').innerText = "VOITIT POMON!";
+            document.getElementById('winScoreContainer').style.display = "none";
+            document.getElementById('winLbSection').style.display = "none";
+            
+            GOAL_X = 1000;
+            entities = [];
+            generateSpectators();
+            
+            let boss = new Entity(VIRTUAL_W/2 + 100, groundY, 'boss');
+            boss.z = 0;
+            boss.y = groundY;
+            boss.hp = 500;
+            entities.push(boss);
+            
+            playEngineTrack(trackBoss);
         }
         
         gameState = 'PLAYING';
@@ -1364,7 +1633,13 @@
         danceBtn.style.color = isDancing ? '#000' : '#FFF';
     });
 
-    // Chat input
+    document.getElementById('mobileChatBtn').addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        let inp = document.getElementById('mpChatInput');
+        inp.style.display = inp.style.display === 'none' ? 'block' : 'none';
+        if (inp.style.display === 'block') document.getElementById('mpChatField').focus();
+    });
+
     document.getElementById('mpChatField').addEventListener('keydown', e => {
         if (e.key === 'Enter') {
             sendChatMessage(e.target.value);
@@ -1379,9 +1654,32 @@
         e.stopPropagation();
     });
 
+    function advanceBossIntro() {
+        if (gameState !== 'BOSS_INTRO') return;
+        if (bossIntroCharIdx < bossIntroFullText.length) {
+            bossIntroCharIdx = bossIntroFullText.length;
+            bossIntroText = bossIntroFullText;
+        } else {
+            if (bossIntroState === 0) {
+                bossIntroState = 1;
+                bossIntroFullText = "oletko.. VALMIS? eiKUN OIKOTIÄ!";
+                bossIntroText = "";
+                bossIntroCharIdx = 0;
+            } else if (bossIntroState === 1) {
+                bossIntroState = 2; // Fade out alkaa
+            }
+        }
+    }
+
     // --- CONTROLS ---
     window.addEventListener('keydown', e => {
         let k = e.key.toLowerCase();
+        
+        if (gameState === 'BOSS_INTRO' && (k === 'enter' || k === ' ')) {
+            advanceBossIntro();
+            return;
+        }
+
         if (k === 'a' || k === 'arrowleft') keys.a = true;
         if (k === 'd' || k === 'arrowright') keys.d = true;
         if (k === 'w' || k === 'arrowup') keys.w = true;
@@ -1389,6 +1687,7 @@
         if (k === ' ') { keys.space = true; e.preventDefault(); }
         if (k === 'e') keys.e = true;
         if (k === 'x' && currentMode === 'multiplayer') { isDancing = !isDancing; }
+        if (k === 'j' && isNearCasino && currentMode === 'multiplayer') { playCasino(); }
         if (k === 't' && currentMode === 'multiplayer' && gameState === 'PLAYING') {
             let inp = document.getElementById('mpChatInput');
             inp.style.display = inp.style.display === 'none' ? 'block' : 'none';
@@ -1405,7 +1704,12 @@
         if (k === 'e') keys.e = false;
     });
 
-    // Joystick touch
+    window.addEventListener('touchstart', e => {
+        if (gameState === 'BOSS_INTRO') {
+            advanceBossIntro();
+        }
+    });
+
     const joystickBase = document.getElementById('joystickBase');
     const joystickStick = document.getElementById('joystickStick');
     joystickBase.addEventListener('touchstart', e => {
@@ -1431,16 +1735,33 @@
         joystickStick.style.left = '25%'; joystickStick.style.top = '25%';
     });
 
-    // Kick/jump buttons
     document.getElementById('kickBtn').addEventListener('touchstart', e => { e.preventDefault(); isKickingMobile = true; }, { passive: false });
     document.getElementById('kickBtn').addEventListener('touchend', e => { e.preventDefault(); isKickingMobile = false; });
     document.getElementById('jumpBtn').addEventListener('touchstart', e => { e.preventDefault(); isJumpingMobile = true; }, { passive: false });
     document.getElementById('jumpBtn').addEventListener('touchend', e => { e.preventDefault(); isJumpingMobile = false; });
+    document.getElementById('mobileCasinoBtn').addEventListener('touchstart', e => { e.preventDefault(); playCasino(); }, { passive: false });
+
+    function playCasino() {
+        if (player.energy >= 10) {
+            player.energy -= 10;
+            let won = Math.random() < 0.3;
+            if (won) {
+                playSound('win');
+                player.energy = Math.min(100, player.energy + 50);
+                addFloatingText("VOITTO! +50❤️", player.x, player.y - 150, '#0F0', '');
+            } else {
+                playSound('hit');
+                addFloatingText("HÄVISIT -10❤️", player.x, player.y - 150, '#F00', '');
+            }
+        } else {
+            addFloatingText("EI ENERGIAA", player.x, player.y - 150, '#F00', '');
+        }
+    }
 
     // --- UPDATE ---
     function update(dt) {
         if(gameState === 'PLAYING') {
-            let speed = isMobile ? 8 : 4; 
+            let speed = 6; 
             let moveX = 0, moveZ = 0;
             if (keys.a || keys.left) moveX -= 1; if (keys.d || keys.right) moveX += 1;
             if (keys.w || keys.up) moveZ -= 1; if (keys.s || keys.down) moveZ += 1;
@@ -1448,35 +1769,44 @@
 
             if(moveX !== 0 || moveZ !== 0 || player.isKicking || player.vy < 0) {
                 isDancing = false;
-                if(isMobile) { danceBtn.style.background = '#DA70D6'; danceBtn.style.color = '#FFF'; }
+                if(isMobile && currentMode === 'multiplayer') { danceBtn.style.background = '#DA70D6'; danceBtn.style.color = '#FFF'; }
             }
 
             let nextX = player.x + moveX * speed;
             let nextZ = player.z + moveZ * (speed * 0.7);
 
-            if (currentMode === 'rampage' || currentMode === 'destroy' || currentMode === 'multiplayer') {
-                let maxZ = Math.min(120, (H - groundY) - 20);
-                if (nextZ < -40) nextZ = -40; 
+            if (currentMode === 'rampage' || currentMode === 'multiplayer') {
+                let maxZ = 130;
+                if (nextZ < -100) nextZ = -100;
                 if (nextZ > maxZ) nextZ = maxZ;
-            } else {
-                let pYardX = storyHouses[5].x;
+            } else if (currentMode === 'story') {
+                let pYardX = storyHouses[5] ? storyHouses[5].x : 0;
                 let inOwnYard = (nextX > pYardX - 50 && nextX < pYardX + 350);
-                let minZ = inOwnYard ? -180 : -40; 
-                let maxZ = Math.min(120, (H - groundY) - 20);
+                let minZ = inOwnYard ? -180 : -90; 
+                let maxZ = 130;
                 if (nextZ < minZ) nextZ = minZ;
                 if (nextZ > maxZ) nextZ = maxZ; 
                 if (inOwnYard && nextZ < -160 && nextX > pYardX + 100 && nextX < pYardX + 200) {
                     gameState = 'STORY_ENDING'; stopBGM();
                 }
+            } else if (currentMode === 'boss_fight') {
+                let maxBoundX = VIRTUAL_W/2 + 180;
+                let minBoundX = VIRTUAL_W/2 - 180;
+                if (nextX > maxBoundX) nextX = maxBoundX;
+                if (nextX < minBoundX) nextX = minBoundX;
+                if (nextZ < -40) nextZ = -40;
+                if (nextZ > 90) nextZ = 90;
             }
             if (nextX < 100) nextX = 100;
+            
+            if (currentMode === 'multiplayer' && nextX > GOAL_X) nextX = GOAL_X;
 
             if (!checkCollision(nextX, player.z)) player.x = nextX;
             if (!checkCollision(player.x, nextZ)) player.z = nextZ;
             if (moveX !== 0) player.dir = moveX > 0 ? 1 : -1;
 
             let baseFloor = groundY + player.z;
-            if (currentMode === 'destroy' || currentMode === 'multiplayer') {
+            if (currentMode === 'multiplayer' || currentMode === 'boss_fight') {
                 if ((keys.space || isJumpingMobile) && player.y >= baseFloor - 1) {
                     player.vy = -15; playSound('jump');
                 }
@@ -1486,28 +1816,41 @@
                 player.y = baseFloor;
             }
 
+            isNearCasino = false;
+            if (currentMode === 'multiplayer') {
+                for (let ent of entities) {
+                    if (ent && ent.type === 'arcade') {
+                        if (Math.hypot(player.x - ent.x, player.z - ent.z) < 80) {
+                            isNearCasino = true;
+                        }
+                    }
+                }
+            }
+            let casinoMobileBtn = document.getElementById('mobileCasinoBtn');
+            let pcCasinoText = document.getElementById('pcCasinoText');
+            if (isNearCasino) {
+                if (isMobile) casinoMobileBtn.style.display = 'flex';
+                else pcCasinoText.style.display = 'block';
+            } else {
+                casinoMobileBtn.style.display = 'none';
+                pcCasinoText.style.display = 'none';
+            }
+
             if ((moveX !== 0 || moveZ !== 0) && player.y >= baseFloor - 1) {
                 if (audioCtx && audioCtx.currentTime - lastStepTime > 0.3) {
                     playSound('step'); lastStepTime = audioCtx.currentTime;
                 }
             }
 
-            if ((keys.e || (currentMode !== 'destroy' && currentMode !== 'multiplayer' && keys.space) || isKickingMobile)) {
+            if ((keys.e || (currentMode !== 'multiplayer' && keys.space) || isKickingMobile)) {
                 if (Date.now() - (player.lastKickTime||0) > 250 && player.kickTimer <= 0) {
                     player.lastKickTime = Date.now();
                     player.isKicking = true; player.kickTimer = 25; playSound('kick');
                     let hitBox = { x: player.x + (player.dir * 40), y: player.y - 40, r: 60 };
-                    if(currentMode === 'destroy') {
-                        for(let b of destroyBuildings) {
-                            if(b.checkHit(player.x, player.y, player.z, player.dir)) {
-                                addScore(10, player.x, player.y - 100);
-                            }
-                        }
-                    }
                     for (let ent of entities) {
-                        if (ent.isDead || ['basket','goal','burger','oikotie','leg','bottle','restaurant','sign_crash','tree','bench','butcher','blood'].includes(ent.type)) continue;
+                        if (!ent || ent.isDead || ['basket','goal','burger','oikotie','leg','bottle','restaurant','sign_crash','tree','bench','butcher','blood','arcade','platform'].includes(ent.type)) continue;
                         if (Math.abs(ent.x - player.x) > 300) continue;
-                        let dx = ent.x - hitBox.x, dy = (ent.y + ent.z) - hitBox.y;
+                        let dx = ent.x - hitBox.x, dy = ent.y - hitBox.y;
                         if (Math.hypot(dx, dy) < hitBox.r + ent.width/2 && Math.abs(ent.z - player.z) < 40) {
                             ent.takeDamage(50, player.dir * 15); cameraX += (Math.random() - 0.5) * 30; 
                         }
@@ -1516,40 +1859,74 @@
             }
             if (player.kickTimer > 0) { player.kickTimer--; if (player.kickTimer < 10) player.isKicking = false; }
 
-            if (currentMode === 'rampage' || currentMode === 'destroy') {
-                if (currentMode === 'rampage') {
-                    let drain = settings.difficulty === 0 ? 0.06 : (settings.difficulty === 1 ? 0.12 : 0.20);
-                    player.energy -= drain; 
-                }
+            if (currentMode === 'rampage') {
+                let drain = settings.difficulty === 0 ? 0.025 : (settings.difficulty === 1 ? 0.06 : 0.10);
+                player.energy -= drain; 
                 if (player.energy <= 0) gameOver();
+                
                 let progress = Math.floor((player.x / GOAL_X) * 100);
                 distDisplay.innerText = Math.min(100, Math.max(0, progress));
-                if(currentMode === 'rampage' && Math.random() < 0.002 && !oikotieActive) { spawnOikotie(); }
-                if (player.x >= GOAL_X && currentMode === 'rampage') {
+                
+                if (oikotieProgressTriggers.length && !oikotieActive) {
+                    let prog = (player.x / GOAL_X) * 100;
+                    for (let oi = 0; oi < oikotieProgressTriggers.length; oi++) {
+                        if (!oikotieProgressFired[oi] && prog >= oikotieProgressTriggers[oi]) {
+                            oikotieProgressFired[oi] = true;
+                            spawnOikotie();
+                            break;
+                        }
+                    }
+                }
+                
+                if (player.x >= GOAL_X - 600 && currentMode === 'rampage') {
                     gameState = 'ANIMATION'; stopBGM(); playSound('win');
                     player.isKicking = false; player.dir = 1;
                 }
+                
             } else if (currentMode === 'story') {
                 storyCarTimer -= dt;
                 if (storyCarTimer <= 0) { spawnStoryCar(); storyCarTimer = 3000 + Math.random() * 3000; }
                 for (let ent of entities) {
-                    if (ent.type === 'car' && !ent.isDead) {
+                    if (ent && ent.type === 'car' && !ent.isDead) {
                         let dx = player.x - ent.x, dz = player.z - ent.z;
-                        if (Math.abs(dx) < 60 && Math.abs(dz) < 40) { player.hp = 0; gameOverStory(); }
+                        if (Math.abs(dx) < 60 && Math.abs(dz) < 24) { player.hp = 0; gameOverStory(); }
                     }
                 }
             }
 
+        } else if (gameState === 'BOSS_INTRO') {
+            bossIntroTimer++;
+            if (bossIntroState === 0 || bossIntroState === 1) {
+                if (bossIntroCharIdx < bossIntroFullText.length) {
+                    if (bossIntroTimer % 3 === 0) {
+                        bossIntroText += bossIntroFullText.charAt(bossIntroCharIdx);
+                        bossIntroCharIdx++;
+                        playSound('beep');
+                    }
+                }
+            } else if (bossIntroState === 2) {
+                bossIntroFade += 0.02;
+                if (bossIntroFade >= 1) {
+                    initGameData('boss_fight');
+                }
+            }
         } else if (gameState === 'ANIMATION') {
             if (currentMode === 'rampage') {
-                let targetX = GOAL_X + 200, targetZ = -40;
+                let targetX = GOAL_X, targetZ = -80; 
                 let dx = targetX - player.x, dz = targetZ - player.z;
                 let dist = Math.hypot(dx, dz);
                 if (dist > 5) {
-                    player.x += (dx / dist) * 0.8; player.z += (dz / dist) * 0.8; player.dir = dx > 0 ? 1 : -1;
+                    player.x += (dx / dist) * 1.5; 
+                    player.z += (dz / dist) * 1.5; 
+                    player.y = groundY + player.z; 
+                    player.dir = dx > 0 ? 1 : (dx < 0 ? -1 : 1);
                 } else {
-                    player.isDead = true; fadeAlpha += 0.008; 
-                    if (fadeAlpha >= 1) { fadeAlpha = 1; winGame(); }
+                    fadeAlpha += 0.01; 
+                    if (fadeAlpha >= 1) { 
+                        fadeAlpha = 1; 
+                        player.isDead = true; 
+                        winGame(); 
+                    }
                 }
             } 
         } else if (gameState === 'STORY_ENDING') {
@@ -1559,15 +1936,20 @@
             } else if (endingTimer === 300) {
                 for(let i=0; i<6; i++) {
                     let b = new Entity(player.x - 200 + Math.random()*400, groundY, 'butcher');
-                    b.z = -100 + Math.random()*80; entities.push(b);
+                    b.z = -100 + Math.random()*80; 
+                    b.y = groundY + b.z;
+                    entities.push(b);
                 }
             } else if (endingTimer > 300) {
                 let hitPlayer = false;
                 for(let b of entities) {
-                    if (b.type === 'butcher') {
+                    if (b && b.type === 'butcher') {
                         let dx = player.x - b.x, dz = player.z - b.z;
                         let dist = Math.hypot(dx, dz);
-                        if (dist > 10) { b.x += (dx/dist) * 3; b.z += (dz/dist) * 3; b.dir = dx > 0 ? 1 : -1; }
+                        if (dist > 10) { 
+                            b.x += (dx/dist) * 3; b.z += (dz/dist) * 3; b.y = groundY + b.z;
+                            b.dir = dx > 0 ? 1 : -1; 
+                        }
                         else { hitPlayer = true; }
                     }
                 }
@@ -1580,12 +1962,19 @@
         }
 
         if(['PLAYING', 'ANIMATION', 'STORY_ENDING'].includes(gameState)) {
-            healthBar.style.width = Math.max(0, player.energy) + "%";
-            healthBar.style.background = player.energy < 30 ? "#F00" : "linear-gradient(to right, #f00, #0f0)";
-            cameraX += (player.x - W/3 - cameraX) * 0.1;
+            if (healthBar) {
+                healthBar.style.width = Math.max(0, player.energy) + "%";
+                healthBar.style.background = player.energy < 30 ? "#F00" : "linear-gradient(to right, #f00, #0f0)";
+            }
+            cameraX += (player.x - VIRTUAL_W/3 - cameraX) * 0.1;
+            if (currentMode === 'multiplayer') {
+                let mpHint = document.getElementById('mpPlayersHint');
+                if (mpHint) { mpHint.innerText = 'Muut kartalla: ' + Object.keys(otherPlayers).length; }
+            }
 
             for (let i = entities.length - 1; i >= 0; i--) {
                 let ent = entities[i];
+                if (!ent) continue;
                 if (ent.hitTimer > 0) ent.hitTimer--; if (ent.shakeTimer > 0) ent.shakeTimer--;
                 let dToPlayer = Math.hypot(player.x - ent.x, player.z - ent.z);
                 if (!ent.isDead) {
@@ -1607,6 +1996,8 @@
                             if (ent.speechTimer > 0) ent.speechTimer--;
                             else if (Math.random() < 0.005) { ent.speechText = phoneTexts[Math.floor(Math.random() * phoneTexts.length)]; ent.speechTimer = 150; if (dToPlayer < 250) playSound('speech'); }
                         }
+                    } else if (ent.type === 'human_sit') {
+                        ent.idleTimer++;
                     } else if (ent.type === 'human_dance') {
                         ent.idleTimer++; if (ent.speechTimer > 0) ent.speechTimer--;
                         else if (Math.random() < 0.01) { ent.speechTimer = 150; if (dToPlayer < 250) playSound('speech'); }
@@ -1615,26 +2006,29 @@
                         if (ent.speechTimer > 0) ent.speechTimer--;
                     } else if (['npc_chicken', 'chicken_girl', 'chicken_baby'].includes(ent.type)) {
                         ent.idleTimer++;
-                        if(ent.idleTimer % 100 < 20 && (!checkCollision(ent.x + ent.dir, ent.z) || currentMode !== 'rampage')) ent.x += ent.dir * 1; 
+                        if(ent.idleTimer % 100 < 20 && currentMode === 'rampage' && !checkCollision(ent.x + ent.dir, ent.z)) ent.x += ent.dir * 1; 
                         else if(Math.random() < 0.01) ent.dir *= -1;
                     } else if (ent.type === 'car') {
                         if (currentMode === 'story') {
                             ent.x += ent.vx;
-                            if (ent.x < cameraX - 500 || ent.x > cameraX + W + 500) { ent.hp = 0; ent.isDead = true; }
+                            ent.y = groundY + ent.z; 
+                            if (ent.x < cameraX - 500 || ent.x > cameraX + VIRTUAL_W + 500) { ent.hp = 0; ent.isDead = true; }
                         }
                     } else if (ent.type === 'oikotie') {
                         if (ent.state === 0) {
                             ent.y += ent.vy; 
-                            if (ent.y <= groundY + ent.z + 60) { ent.y = groundY + ent.z + 60; ent.state = 1; ent.actionTimer = 50; }
+                            if (ent.y <= groundY + ent.z + 60) { ent.y = groundY + ent.z + 60; ent.state = 1; ent.actionTimer = 20; } 
                         } else if (ent.state === 1) {
                             ent.actionTimer--;
-                            if (ent.actionTimer === 20) {
+                            if (ent.actionTimer === 0) {
                                 playSound('hamburgerVoice'); addFloatingText("OIKOTIÄ!", ent.x, ent.y - 100, '#00FFFF', 'oikotie-shout');
                                 let b = new Entity(ent.x, groundY, 'burger'); b.z = ent.z; b.y = ent.y - 30;
                                 let dx = player.x - b.x, dz = player.z - b.z; let dist = Math.hypot(dx, dz);
                                 if (dist > 0) { b.vx = (dx / dist) * 14; b.vz = (dz / dist) * 14; }
                                 entities.push(b);
-                            } else if (ent.actionTimer <= 0) ent.state = 2;
+                            } else if (ent.actionTimer <= -20) {
+                                ent.state = 2; 
+                            }
                         } else if (ent.state === 2) {
                             ent.y += 3; if (ent.y > groundY + ent.z + 150) { entities.splice(i, 1); oikotieActive = false; }
                         }
@@ -1644,10 +2038,29 @@
                             player.energy -= 30; playSound('hit'); addFloatingText("BURGER'D!", player.x, player.y - 120, '#FF0000', 'burger-text');
                             cameraX += (Math.random() - 0.5) * 50; entities.splice(i, 1);
                         }
-                        if (ent.z > 200 || ent.x < cameraX - 200 || ent.x > cameraX + W + 200) entities.splice(i, 1);
+                        if (ent.z > 200 || ent.x < cameraX - 200 || ent.x > cameraX + VIRTUAL_W + 200) entities.splice(i, 1);
+                    } else if (ent.type === 'boss') {
+                        let dx = player.x - ent.x;
+                        let dz = player.z - ent.z;
+                        let dist = Math.hypot(dx, dz);
+                        if (dist > 50) {
+                            ent.x += (dx/dist) * 2;
+                            ent.z += (dz/dist) * 2;
+                            ent.y = groundY + ent.z;
+                            ent.dir = dx > 0 ? 1 : -1;
+                        }
+                        ent.actionTimer = (ent.actionTimer || 0) + 1;
+                        if (ent.actionTimer > 100 && dist < 80) {
+                            ent.actionTimer = 0;
+                            player.energy -= 20;
+                            playSound('hit');
+                            addFloatingText("BAM!", player.x, player.y - 80, '#F00', '');
+                            cameraX += (Math.random() - 0.5) * 30;
+                            if (player.energy <= 0) gameOver();
+                        }
                     }
                 } else {
-                    if(!['basket','burger','oikotie','brick_wall','leg','bottle','restaurant','sign_crash','tree','bench','butcher'].includes(ent.type)) {
+                    if(!['basket','burger','oikotie','brick_wall','leg','bottle','restaurant','sign_crash','tree','bench','butcher','arcade','platform'].includes(ent.type)) {
                         ent.x += ent.vx; ent.y += ent.vy; ent.vy += 1; ent.dir += 0.2; 
                     }
                 }
@@ -1655,9 +2068,10 @@
 
             for (let i = entities.length - 1; i >= 0; i--) {
                 let ent = entities[i];
-                if (ent.isDead && (ent.type === 'car' || ent.y > H + 500 || ent.type === 'burger' || ent.type === 'oikotie')) {
+                if (!ent) continue;
+                if (ent.isDead && (ent.type === 'car' || ent.y > VIRTUAL_H + 500 || ent.type === 'burger' || ent.type === 'oikotie')) {
                     entities.splice(i, 1);
-                } else if (ent.type === 'car' && (ent.x < cameraX - 1500 || ent.x > cameraX + W + 1500)) {
+                } else if (ent.type === 'car' && (ent.x < cameraX - 1500 || ent.x > cameraX + VIRTUAL_W + 1500)) {
                     entities.splice(i, 1); 
                 }
             }
@@ -1667,76 +2081,227 @@
                 if(p.type === 'smoke') { p.vy -= 0.05; } else { p.vy += 0.8; }
                 p.life--; if (p.life <= 0) particles.splice(i, 1);
             }
-            entities.sort((a, b) => (a.y + a.z) - (b.y + b.z));
+            entities.sort((a, b) => (a && b) ? ((a.y + a.z) - (b.y + b.z)) : 0);
         }
     }
 
     function drawGame() {
-        if (gameState === 'STORY_ENDING' && fadeAlpha === 0 && endingTimer < 300) {
-            ctx.fillStyle = '#111'; ctx.fillRect(0,0,W,H); 
-            ctx.fillStyle = '#220000'; ctx.fillRect(0, groundY-50, W, H); 
+        ctx.save();
+        ctx.imageSmoothingEnabled = false;
+        
+        if (gameState === 'BOSS_INTRO' || currentMode === 'boss_fight') {
+            ctx.fillStyle = '#050510'; ctx.fillRect(0,0,VIRTUAL_W, VIRTUAL_H);
+            
+            // Render Spectators properly (darkened slightly to look like shadow)
+            for (let spec of bossSpectators) {
+                let sx = spec.x - cameraX;
+                if (sx < -100 || sx > VIRTUAL_W + 100) continue;
+                ctx.save();
+                ctx.translate(Math.floor(sx), Math.floor(spec.y));
+                if (spec.flip) ctx.scale(-1, 1);
+                let spr = Sprites[spec.sprite];
+                if (spr) {
+                    ctx.globalAlpha = 0.4;
+                    ctx.drawImage(spr, -spr.width/2, -spr.height);
+                    ctx.globalAlpha = 1.0;
+                }
+                ctx.restore();
+            }
+
+            let ringX = VIRTUAL_W/2 - cameraX;
+            ctx.fillStyle = '#112244';
+            ctx.fillRect(Math.floor(ringX - 200), Math.floor(groundY - 50), 400, 150);
+            
+            ctx.fillStyle = '#333';
+            ctx.fillRect(Math.floor(ringX - 205), Math.floor(groundY - 120), 10, 100);
+            ctx.fillRect(Math.floor(ringX + 195), Math.floor(groundY - 120), 10, 100);
+            ctx.fillRect(Math.floor(ringX - 205), Math.floor(groundY + 80), 10, 30);
+            ctx.fillRect(Math.floor(ringX + 195), Math.floor(groundY + 80), 10, 30);
+            
+            ctx.strokeStyle = '#800'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(ringX - 200, groundY - 90); ctx.lineTo(ringX + 200, groundY - 90); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(ringX - 200, groundY - 50); ctx.lineTo(ringX + 200, groundY - 50); ctx.stroke();
+
+            let grd = ctx.createRadialGradient(Math.floor(ringX), groundY - 40, 0, Math.floor(ringX), groundY - 40, 250);
+            grd.addColorStop(0, "rgba(255, 255, 200, 0.2)");
+            grd.addColorStop(1, "rgba(255, 255, 200, 0)");
+            ctx.globalCompositeOperation = 'screen';
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
+            ctx.globalCompositeOperation = 'source-over';
+
+            if (gameState === 'BOSS_INTRO') {
+                ctx.drawImage(Sprites.chicken_idle, Math.floor(ringX - 80 - Sprites.chicken_idle.width/2), Math.floor(groundY - Sprites.chicken_idle.height));
+                ctx.save();
+                ctx.translate(Math.floor(ringX + 80), Math.floor(groundY));
+                ctx.scale(-1, 1);
+                ctx.drawImage(Sprites.oikotie, Math.floor(-Sprites.oikotie.width/2), Math.floor(-Sprites.oikotie.height));
+                ctx.restore();
+
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, VIRTUAL_W, 60);
+                ctx.fillRect(0, VIRTUAL_H - 120, VIRTUAL_W, 120);
+
+                ctx.strokeStyle = '#FFF'; ctx.lineWidth = 4;
+                ctx.strokeRect(20, VIRTUAL_H - 110, VIRTUAL_W - 40, 90);
+                ctx.fillStyle = '#000'; ctx.fillRect(20, VIRTUAL_H - 110, VIRTUAL_W - 40, 90);
+
+                ctx.drawImage(Sprites.oikotie, 30, VIRTUAL_H - 105, 70, 80);
+
+                ctx.fillStyle = '#FFF';
+                ctx.font = '12px "Press Start 2P"';
+                ctx.textAlign = 'left';
+                ctx.fillText("Oikotiemies", 120, VIRTUAL_H - 85);
+                ctx.font = '10px "Press Start 2P"';
+                
+                ctx.fillText(bossIntroText, 120, VIRTUAL_H - 60);
+
+                if (bossIntroCharIdx >= bossIntroFullText.length && Math.floor(Date.now() / 500) % 2 === 0) {
+                    ctx.fillStyle = '#FFD700';
+                    ctx.font = '8px "Press Start 2P"';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(isMobile ? "Napauta jatkaaksesi" : "Paina ENTER", VIRTUAL_W - 30, VIRTUAL_H - 30);
+                }
+                
+                if (bossIntroFade > 0) {
+                    ctx.fillStyle = `rgba(0,0,0,${bossIntroFade})`;
+                    ctx.fillRect(0,0,VIRTUAL_W,VIRTUAL_H);
+                }
+                
+                ctx.restore();
+                return;
+            }
+        } else if (gameState === 'STORY_ENDING' && fadeAlpha === 0 && endingTimer < 300) {
+            ctx.fillStyle = '#111'; ctx.fillRect(0,0,VIRTUAL_W,VIRTUAL_H); 
+            ctx.fillStyle = '#220000'; ctx.fillRect(0, groundY-50, VIRTUAL_W, VIRTUAL_H); 
         } else if (gameState === 'STORY_ENDING' && endingTimer >= 300) {
-            ctx.fillStyle = '#111'; ctx.fillRect(0,0,W,H); 
-            ctx.fillStyle = '#220000'; ctx.fillRect(0, groundY-50, W, H); 
+            ctx.fillStyle = '#111'; ctx.fillRect(0,0,VIRTUAL_W,VIRTUAL_H); 
+            ctx.fillStyle = '#220000'; ctx.fillRect(0, groundY-50, VIRTUAL_W, VIRTUAL_H); 
         } else {
-            if (currentMode === 'rampage' || currentMode === 'destroy' || currentMode === 'multiplayer') {
-                ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, W, H);
-                for (let b of cityBuildings) {
-                    let bx = b.x - cameraX * 0.3;
-                    if (bx + b.w > 0 && bx < W) {
-                        ctx.fillStyle = b.color; ctx.fillRect(Math.floor(bx), Math.floor(groundY - b.h - 50), b.w, b.h + 100);
-                        for(let w of b.windows) { ctx.fillStyle = w.color; ctx.fillRect(Math.floor(bx + w.x), Math.floor(groundY - b.h - 50 + w.y), 10, 15); }
+            if (currentMode === 'rampage' || currentMode === 'multiplayer') {
+                ctx.fillStyle = '#1a1a2e'; ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
+                if (cityBuildings) {
+                    for (let b of cityBuildings) {
+                        if (!b) continue;
+                        let bx = b.x - cameraX * 0.3;
+                        if (bx + b.w > -300 && bx < VIRTUAL_W + 300) {
+                            ctx.fillStyle = b.color; ctx.fillRect(Math.floor(bx), Math.floor(groundY - 100 - b.h), b.w, b.h + 200);
+                            for(let w of b.windows) { ctx.fillStyle = w.color; ctx.fillRect(Math.floor(bx + w.x), Math.floor(groundY - 100 - b.h + w.y), 10, 15); }
+                        }
                     }
                 }
             } else {
-                ctx.fillStyle = '#FF7F50'; ctx.fillRect(0, 0, W, H); 
-                ctx.fillStyle = '#4CAF50'; ctx.fillRect(0, groundY - 200, W, H); 
-                for (let h of storyHouses) {
-                    let hx = h.x - cameraX;
-                    if (hx + h.w > -300 && hx < W + 300) {
-                        ctx.fillStyle = h.color; ctx.fillRect(Math.floor(hx), Math.floor(groundY - 200 - h.h), h.w, h.h); 
-                        ctx.fillStyle = h.roofColor; ctx.beginPath(); 
-                        ctx.moveTo(Math.floor(hx - 20), Math.floor(groundY - 200 - h.h)); ctx.lineTo(Math.floor(hx + h.w / 2), Math.floor(groundY - 200 - h.h - 80)); ctx.lineTo(Math.floor(hx + h.w + 20), Math.floor(groundY - 200 - h.h)); ctx.fill();
-                        ctx.fillStyle = '#FFF'; ctx.fillRect(Math.floor(hx + 40), Math.floor(groundY - 200 - h.h + 40), 40, 40); ctx.fillRect(Math.floor(hx + h.w - 80), Math.floor(groundY - 200 - h.h + 40), 40, 40); 
-                        ctx.fillStyle = '#3E2723'; ctx.fillRect(Math.floor(hx + h.w/2 - 25), Math.floor(groundY - 200 - 80), 50, 80); 
-                        drawPicketFence(h.x, h.x + h.w, h.isPlayerHouse);
-                        if (h.isPlayerHouse) {
-                            let arrowY = groundY - 200 - 100 + Math.sin(Date.now() / 150) * 10;
-                            ctx.drawImage(Sprites.arrow, Math.floor(hx + h.w/2 - Sprites.arrow.width/2), Math.floor(arrowY));
+                ctx.fillStyle = '#FF7F50'; ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H); 
+                ctx.fillStyle = '#4CAF50'; ctx.fillRect(0, groundY - 200, VIRTUAL_W, VIRTUAL_H); 
+                
+                if (storyHouses) {
+                    for (let h of storyHouses) {
+                        if (!h) continue;
+                        let hx = Math.floor(h.x - cameraX);
+                        if (hx + h.w > -300 && hx < VIRTUAL_W + 300) {
+                            let hy = Math.floor(groundY - 200 - h.h);
+                            
+                            ctx.fillStyle = '#222';
+                            ctx.beginPath(); 
+                            ctx.moveTo(hx + h.w, hy); 
+                            ctx.lineTo(hx + h.w + 40, hy - 40); 
+                            ctx.lineTo(hx + h.w + 40, hy + h.h - 40); 
+                            ctx.lineTo(hx + h.w, hy + h.h); 
+                            ctx.fill();
+                            
+                            ctx.fillStyle = '#555';
+                            ctx.beginPath(); 
+                            ctx.moveTo(hx + h.w, hy); 
+                            ctx.lineTo(hx + h.w / 2, hy - 60); 
+                            ctx.lineTo(hx + h.w / 2 + 40, hy - 100); 
+                            ctx.lineTo(hx + h.w + 40, hy - 40); 
+                            ctx.fill();
+                            
+                            ctx.fillStyle = h.color; ctx.fillRect(hx, hy, h.w, h.h); 
+                            ctx.fillStyle = h.roofColor; ctx.beginPath(); 
+                            ctx.moveTo(hx - 20, hy); 
+                            ctx.lineTo(hx + h.w / 2, hy - 60); 
+                            ctx.lineTo(hx + h.w + 20, hy); ctx.fill();
+                            
+                            ctx.fillStyle = '#FFF'; 
+                            ctx.fillRect(hx + 30, hy + 20, 40, 40); 
+                            ctx.fillRect(hx + h.w - 70, hy + 20, 40, 40); 
+                            
+                            let doorX = hx + h.w/2 - 25;
+                            let doorY = groundY - 200 - 80;
+                            ctx.fillStyle = '#3E2723'; ctx.fillRect(doorX, doorY, 50, 80); 
+                            
+                            ctx.fillStyle = '#777';
+                            for(let step = 0; step < 6; step++) {
+                                ctx.fillRect(hx + h.w/2 - 20 + (Math.random()*10-5), groundY - 200 + step*18, 40, 10);
+                            }
+
+                            let gx = hx - 140;
+                            let gy = hy + 30;
+                            ctx.fillStyle = '#222';
+                            ctx.beginPath(); ctx.moveTo(gx + 120, gy); ctx.lineTo(gx + 150, gy - 30); ctx.lineTo(gx + 150, gy + 70 - 30); ctx.lineTo(gx + 120, gy + 70); ctx.fill();
+                            ctx.fillStyle = '#444';
+                            ctx.beginPath(); ctx.moveTo(gx + 120, gy); ctx.lineTo(gx + 60, gy - 40); ctx.lineTo(gx + 60 + 30, gy - 70); ctx.lineTo(gx + 150, gy - 30); ctx.fill();
+                            ctx.fillStyle = '#555'; ctx.fillRect(gx, gy, 120, 70);
+                            ctx.fillStyle = '#333'; ctx.fillRect(gx + 10, gy + 20, 100, 50); 
+                            ctx.fillStyle = '#666'; ctx.beginPath(); ctx.moveTo(gx - 10, gy); ctx.lineTo(gx + 60, gy - 40); ctx.lineTo(gx + 130, gy); ctx.fill(); 
+
+                            drawPicketFence(h.x, h.x + h.w, h.isPlayerHouse);
+                            
+                            if (h.isPlayerHouse) {
+                                let arrowY = groundY - 200 - 100 + Math.sin(Date.now() / 150) * 10;
+                                ctx.drawImage(Sprites.arrow, Math.floor(hx + h.w/2 - Sprites.arrow.width/2), Math.floor(arrowY));
+                            }
                         }
                     }
                 }
             }
 
-            ctx.fillStyle = PAL['K']; ctx.fillRect(0, Math.floor(groundY - 40), W, 40); 
-            ctx.fillStyle = PAL['A']; ctx.fillRect(0, Math.floor(groundY), W, H - groundY); 
-            ctx.fillStyle = '#FFF'; for(let i = -1; i < W / 100 + 2; i++) { ctx.fillRect(Math.floor(i * 100 - (cameraX % 100)), Math.floor(groundY + 50), 60, 8); }
-        }
-
-        if(currentMode === 'destroy') {
-            for(let b of destroyBuildings) b.draw(cameraX);
-            for(let lbl of museumLabels) {
-                if(lbl.x - cameraX > -100 && lbl.x - cameraX < W + 100) {
-                    ctx.fillStyle = '#FFF'; ctx.font = '1.5vh "Press Start 2P"'; ctx.textAlign = 'center';
-                    ctx.fillText(lbl.text, Math.floor(lbl.x - cameraX), Math.floor(groundY + lbl.z - lbl.yOffset));
-                }
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, Math.floor(groundY), VIRTUAL_W, VIRTUAL_H - groundY + 100);
+            
+            ctx.fillStyle = '#FFF';
+            for(let i = -1; i < VIRTUAL_W / 100 + 2; i++) {
+                ctx.fillRect(Math.floor(i * 100 - (cameraX % 100)), Math.floor(groundY - 8), 60, 8);
             }
         }
 
-        let renderList = [...entities, player]; renderList.sort((a, b) => (a.z) - (b.z));
+        // Turvallinen lista ilman undefinedeja
+        let renderList = [...entities];
+        if (player) renderList.push(player);
+        renderList = renderList.filter(e => e != null);
+        renderList.sort((a, b) => (a.z) - (b.z));
+
         for (let ent of renderList) {
             let screenX = ent.x - cameraX;
-            if (screenX < -300 || screenX > W + 300) continue;
-            if ((ent.isDead && ['basket','brick_wall','leg','bottle','blood','bat_guy'].includes(ent.type)) || ent.type === 'burger') continue;
-            if (ent.type !== 'oikotie' && ent.type !== 'restaurant' && ent.type !== 'blood') drawShadow(screenX, groundY + ent.z, ent.width/2, 8);
+            if (screenX < -800 || screenX > VIRTUAL_W + 800) continue;
+            if ((ent.isDead && ['basket','brick_wall','leg','bottle','blood','bat_guy','arcade','platform'].includes(ent.type)) || ent.type === 'burger') continue;
+            
+            if (!['oikotie', 'restaurant', 'blood', 'platform', 'boss'].includes(ent.type)) {
+                let rx = ent.width / 2.5;
+                let ry = 8;
+                if (ent.type === 'car' || ent.type === 'car_crashed') { rx = 60; ry = 15; }
+                if (ent.type === 'tree') { rx = 35; ry = 12; }
+                if (ent.type === 'bench') { rx = 40; ry = 10; }
+                drawShadow(screenX, groundY + ent.z, rx, ry);
+            }
+        }
+
+        for (let ent of renderList) {
+            let screenX = ent.x - cameraX;
+            if (screenX < -800 || screenX > VIRTUAL_W + 800) continue;
+            if ((ent.isDead && ['basket','brick_wall','leg','bottle','blood','bat_guy','arcade','platform'].includes(ent.type)) || ent.type === 'burger') continue;
 
             ctx.save();
             let sX = 0, sY = 0;
             if (ent.shakeTimer > 0) { sX = (Math.random() - 0.5) * 8; sY = (Math.random() - 0.5) * 8; }
-            ctx.translate(Math.floor(screenX + sX), Math.floor((ent.y || groundY + ent.z) + sY));
-            if (ent.isDead && ent.type !== 'player' && ent !== player) {
+            
+            let renderY = (ent.type === 'player' || ent.type === 'boss' || ent.type === 'burger' || ent.type === 'oikotie' || ent === player) ? ent.y : (groundY + ent.z);
+            ctx.translate(Math.floor(screenX + sX), Math.floor(renderY + sY));
+            
+            if (ent.isDead && ent.type !== 'player' && ent !== player && ent.type !== 'boss') {
                 ctx.rotate(ent.dir); 
-            } else if (!['basket','table','trash','car','car_crashed','oikotie','burger','brick_wall','restaurant','sign_crash','leg','bottle','blood','bat_guy'].includes(ent.type)) {
+            } else if (!['basket','table','trash','car','car_crashed','oikotie','burger','brick_wall','restaurant','sign_crash','leg','bottle','blood','bat_guy','arcade','platform'].includes(ent.type)) {
                 ctx.scale(ent.dir > 0 ? 1 : -1, 1);
             }
 
@@ -1754,12 +2319,18 @@
                     let walkY = (isMoving && !isDancing) ? Math.sin(Date.now() / 100) * 10 : 0;
                     ctx.drawImage(sprite, Math.floor(-sprite.width/2), Math.floor(-sprite.height + walkY));
                 }
+            } else if (ent.type === 'boss') {
+                ctx.drawImage(Sprites.oikotie, Math.floor(-Sprites.oikotie.width/2), Math.floor(-Sprites.oikotie.height));
+                ctx.fillStyle = '#F00'; ctx.fillRect(-20, -Sprites.oikotie.height - 10, 40, 5);
+                ctx.fillStyle = '#0F0'; ctx.fillRect(-20, -Sprites.oikotie.height - 10, 40 * (Math.max(0, ent.hp) / 500), 5);
             } else if (ent.type === 'smoker') {
                 let s = ent.idleType === 'smoke' ? Sprites.smoker_2 : Sprites.smoker_1;
                 ctx.drawImage(s, Math.floor(-Sprites.human_stand.width/2), Math.floor(-Sprites.human_stand.height));
             } else if (ent.type === 'human_stand') {
                 ctx.drawImage(Sprites.human_stand, Math.floor(-Sprites.human_stand.width/2), Math.floor(-Sprites.human_stand.height));
                 if (ent.idleType === 'phone' && ent.speechTimer > 0 && !ent.isDead) drawBubble(ctx, ent, ent.speechText);
+            } else if (ent.type === 'human_sit') {
+                ctx.drawImage(Sprites.human_sit, Math.floor(-Sprites.human_sit.width/2), Math.floor(-Sprites.human_sit.height));
             } else if (ent.type === 'human_dance') {
                 let sprite = Math.floor(Date.now() / 150) % 2 === 0 ? Sprites.human_dance1 : Sprites.human_dance2;
                 ctx.drawImage(sprite, Math.floor(-Sprites.human_stand.width/2), Math.floor(-Sprites.human_stand.height));
@@ -1778,20 +2349,20 @@
                 let walkY = ent.idleTimer % 100 < 20 ? Math.sin(Date.now() / 50) * 5 : 0;
                 ctx.drawImage(Sprites.chicken_idle, Math.floor(-Sprites.chicken_idle.width/2), Math.floor(-Sprites.chicken_idle.height + walkY));
             } else if (ent.type === 'table') { ctx.drawImage(Sprites.table, Math.floor(-Sprites.table.width/2), Math.floor(-Sprites.table.height));
-            } else if (ent.type === 'basket') { let floatY = Math.sin(Date.now() / 200) * 5; ctx.drawImage(Sprites.basket, Math.floor(-Sprites.basket.width/2), Math.floor(-Sprites.basket.height + floatY));
+            } else if (ent.type === 'basket') { let floatY = (Math.sin(Date.now() / 200) * 5); ctx.drawImage(Sprites.basket, Math.floor(-Sprites.basket.width/2), Math.floor(-Sprites.basket.height + floatY));
             } else if (ent.type === 'leg') { ctx.drawImage(Sprites.leg, Math.floor(-Sprites.leg.width/2), Math.floor(-Sprites.leg.height));
             } else if (ent.type === 'bottle') { ctx.drawImage(Sprites.bottle, Math.floor(-Sprites.bottle.width/2), Math.floor(-Sprites.bottle.height));
             } else if (ent.type === 'tree') { ctx.drawImage(Sprites.tree, Math.floor(-Sprites.tree.width/2), Math.floor(-Sprites.tree.height));
             } else if (ent.type === 'bench') { ctx.drawImage(Sprites.bench, Math.floor(-Sprites.bench.width/2), Math.floor(-Sprites.bench.height));
             } else if (ent.type === 'sign_crash') {
                 ctx.drawImage(Sprites.sign, Math.floor(-Sprites.sign.width/2), Math.floor(-Sprites.sign.height));
-                ctx.fillStyle = '#FFF'; ctx.font = '2vh "Press Start 2P"'; ctx.textAlign = 'center';
-                ctx.fillText("Autokolari", 0, Math.floor(-Sprites.sign.height - 20)); ctx.fillText("heheh", 0, Math.floor(-Sprites.sign.height - 5));
+                ctx.fillStyle = '#FFF'; ctx.font = '10px "Press Start 2P", cursive'; ctx.textAlign = 'center';
+                ctx.fillText("AUTOKOLARI", 0, Math.floor(-Sprites.sign.height - 20)); ctx.fillText("HEHHEH", 0, Math.floor(-Sprites.sign.height - 5));
             } else if (ent.type === 'restaurant') {
-                let rW = Math.min(W * 0.8, 400); 
+                let rW = Math.min(VIRTUAL_W * 0.8, 400); 
                 ctx.fillStyle = '#400'; ctx.fillRect(Math.floor(-rW/2), -200, Math.floor(rW), 200); 
                 ctx.fillStyle = '#200'; ctx.fillRect(Math.floor(-rW/2 + 10), -180, Math.floor(rW - 20), 80); 
-                ctx.fillStyle = '#F00'; ctx.font = '2vh "Press Start 2P"'; ctx.textAlign = 'center';
+                ctx.fillStyle = '#F00'; ctx.font = '10px "Press Start 2P", cursive'; ctx.textAlign = 'center';
                 ctx.fillText("KANAN TEURASTAMO", 0, -135); 
                 ctx.fillStyle = '#111'; ctx.fillRect(-25, -80, 50, 80); 
                 ctx.fillStyle = '#FFD700'; ctx.fillRect(10, -45, 8, 8); 
@@ -1823,9 +2394,20 @@
             } else if (ent.type === 'car' || ent.type === 'car_crashed') {
                 let sprite = ent.carType === 'car_blue' ? Sprites.car_blue : Sprites.car_red; ctx.drawImage(sprite, Math.floor(-sprite.width/2), Math.floor(-sprite.height));
                 if (ent.type === 'car_crashed' && Math.random() < 0.2 && settings.particles) {
-                    particles.push({ x: ent.x + 30, y: ent.y + ent.z - 30, vx: (Math.random()-0.5)*2, vy: -1-Math.random()*2, size: 4+Math.random()*6, color: 'rgba(50,50,50,0.8)', life: 60, type: 'smoke' });
+                    particles.push({ x: ent.x + 30, y: (ent.y || groundY + ent.z) - 30, vx: (Math.random()-0.5)*2, vy: -1-Math.random()*2, size: 4+Math.random()*6, color: 'rgba(50,50,50,0.8)', life: 60, type: 'smoke' });
                 }
-            } else if (ent.type === 'oikotie') { ctx.drawImage(Sprites.oikotie, Math.floor(-Sprites.oikotie.width/2), Math.floor(-Sprites.oikotie.height)); }
+            } else if (ent.type === 'oikotie') { ctx.drawImage(Sprites.oikotie, Math.floor(-Sprites.oikotie.width/2), Math.floor(-Sprites.oikotie.height)); 
+            } else if (ent.type === 'platform') {
+                ctx.fillStyle = '#555'; ctx.fillRect(Math.floor(-ent.width/2), 0, ent.width, 20);
+                ctx.fillStyle = '#333'; ctx.fillRect(Math.floor(-ent.width/2), 20, ent.width, 10);
+                ctx.fillStyle = '#FFD700'; ctx.fillRect(Math.floor(-ent.width/2), 0, ent.width, 2);
+            } else if (ent.type === 'arcade') {
+                ctx.fillStyle = '#111'; ctx.fillRect(-30, -100, 60, 100);
+                ctx.fillStyle = Math.floor(Date.now()/200)%2==0 ? '#F00' : '#FFD700';
+                ctx.fillRect(-25, -95, 50, 40);
+                ctx.fillStyle = '#FFF'; ctx.font = '8px "Press Start 2P"'; ctx.textAlign = 'center';
+                ctx.fillText("KASINO", 0, -70);
+            }
 
             if ((ent.type === 'car' || ent.type === 'car_crashed') && ent.hitTimer > 0) {
                 ctx.fillRect(-100, -100, 200, 200); ctx.globalCompositeOperation = 'source-over';
@@ -1834,20 +2416,20 @@
         }
 
         for (let ent of entities) {
-            if (ent.type === 'burger' && (ent.x - cameraX > -100 && ent.x - cameraX < W + 100)) {
+            if (ent && ent.type === 'burger' && (ent.x - cameraX > -100 && ent.x - cameraX < VIRTUAL_W + 100)) {
                 ctx.save(); ctx.translate(Math.floor(ent.x - cameraX), Math.floor(ent.y + ent.z));
                 ctx.drawImage(Sprites.burger, Math.floor(-Sprites.burger.width/2), Math.floor(-Sprites.burger.height)); ctx.restore();
             }
         }
 
-        // Multiplayer other players
         if (currentMode === 'multiplayer') {
             for (let id in otherPlayers) {
                 let op = otherPlayers[id];
+                if (!op) continue;
                 let screenX = op.x - cameraX;
-                if (screenX < -100 || screenX > W + 100) continue;
+                if (screenX < -100 || screenX > VIRTUAL_W + 100) continue;
                 ctx.save();
-                ctx.translate(Math.floor(screenX), Math.floor(op.y + op.z));
+                ctx.translate(Math.floor(screenX), Math.floor(op.y)); 
                 ctx.scale(op.dir > 0 ? 1 : -1, 1);
                 let sprite = op.char === 'female' ? Sprites.chicken_girl : Sprites.chicken_idle;
                 if (op.isDancing) { sprite = Math.floor(Date.now() / 150) % 2 === 0 ? Sprites.human_dance1 : Sprites.human_dance2;
@@ -1855,36 +2437,39 @@
                 ctx.drawImage(sprite, Math.floor(-sprite.width/2), Math.floor(-sprite.height));
                 ctx.restore();
                 if (!settings.hideNames && op.name) {
-                    ctx.fillStyle = '#FFF'; ctx.font = '1.5vh "Press Start 2P"'; ctx.textAlign = 'center';
-                    ctx.fillText(op.name, Math.floor(screenX), Math.floor(op.y + op.z - 90));
+                    ctx.fillStyle = '#FFF'; ctx.font = '10px "Press Start 2P", cursive'; ctx.textAlign = 'center';
+                    ctx.fillText(op.name, Math.floor(screenX), Math.floor(op.y - 90));
                 }
             }
         }
 
         for (let p of particles) {
             let px = p.x - cameraX;
-            if (px > -50 && px < W + 50) {
+            if (px > -50 && px < VIRTUAL_W + 50) {
                 ctx.fillStyle = p.color; ctx.fillRect(Math.floor(px), Math.floor(p.y), Math.floor(p.size), Math.floor(p.size)); 
             }
         }
 
-        if (fadeAlpha > 0) { ctx.fillStyle = `rgba(255,0,0,${fadeAlpha})`; ctx.fillRect(0, 0, W, H); }
+        if (fadeAlpha > 0) { ctx.fillStyle = `rgba(255,0,0,${fadeAlpha})`; ctx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H); }
+        ctx.restore();
     }
     
     function drawBubble(ctx, ent, text) {
-        ctx.restore(); ctx.save();
-        ctx.translate(Math.floor(ent.x - cameraX), Math.floor(ent.y + ent.z - 90));
-        ctx.font = '1.5vh "Press Start 2P"'; let tw = ctx.measureText(text).width;
+        ctx.save();
+        ctx.translate(Math.floor(ent.x - cameraX), Math.floor(ent.y - 90));
+        ctx.font = '10px "Press Start 2P", cursive'; let tw = ctx.measureText(text).width;
         ctx.fillStyle = 'white'; ctx.fillRect(Math.floor(-tw/2 - 10), -20, Math.floor(tw + 20), 25);
         ctx.fillStyle = 'black'; ctx.strokeRect(Math.floor(-tw/2 - 10), -20, Math.floor(tw + 20), 25);
         ctx.beginPath(); ctx.moveTo(-5, 5); ctx.lineTo(5, 5); ctx.lineTo(0, 10); ctx.fill();
-        ctx.fillText(text, Math.floor(-tw/2), 0); ctx.restore(); ctx.save();
+        ctx.fillText(text, Math.floor(-tw/2), 0);
+        ctx.restore();
     }
 
     function drawShadow(x, y, radiusX, radiusY) {
-        if (!settings.shadows) return; ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        if (!settings.shadows) return; ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
         ctx.beginPath(); ctx.ellipse(Math.floor(x), Math.floor(y), Math.floor(radiusX), Math.floor(radiusY), 0, 0, Math.PI * 2); ctx.fill();
     }
+
     function createParticles(x, y, count, color) {
         if(!settings.particles) return;
         for(let i=0; i<count; i++) particles.push({ x: x, y: y - 40, vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 1) * 20, size: Math.random() * 8 + 4, color: color, life: 30 + Math.random() * 20, type: 'debris' });
@@ -1918,7 +2503,6 @@
         document.getElementById('winTime').innerText = finalTimeStr;
         winScreen.style.display = 'flex'; controlsArea.style.display = 'none';
 
-        // Load leaderboard on win screen
         loadWinLeaderboard();
         
         let qualifies = await checkQualifiesTop3(score);
@@ -1961,19 +2545,21 @@
     let menuTime = 0;
     function drawMenu() {
         if (gameState !== 'MENU') return; menuTime += 0.05;
-        mCtx.fillStyle = '#1a1a2e'; mCtx.fillRect(0, 0, W, H);
+        mCtx.save();
+        mCtx.imageSmoothingEnabled = false;
+        mCtx.fillStyle = '#1a1a2e'; mCtx.fillRect(0, 0, VIRTUAL_W, VIRTUAL_H);
         let mGround = groundY; 
-        mCtx.fillStyle = '#111122'; for(let i=0; i<10; i++) { let bx = ((i*200 - menuTime*2) % (W+400)) - 200; mCtx.fillRect(Math.floor(bx), Math.floor(mGround-300), 150, 300); }
+        mCtx.fillStyle = '#111122'; for(let i=0; i<10; i++) { let bx = ((i*200 - menuTime*2) % (VIRTUAL_W+400)) - 200; mCtx.fillRect(Math.floor(bx), Math.floor(mGround-300), 150, 300); }
         mCtx.fillStyle = '#222233';
         for(let i=0; i<8; i++) {
-            let bx = ((i*300 - menuTime*5) % (W+500)) - 200; mCtx.fillRect(Math.floor(bx), Math.floor(mGround-400+(i%2)*50), 200, 400); mCtx.fillStyle = '#FFD700';
+            let bx = ((i*300 - menuTime*5) % (VIRTUAL_W+500)) - 200; mCtx.fillRect(Math.floor(bx), Math.floor(mGround-400+(i%2)*50), 200, 400); mCtx.fillStyle = '#FFD700';
             for(let w=0; w<5; w++) mCtx.fillRect(Math.floor(bx+40+w*30), Math.floor(mGround-300+(i%3)*40), 10, 15);
             mCtx.fillStyle = '#222233'; 
         }
-        mCtx.fillStyle = '#2b2b2b'; mCtx.fillRect(0, Math.floor(mGround), W, Math.floor(H-mGround)); mCtx.fillStyle = '#555'; mCtx.fillRect(0, Math.floor(mGround), W, 10); 
-        mCtx.fillStyle = '#FFF'; for(let i=0; i<W/100 + 2; i++) mCtx.fillRect(Math.floor(i*100 - (menuTime*10)%100), Math.floor(mGround+50), 60, 8);
+        mCtx.fillStyle = '#2b2b2b'; mCtx.fillRect(0, Math.floor(mGround), VIRTUAL_W, Math.floor(VIRTUAL_H-mGround)); mCtx.fillStyle = '#555'; mCtx.fillRect(0, Math.floor(mGround), VIRTUAL_W, 10); 
+        mCtx.fillStyle = '#FFF'; for(let i=0; i<VIRTUAL_W/100 + 2; i++) mCtx.fillRect(Math.floor(i*100 - (menuTime*10)%100), Math.floor(mGround+50), 60, 8);
         
-        let leftCenter = W / 5;
+        let leftCenter = VIRTUAL_W / 5;
         if(leftCenter < 100) leftCenter = 100;
         
         mCtx.save();
@@ -2004,12 +2590,13 @@
         mCtx.fillStyle = '#FFF'; 
         mCtx.fillRect(Math.floor(leftCenter + 20 + Math.sin(menuTime*5)*10), 40, 5, 5);
         mCtx.fillRect(Math.floor(leftCenter + 20 + Math.cos(menuTime*4)*10), 50, 5, 5);
+        mCtx.restore();
     }
 
     function gameLoop(timestamp) {
         let dt = timestamp - lastTime; lastTime = timestamp;
         if (gameState === 'MENU') drawMenu(); 
-        else if (gameState === 'PLAYING' || gameState === 'ANIMATION' || gameState === 'STORY_ENDING') { update(dt); drawGame(); } 
+        else if (gameState === 'PLAYING' || gameState === 'ANIMATION' || gameState === 'STORY_ENDING' || gameState === 'BOSS_INTRO') { update(dt); drawGame(); } 
         else if (['GAMEOVER', 'WIN', 'STORY_GAMEOVER', 'STORY_WIN'].includes(gameState)) drawGame(); 
         gameLoopId = requestAnimationFrame(gameLoop);
     }
@@ -2017,24 +2604,35 @@
     function resize() {
         let screenW = window.innerWidth || 800; 
         let screenH = window.innerHeight || 600; 
-        W = screenW;
-        H = screenH;
-        menuCanvas.width = W; menuCanvas.height = H; 
-        canvas.width = W; canvas.height = H; 
-        let oldGround = groundY;
-        groundY = Math.max(H * 0.7, 350); 
-        let diff = groundY - (oldGround || groundY);
-        if (diff !== 0 && player) {
-            player.y += diff; entities.forEach(e => e.y += diff); particles.forEach(p => p.y += diff);
-        }
+        displayScale = Math.min(screenW / VIRTUAL_W, screenH / VIRTUAL_H);
+        if (!isFinite(displayScale) || displayScale <= 0) displayScale = 1;
+        displayOffsetX = (screenW - VIRTUAL_W * displayScale) / 2;
+        displayOffsetY = (screenH - VIRTUAL_H * displayScale) / 2;
+        menuCanvas.width = VIRTUAL_W; menuCanvas.height = VIRTUAL_H; 
+        canvas.width = VIRTUAL_W; canvas.height = VIRTUAL_H; 
+        menuCanvas.style.width = (VIRTUAL_W * displayScale) + 'px';
+        menuCanvas.style.height = (VIRTUAL_H * displayScale) + 'px';
+        menuCanvas.style.left = displayOffsetX + 'px';
+        menuCanvas.style.top = displayOffsetY + 'px';
+        menuCanvas.style.position = 'absolute';
+        canvas.style.width = (VIRTUAL_W * displayScale) + 'px';
+        canvas.style.height = (VIRTUAL_H * displayScale) + 'px';
+        canvas.style.left = displayOffsetX + 'px';
+        canvas.style.top = displayOffsetY + 'px';
+        canvas.style.position = 'absolute';
+        
+        gameUiLayer.style.transform = `scale(${displayScale})`;
+        gameUiLayer.style.left = displayOffsetX + 'px';
+        gameUiLayer.style.top = displayOffsetY + 'px';
+        
         ctx.imageSmoothingEnabled = false; mCtx.imageSmoothingEnabled = false;
     }
     window.addEventListener('resize', resize);
     
     // Button listeners
     document.getElementById('playBtn').addEventListener('click', () => { initAudio(); initGameData('rampage'); });
+    document.getElementById('bossBtn').addEventListener('click', () => { initAudio(); initGameData('boss_intro'); });
     document.getElementById('storyBtn').addEventListener('click', () => { initAudio(); initGameData('story'); });
-    document.getElementById('destroyBtn').addEventListener('click', () => { initAudio(); initGameData('destroy'); });
     
     document.getElementById('mpBtn').addEventListener('click', () => {
         initAudio();
@@ -2065,6 +2663,7 @@
         document.getElementById('nameInputLayer').style.display='none';
         document.getElementById('mpChatInput').style.display = 'none';
         document.getElementById('mpChat').style.display = 'none';
+        document.getElementById('mpPlayersHint').style.display = 'none';
         if (myMpId) { db.ref('players/' + myMpId).remove(); myMpId = null; }
         stopBGM(); startMenuBGM(); 
     };
@@ -2075,7 +2674,7 @@
     document.getElementById('storyWinMenuBtn').addEventListener('click', goToMenu);
     
     document.getElementById('copyBtn').addEventListener('click', () => {
-        const resultText = `Horseleg chicken\nVaikeustaso: ${settings.difficulty === 0 ? "Helppo" : settings.difficulty === 1 ? "Normaali" : "Vaikea"}\nAika: ${finalTimeStr}\nLoppupisteet: ${score}\nOlet paras!`;
+        const resultText = `Horseleg chicken\:nVaikeustaso ${settings.difficulty === 0 ? "Helppo" : settings.difficulty === 1 ? "Normaali" : "Vaikea"}\nAika: ${finalTimeStr}\nLoppupisteet: ${score}\nOlet paras!`;
         if (navigator.clipboard) { navigator.clipboard.writeText(resultText).then(() => alert("Kopioitu leikepöydälle!")); }
         else { alert("Kopiointi ei tuettu tässä selaimessa."); }
     });
